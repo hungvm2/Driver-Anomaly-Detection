@@ -70,7 +70,8 @@ def generate_model(args):
         model = nn.DataParallel(model, device_ids=None)
     else:
         if args.model_type == 'resnet':
-            pre_model_path = './premodels/kinetics_resnet_' + str(args.model_depth) + '_RGB_16_best.pth'
+            # pre_model_path = './premodels/kinetics_resnet_' + str(args.model_depth) + '_RGB_16_best.pth'
+            pre_model_path = './checkpoints.ori/best_model_resnet_front_depth.pth'
             ###default pre-trained model is trained on kinetics dataset which has 600 classes
             if args.model_depth == 18:
                 model = resnet.resnet18(

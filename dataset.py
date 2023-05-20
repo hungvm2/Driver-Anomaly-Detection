@@ -1,8 +1,12 @@
+import csv
+import os
+import sys
+import traceback
+
 import torch
 import torch.utils.data as data
 from PIL import Image
-import os
-import csv
+
 
 def pil_loader(path):
     """
@@ -10,10 +14,16 @@ def pil_loader(path):
     :param path: image path
     :return: image data
     """
-    with open(path, 'rb') as f:
-        with Image.open(f) as img:
-            #return img.convert('RGB')
-            return img.convert('L')
+    try:
+        with open(path, 'rb') as f:
+            with Image.open(f) as img:
+                # return img.convert('RGB')
+                return img.convert('L')
+    except Exception:
+        traceback.print_exc()
+        print(path)
+        sys.exit()
+
 
 def accimage_loader(path):
     """
@@ -28,6 +38,7 @@ def accimage_loader(path):
         # Potentially a decoding problem, fall back to PIL.Image
         return pil_loader(path)
 
+
 def get_default_image_loader():
     """
     choose accimage as image loader if it is available, PIL otherwise
@@ -37,6 +48,7 @@ def get_default_image_loader():
         return accimage_loader
     else:
         return pil_loader
+
 
 def get_video(video_path, frame_indices):
     """
@@ -53,6 +65,7 @@ def get_video(video_path, frame_indices):
         img = image_reader(image_path)
         video.append(img)
     return video
+
 
 def get_clips(video_path, video_begin, video_end, label, view, sample_duration):
     """
@@ -81,7 +94,8 @@ def get_clips(video_path, video_begin, video_end, label, view, sample_duration):
         video_begin += sample_duration
     if interval_len % sample_duration != 0:
         sample_ = sample.copy()
-        sample_['frame_indices'] = list(range(video_begin, video_end+1)) + [video_end] * (sample_duration - (video_end - video_begin + 1))
+        sample_['frame_indices'] = list(range(video_begin, video_end + 1)) + [video_end] * (
+                sample_duration - (video_end - video_begin + 1))
         clips.append(sample_)
     return clips
 
@@ -91,7 +105,7 @@ def listdir(path):
     show every files or folders under the path folder
     """
     for f in os.listdir(path):
-            yield f
+        yield f
 
 
 def make_dataset(root_path, subset, view, sample_duration, type=None):
@@ -106,10 +120,12 @@ def make_dataset(root_path, subset, view, sample_duration, type=None):
     dataset = []
     if subset == 'train' and type == 'normal':
         # load normal training data
-        train_folder_list = list(filter(lambda string: string.find('Tester') != -1, list(listdir(root_path))))
+        train_folder_list = list(
+            filter(lambda string: string.find('Tester') != -1, list(listdir(root_path))))
 
         for train_folder in train_folder_list:
-            normal_video_list = list(filter(lambda string: string.split('_')[0] == 'normal', list(listdir(os.path.join(root_path, train_folder)))))
+            normal_video_list = list(filter(lambda string: string.split('_')[0] == 'normal',
+                                            list(listdir(os.path.join(root_path, train_folder)))))
 
             for normal_video in normal_video_list:
                 video_path = os.path.join(root_path, train_folder, normal_video, view)
@@ -133,17 +149,19 @@ def make_dataset(root_path, subset, view, sample_duration, type=None):
                     sample_ = sample.copy()
                     sample_['frame_indices'] = list(range(i, min(n_frames, i + sample_duration)))
                     if len(sample_['frame_indices']) < sample_duration:
-                        for j in range(sample_duration-len(sample_['frame_indices'])):
+                        for j in range(sample_duration - len(sample_['frame_indices'])):
                             sample_['frame_indices'].append(sample_['frame_indices'][-1])
                     dataset.append(sample_)
 
 
     elif subset == 'train' and type == 'anormal':
-        #load anormal training data
-        train_folder_list = list(filter(lambda string: string.find('Tester') != -1, list(listdir(root_path))))
+        # load anormal training data
+        train_folder_list = list(
+            filter(lambda string: string.find('Tester') != -1, list(listdir(root_path))))
 
         for train_folder in train_folder_list:
-            anormal_video_list = list(filter(lambda string: string.split('_')[0] != 'normal', list(listdir(os.path.join(root_path, train_folder)))))
+            anormal_video_list = list(filter(lambda string: string.split('_')[0] != 'normal',
+                                             list(listdir(os.path.join(root_path, train_folder)))))
 
             for anormal_video in anormal_video_list:
                 video_path = os.path.join(root_path, train_folder, anormal_video, view)
@@ -166,13 +184,13 @@ def make_dataset(root_path, subset, view, sample_duration, type=None):
                     sample_ = sample.copy()
                     sample_['frame_indices'] = list(range(i, min(n_frames, i + sample_duration)))
                     if len(sample_['frame_indices']) < sample_duration:
-                        for j in range(sample_duration-len(sample_['frame_indices'])):
+                        for j in range(sample_duration - len(sample_['frame_indices'])):
                             sample_['frame_indices'].append(sample_['frame_indices'][-1])
 
                     dataset.append(sample_)
 
     elif subset == 'validation' and type == None:
-        #load valiation data as well as thier labels
+        # load valiation data as well as thier labels
         csv_path = root_path + 'LABEL.csv'
         with open(csv_path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -200,6 +218,7 @@ class DAD(data.Dataset):
     """
     generate normal training/ anormal training/ validation dataset according to requirement
     """
+
     def __init__(self,
                  root_path,
                  subset,
@@ -221,15 +240,16 @@ class DAD(data.Dataset):
         if self.subset == 'train':
             video_path = self.data[index]['video']
             frame_indices = self.data[index]['frame_indices']
-            #print(frame_indices)
+            # print(frame_indices)
             if self.temporal_transform is not None:
                 frame_indices = self.temporal_transform(frame_indices)
-            #print(frame_indices)
+            # print(frame_indices)
             clip = self.loader(video_path, frame_indices)
 
             self.spatial_transform.randomize_parameters()
             clip = [self.spatial_transform(img) for img in clip]
-            clip = torch.stack(clip, 0).permute(1, 0, 2, 3)                 #data with shape (channels, timesteps, height, width)
+            clip = torch.stack(clip, 0).permute(1, 0, 2,
+                                                3)  # data with shape (channels, timesteps, height, width)
             return clip, index
         elif self.subset == 'validation':
             video_path = self.data[index]['video']
@@ -246,6 +266,6 @@ class DAD(data.Dataset):
 
         else:
             print('!!!DATA LOADING FAILURE!!!CANT FIND CORRESPONDING DATA!!!PLEASE CHECK INPUT!!!')
+
     def __len__(self):
         return len(self.data)
-

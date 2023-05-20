@@ -15,6 +15,7 @@ from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2
 import ast
 import numpy as np
 from dataset_test import DAD_Test
+import time
 
 
 def parse_args():
@@ -61,11 +62,11 @@ def parse_args():
     parser.add_argument('--n_scales', default=3, type=int, help='Number of scales for multiscale cropping')
     parser.add_argument('--train_crop', default='corner', type=str,
                         help='Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center.  (random | corner | center)')
-    parser.add_argument('--checkpoint_folder', default='./checkpoints/', type=str, help='folder to store checkpoints')
+    parser.add_argument('--checkpoint_folder', default='./checkpoints', type=str, help='folder to store checkpoints')
     parser.add_argument('--log_folder', default='./logs/', type=str, help='folder to store log files')
     parser.add_argument('--log_resume', default=False, type=ast.literal_eval, help='True|False: a flag controlling whether to create a new log file')
-    parser.add_argument('--normvec_folder', default='./normvec/', type=str, help='folder to store norm vectors')
-    parser.add_argument('--score_folder', default='./score/', type=str, help='folder to store scores')
+    parser.add_argument('--normvec_folder', default='./normvec', type=str, help='folder to store norm vectors')
+    parser.add_argument('--score_folder', default='./score', type=str, help='folder to store scores')
     parser.add_argument('--Z_momentum', default=0.9, help='momentum for normalization constant Z updates')
     parser.add_argument('--groups', default=3, type=int, help='hyper-parameters when using shufflenet')
     parser.add_argument('--width_mult', default=2.0, type=float,
@@ -327,6 +328,7 @@ if __name__ == '__main__':
 
         print(
             "==========================================!!!START TRAINING!!!==========================================")
+        start = time.time()
         cudnn.benchmark = True
         batch_logger = Logger(os.path.join(args.log_folder, 'batch.log'), ['epoch', 'batch', 'loss', 'probs', 'lr'],
                               args.log_resume)
@@ -414,7 +416,7 @@ if __name__ == '__main__':
                 lr = args.learning_rate * (0.1 ** (epoch // args.lr_decay))
                 adjust_learning_rate(optimizer, lr)
                 print(f'New learning rate: {lr}')
-
+        print("Total training time: ", time.time() - start)
     elif args.mode == 'test':
         if not os.path.exists(args.normvec_folder):
             os.makedirs(args.normvec_folder)
@@ -428,10 +430,10 @@ if __name__ == '__main__':
         model_top_d = generate_model(args)
         model_top_ir = generate_model(args)
 
-        resume_path_front_d = './checkpoints/best_model_' + args.model_type + '_front_depth.pth'
-        resume_path_front_ir = './checkpoints/best_model_' + args.model_type + '_front_IR.pth'
-        resume_path_top_d = './checkpoints/best_model_' + args.model_type + '_top_depth.pth'
-        resume_path_top_ir = './checkpoints/best_model_' + args.model_type + '_top_IR.pth'
+        resume_path_front_d = './checkpoints.ori/best_model_' + args.model_type + '_front_depth.pth'
+        resume_path_front_ir = './checkpoints.ori/best_model_' + args.model_type + '_front_IR.pth'
+        resume_path_top_d = './checkpoints.ori/best_model_' + args.model_type + '_top_depth.pth'
+        resume_path_top_ir = './checkpoints.ori/best_model_' + args.model_type + '_top_IR.pth'
 
         resume_checkpoint_front_d = torch.load(resume_path_front_d)
         resume_checkpoint_front_ir = torch.load(resume_path_front_ir)

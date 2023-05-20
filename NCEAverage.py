@@ -27,7 +27,8 @@ class NCEAverage(nn.Module):
             print('normalization constant Z is set to {:.1f}'.format(Z))
         else:
             Z_new = outs.mean() * self.len_neg
-            self.params[0] = (1 - self.params[2]) * Z_new + self.params[2] * self.params[0]
+            with torch.no_grad():
+                self.params[0] = (1 - self.params[2]) * Z_new + self.params[2] * self.params[0]
             Z = self.params[0].clone().detach().item()
         outs = torch.div(outs, Z).contiguous()
         probs = self.extract_probs(outs)

@@ -55,6 +55,7 @@ class ToTensor(object):
 
         if isinstance(pic, np.ndarray):
             # handle numpy array
+            pic = np.array(pic)
             img = torch.from_numpy(np.expand_dims(pic, axis=0))
             # backward compatibility
             return img.float().div(self.norm_value)
@@ -496,7 +497,7 @@ class SaltImage(object):
 
         if self.p < 0.10:
             data_final = []
-            img = img.astype(np.float)
+            img = img.astype(np.float32)
             img_shape = img.shape
             noise = np.random.randint(self.ratio, size=img_shape)
             img = np.where(noise == 0, 255, img)
@@ -525,7 +526,7 @@ class Dropout(object):
 
         if self.p < 0.10:
             data_final = []
-            img = img.astype(np.float)
+            img = img.astype(np.float32)
             img_shape = img.shape
             noise = np.random.randint(self.ratio, size=img_shape)
             img = np.where(noise == 0, 0, img)
@@ -552,7 +553,7 @@ class MultiplyValues():
         if is_PIL:
             img = np.asarray(img)
 
-        image = img.astype(np.float64)
+        image = img.astype(np.float32)
         image *= self.sample
         image = np.where(image > 255, 255, image)
         image = np.where(image < 0, 0, image)

@@ -1,8 +1,10 @@
+import csv
+import os
+
 import torch
 import torch.utils.data as data
 from PIL import Image
-import os
-import csv
+
 
 def pil_loader(path):
     """
@@ -13,6 +15,7 @@ def pil_loader(path):
     with open(path, 'rb') as f:
         with Image.open(f) as img:
             return img.convert('L')
+
 
 def accimage_loader(path):
     """
@@ -27,6 +30,7 @@ def accimage_loader(path):
         # Potentially a decoding problem, fall back to PIL.Image
         return pil_loader(path)
 
+
 def get_default_image_loader():
     """
     choose accimage as image loader if it is available, PIL otherwise
@@ -36,6 +40,7 @@ def get_default_image_loader():
         return accimage_loader
     else:
         return pil_loader
+
 
 def get_video(video_path, frame_indices):
     """
@@ -52,6 +57,7 @@ def get_video(video_path, frame_indices):
         img = image_reader(image_path)
         video.append(img)
     return video
+
 
 def get_clips(video_path, video_begin, video_end, label, view, sample_duration):
     """
@@ -76,26 +82,26 @@ def get_clips(video_path, video_begin, video_end, label, view, sample_duration):
     if video_begin == 0:
         for i in range(7):
             sample_ = sample.copy()
-            sample_['frame_indices'] = [0] * (7-i) + list(range(0, i + 9))
+            sample_['frame_indices'] = [0] * (7 - i) + list(range(0, i + 9))
             clips.append(sample_)
-        for i in range(7, video_end+1, step):
+        for i in range(7, video_end + 1, step):
             sample_ = sample.copy()
-            sample_['frame_indices'] = list(range(i-7, i + 9))
+            sample_['frame_indices'] = list(range(i - 7, i + 9))
             clips.append(sample_)
 
     elif video_end == 9999:
         for i in range(video_begin, 9992, step):
             sample_ = sample.copy()
-            sample_['frame_indices'] = list(range(i-7, i + 9))
+            sample_['frame_indices'] = list(range(i - 7, i + 9))
             clips.append(sample_)
         for i in range(8):
             sample_ = sample.copy()
-            sample_['frame_indices'] = list(range(9985+i, 10000)) + [9999] * (i+1)
+            sample_['frame_indices'] = list(range(9985 + i, 10000)) + [9999] * (i + 1)
             clips.append(sample_)
     else:
-        for i in range(video_begin, video_end+1, step):
+        for i in range(video_begin, video_end + 1, step):
             sample_ = sample.copy()
-            sample_['frame_indices'] = list(range(i-7, i + 9))
+            sample_['frame_indices'] = list(range(i - 7, i + 9))
             clips.append(sample_)
     return clips
 
@@ -105,7 +111,8 @@ def listdir(path):
     show every files or folders under the path folder
     """
     for f in os.listdir(path):
-            yield f
+        yield f
+
 
 def make_dataset(root_path, subset, view, sample_duration, type=None):
     """
@@ -119,7 +126,7 @@ def make_dataset(root_path, subset, view, sample_duration, type=None):
     """
     dataset = []
     if subset == 'validation' and type == None:
-        #load valiation data as well as thier labels
+        # load valiation data as well as thier labels
         csv_path = root_path + 'LABEL.csv'
         with open(csv_path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -139,7 +146,8 @@ def make_dataset(root_path, subset, view, sample_duration, type=None):
                 clips = get_clips(video_path, video_begin, video_end, label, view, sample_duration)
                 dataset = dataset + clips
     else:
-        print('!!!DATA LOADING FAILURE!!!THIS DATASET IS ONLY USED IN TESTING MODE!!!PLEASE CHECK INPUT!!!')
+        print(
+            '!!!DATA LOADING FAILURE!!!THIS DATASET IS ONLY USED IN TESTING MODE!!!PLEASE CHECK INPUT!!!')
     return dataset
 
 
@@ -147,6 +155,7 @@ class DAD_Test(data.Dataset):
     """
     This dataset is only used at test time to genrate consecutive video samples.
     """
+
     def __init__(self,
                  root_path,
                  subset,
@@ -175,8 +184,8 @@ class DAD_Test(data.Dataset):
             clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
             return clip, ground_truth
         else:
-            print('!!!DATA LOADING FAILURE!!!THIS DATASET IS ONLY USED IN TESTING MODE!!!PLEASE CHECK INPUT!!!')
+            print(
+                '!!!DATA LOADING FAILURE!!!THIS DATASET IS ONLY USED IN TESTING MODE!!!PLEASE CHECK INPUT!!!')
+
     def __len__(self):
         return len(self.data)
-
-
