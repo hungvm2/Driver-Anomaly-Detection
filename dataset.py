@@ -34,7 +34,7 @@ def accimage_loader(path):
     try:
         import accimage
         return accimage.Image(path)
-    except IOError:
+    except Exception:
         # Potentially a decoding problem, fall back to PIL.Image
         return pil_loader(path)
 
@@ -49,7 +49,7 @@ def get_default_image_loader():
     else:
         return pil_loader
 
-
+import cv2
 def get_video(video_path, frame_indices):
     """
     generate a video clip which is a list of selected frames

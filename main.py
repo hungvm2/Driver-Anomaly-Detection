@@ -79,6 +79,9 @@ def parse_args():
     parser.add_argument('--a_split_ratio', default=1.0, type=float,
                         help='the ratio of normal driving samples will be used during training')
     parser.add_argument('--window_size', default=6, type=int, help='the window size for post-processing')
+    parser.add_argument('--name', required=True, type=str, help='name of this training session')
+    parser.add_argument('--opt', default="sgd", type=str, help='name of optimizer: sgd/adam')
+    parser.add_argument('--test_pret', default=False, type=bool, help='Test using pretrained model or not.')
 
     args = parser.parse_args()
     return args
@@ -93,15 +96,20 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
     model_head.train()
     for batch, ((normal_data, idx_n), (anormal_data, idx_a)) in enumerate(
             zip(train_normal_loader, train_anormal_loader)):
+        start_1 = time.time()
         if normal_data.size(0) != args.n_train_batch_size:
             break
+        # print(f"{epoch} - {batch} - 1: ", time.time() - start_1)
+        start_2 = time.time()
         data = torch.cat((normal_data, anormal_data), dim=0)  # n_vec as well as a_vec are all normalized value
+        # print(f"{epoch} - {batch} - 2: ", time.time() - start_2)
         if args.use_cuda:
             data = data.cuda()
             idx_a = idx_a.cuda()
             idx_n = idx_n.cuda()
             normal_data = normal_data.cuda()
 
+        start_3 = time.time()
         # ================forward====================
         unnormed_vec, normed_vec = model(data)
         vec = model_head(unnormed_vec)
@@ -109,12 +117,16 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         a_vec = vec[args.n_train_batch_size:]
         outs, probs = nce_average(n_vec, a_vec, idx_n, idx_a, normed_vec[0:args.n_train_batch_size])
         loss = criterion(outs)
+        # print(f"{epoch} - {batch} - 3: ", time.time() - start_3)
+        start_4 = time.time()
 
         # ================backward====================
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        # print(f"{epoch} - {batch} - 4: ", time.time() - start_4)
 
+        start_5 = time.time()
         # ===========update memory bank===============
         model.eval()
         _, n = model(normal_data)
@@ -125,11 +137,15 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         else:
             memory_bank.pop(0)
             memory_bank.append(average)
+        # print(f"{epoch} - {batch} - 5: ", time.time() - start_5)
+        start_6 = time.time()
         model.train()
-
+        # print(f"{epoch} - {batch} - 6: ", time.time() - start_6)
+        start_7 = time.time()
         # ===============update meters ===============
         losses.update(loss.item(), outs.size(0))
         prob_meter.update(probs.item(), outs.size(0))
+        # print(f"{epoch} - {batch} - 7: ", time.time() - start_7)
 
         # =================logging=====================
         batch_logger.log({
@@ -296,8 +312,13 @@ if __name__ == '__main__':
         if args.resume_path == '':
             # ===============generate new model or pre-trained model===============
             model = generate_model(args)
-            optimizer = torch.optim.SGD(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, momentum=args.momentum,
-                                        dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+            if args.opt == "sgd":
+                print("========================================== Used SGD Optimizer ==========================================")
+                optimizer = torch.optim.SGD(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, momentum=args.momentum,
+                                            dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+            else:
+                print("========================================== Used Adam Optimizer ==========================================")
+                optimizer = torch.optim.Adam(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, weight_decay=args.weight_decay)
             nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau, args.Z_momentum)
             criterion = NCECriterion(len_neg)
             begin_epoch = 1
@@ -314,8 +335,13 @@ if __name__ == '__main__':
             model_head.load_state_dict(resume_head_checkpoint['state_dict'])
             if args.use_cuda:
                 model_head.cuda()
-            optimizer = torch.optim.SGD(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, momentum=args.momentum,
-                                        dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+            if args.opt == "sgd":
+                print("========================================== Used SGD Optimizer ==========================================")
+                optimizer = torch.optim.SGD(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, momentum=args.momentum,
+                                            dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+            else:
+                print("========================================== Used Adam Optimizer ==========================================")
+                optimizer = torch.optim.Adam(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, weight_decay=args.weight_decay)
             optimizer.load_state_dict(resume_checkpoint['optimizer'])
             nce_average = resume_checkpoint['nce_average']
             criterion = NCECriterion(len_neg)
@@ -338,7 +364,7 @@ if __name__ == '__main__':
                             ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold', 'acc_list',
                              'normal_acc_list', 'anormal_acc_list'], args.log_resume)
 
-        for epoch in range(begin_epoch, begin_epoch + args.epochs + 1):
+        for epoch in range(begin_epoch, begin_epoch + args.epochs):
             memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head, nce_average,
                                       criterion, optimizer, epoch, args, batch_logger, epoch_logger, memory_bank)
 
@@ -371,7 +397,7 @@ if __name__ == '__main__':
                     print(
                         "==========================================!!!Saving!!!==========================================")
                     checkpoint_path = os.path.join(args.checkpoint_folder,
-                                                   f'best_model_{args.model_type}_{args.view}.pth')
+                                                   f'best_model_{args.model_type}_{args.view}_{args.name}.pth')
                     states = {
                         'epoch': epoch,
                         'state_dict': model.state_dict(),
@@ -384,7 +410,7 @@ if __name__ == '__main__':
                     torch.save(states, checkpoint_path)
 
                     head_checkpoint_path = os.path.join(args.checkpoint_folder,
-                                                        f'best_model_{args.model_type}_{args.view}_head.pth')
+                                                        f'best_model_{args.model_type}_{args.view}_head_{args.name}.pth')
                     states_head = {
                         'state_dict': model_head.state_dict()
                     }
@@ -430,10 +456,16 @@ if __name__ == '__main__':
         model_top_d = generate_model(args)
         model_top_ir = generate_model(args)
 
-        resume_path_front_d = './checkpoints.ori/best_model_' + args.model_type + '_front_depth.pth'
-        resume_path_front_ir = './checkpoints.ori/best_model_' + args.model_type + '_front_IR.pth'
-        resume_path_top_d = './checkpoints.ori/best_model_' + args.model_type + '_top_depth.pth'
-        resume_path_top_ir = './checkpoints.ori/best_model_' + args.model_type + '_top_IR.pth'
+        if args.test_pret:
+            resume_path_front_d = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_front_depth.pth'
+            resume_path_front_ir = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_front_IR.pth'
+            resume_path_top_d = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_top_depth.pth'
+            resume_path_top_ir = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_top_IR.pth'
+        else:
+            resume_path_front_d = './checkpoints/best_model_' + args.model_type + '_front_depth_' + args.name + '.pth'
+            resume_path_front_ir = './checkpoints/best_model_' + args.model_type + '_front_IR_' + args.name + '.pth'
+            resume_path_top_d = './checkpoints/best_model_' + args.model_type + '_top_depth_' + args.name + '.pth'
+            resume_path_top_ir = './checkpoints/best_model_' + args.model_type + '_top_IR_' + args.name + '.pth'
 
         resume_checkpoint_front_d = torch.load(resume_path_front_d)
         resume_checkpoint_front_ir = torch.load(resume_path_front_ir)
@@ -612,6 +644,7 @@ if __name__ == '__main__':
         )
         print(f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
 
+        start_testing = time.time()
         print(
             "============================================START EVALUATING============================================")
         normal_vec_front_d = get_normal_vector(model_front_d, train_normal_loader_for_test_front_d,
@@ -665,4 +698,5 @@ if __name__ == '__main__':
             best_acc, best_threshold, AUC = evaluate(score, gt, False)
             print(
                 f'View: {mode_name}(post-processed):       Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)} \n')
+        print("Total testing time: ", time.time() - start_testing)
 
