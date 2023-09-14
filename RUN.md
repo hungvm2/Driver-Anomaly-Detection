@@ -1,5 +1,7 @@
-# Demo: 
+# Demo:
+
 **=> DONE**
+
 ```bash
 conda activate thesis
 
@@ -9,7 +11,9 @@ python3 demo_live.py
 ```
 
 # Train:
+
 - Remove redundant files:
+
 ```bash
 find . -name '*._*' -delete`
 ```
@@ -41,8 +45,10 @@ python main.py \
   --val_step 1
 ```
 
-- Resuming training from a checkpoint: (the resumed models consist of a base encoder model and a projection head model) 
-**=> DONE**
+- Resuming training from a checkpoint: (the resumed models consist of a base encoder model and a
+  projection head model)
+  **=> DONE**
+
 ```bash
 python main.py \
   --root_path /mnt/Data/MasterofDataScience/Thesis/Driver-Anomaly-Detection/DAD/ \
@@ -70,12 +76,15 @@ python main.py \
   --val_step 1
 ```
 
-- Training from a pretrained model. Find the corredponding model type in models.py and set the 'pre_model_path' as the path of the pretrained model. Then set '--pre_train_model True ':
-Need to find the pre-trained weights first (trained with 3-channel imgs.)
+- Training from a pretrained model. Find the corredponding model type in models.py and set the '
+  pre_model_path' as the path of the pretrained model. Then set '--pre_train_model True ':
+  Need to find the pre-trained weights first (trained with 3-channel imgs.)
   In model.py file:
+
 ```
 pre_model_path = './premodels/kinetics_resnet_18_RGB_16_best.pth'
 ```
+
 ```
 python main.py \
   --root_path /mnt/Data/MasterofDataScience/Thesis/Driver-Anomaly-Detection/DAD/ \
@@ -102,7 +111,9 @@ python main.py \
 ```
 
 # Test
-Config `resume_path_front_d`, `resume_path_front_ir`, `resume_path_top_d`, `resume_path_top_ir` paths.
+
+Config `resume_path_front_d`, `resume_path_front_ir`, `resume_path_top_d`, `resume_path_top_ir`
+paths.
 
 ```bash
 python main.py \

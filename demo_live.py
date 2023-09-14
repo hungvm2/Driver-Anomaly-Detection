@@ -1,13 +1,14 @@
-import numpy as np
-import spatial_transforms
-import os
-from models import shufflenet, shufflenetv2, resnet
-import torch.nn as nn
-import torch
 import cv2
-from dataset_test import DAD_Test
+import numpy as np
+import os
+import torch
+import torch.nn as nn
 
-#==========================================================================================================
+import spatial_transforms
+from dataset_test import DAD_Test
+from models import shufflenet, shufflenetv2, resnet
+
+# ==========================================================================================================
 # This file is used after training and testing phase to demonstrate a running demo of the Driver Monitoring System
 # with our contrastive approach.
 #
@@ -19,14 +20,14 @@ from dataset_test import DAD_Test
 #
 # If 'delay' is set to 0, the code runs one sample at a time. By pressing any key, the next sample will be processed
 # If 'delay' is not 0, the code will process all samples from be beginning with a delay of 'delay' millisecond
-#==========================================================================================================
+# ==========================================================================================================
 
-#======================================Hyperparameters=====================================================
-root_path = 'DAD/'  #root path of the dataset
+# ======================================Hyperparameters=====================================================
+root_path = 'DAD/'  # root path of the dataset
 show_which = 'front_depth'  # show which view or modalities: {'front_depth', 'front_IR', 'top_depth', 'top_IR'}
 threshold = 0.81  # the threshold
 delay = 1  # The sample will be processed and shown with a delay of 'delay' ms.
-           # If delay = 0, The code runs one sample at a time, press any key to process the next sample
+# If delay = 0, The code runs one sample at a time, press any key to process the next sample
 
 sample_size = 112
 sample_duration = 16
@@ -36,7 +37,8 @@ use_cuda = True
 shortcut_type = 'A'
 feature_dim = 512
 
-print('========================================Loading Normal Vectors========================================')
+print(
+    '========================================Loading Normal Vectors========================================')
 normal_vec_front_d = np.load('./normvec/normal_vec_front_d.npy')
 normal_vec_front_ir = np.load('./normvec/normal_vec_front_ir.npy')
 normal_vec_top_d = np.load('./normvec/normal_vec_top_d.npy')
@@ -60,65 +62,66 @@ val_spatial_transform = spatial_transforms.Compose([
     spatial_transforms.Normalize([0], [1]),
 ])
 
-print("===========================================Loading Test Data==========================================")
+print(
+    "===========================================Loading Test Data==========================================")
 
 test_data_front_d = DAD_Test(root_path=root_path,
-    subset='validation',
-    view='front_depth',
-    sample_duration=sample_duration,
-    type=None,
-    spatial_transform=val_spatial_transform,
-)
+                             subset='validation',
+                             view='front_depth',
+                             sample_duration=sample_duration,
+                             type=None,
+                             spatial_transform=val_spatial_transform,
+                             )
 test_loader_front_d = torch.utils.data.DataLoader(
     test_data_front_d,
-    batch_size = val_batch_size,
-    shuffle = False,
-    num_workers = n_threads,
-    pin_memory = True,
+    batch_size=val_batch_size,
+    shuffle=False,
+    num_workers=n_threads,
+    pin_memory=True,
 )
 num_val_data_front_d = test_data_front_d.__len__()
 print('Front depth view is done')
 
 test_data_front_ir = DAD_Test(root_path=root_path,
-    subset = 'validation',
-    view = 'front_IR',
-    sample_duration = sample_duration,
-    type = None,
-    spatial_transform = val_spatial_transform,
-)
+                              subset='validation',
+                              view='front_IR',
+                              sample_duration=sample_duration,
+                              type=None,
+                              spatial_transform=val_spatial_transform,
+                              )
 test_loader_front_ir = torch.utils.data.DataLoader(
     test_data_front_ir,
-    batch_size = val_batch_size,
-    shuffle = False,
-    num_workers = n_threads,
-    pin_memory = True,
+    batch_size=val_batch_size,
+    shuffle=False,
+    num_workers=n_threads,
+    pin_memory=True,
 )
 num_val_data_front_ir = test_data_front_ir.__len__()
 print('Front IR view is done')
 
 test_data_top_d = DAD_Test(root_path=root_path,
-    subset = 'validation',
-    view = 'top_depth',
-    sample_duration = sample_duration,
-    type = None,
-    spatial_transform = val_spatial_transform,
-)
+                           subset='validation',
+                           view='top_depth',
+                           sample_duration=sample_duration,
+                           type=None,
+                           spatial_transform=val_spatial_transform,
+                           )
 test_loader_top_d = torch.utils.data.DataLoader(
     test_data_top_d,
-    batch_size = val_batch_size,
-    shuffle = False,
-    num_workers = n_threads,
-    pin_memory = True,
+    batch_size=val_batch_size,
+    shuffle=False,
+    num_workers=n_threads,
+    pin_memory=True,
 )
 num_val_data_top_d = test_data_top_d.__len__()
 print('Top depth view is done')
 
 test_data_top_ir = DAD_Test(root_path=root_path,
-    subset = 'validation',
-    view = 'top_IR',
-    sample_duration = sample_duration,
-    type = None,
-    spatial_transform = val_spatial_transform,)
+                            subset='validation',
+                            view='top_IR',
+                            sample_duration=sample_duration,
+                            type=None,
+                            spatial_transform=val_spatial_transform, )
 test_loader_top_ir = torch.utils.data.DataLoader(
     test_data_top_ir,
     batch_size=val_batch_size,
@@ -130,7 +133,8 @@ num_val_data_top_ir = test_data_top_ir.__len__()
 print('Top IR view is done')
 assert num_val_data_front_d == num_val_data_front_ir == num_val_data_top_d == num_val_data_top_ir
 
-print('=============================================Loading Models===========================================')
+print(
+    '=============================================Loading Models===========================================')
 model_front_d = resnet.resnet18(
     output_dim=feature_dim,
     sample_size=sample_size,
@@ -184,8 +188,10 @@ model_front_ir.eval()
 model_top_d.eval()
 model_top_ir.eval()
 
-print('===========================================Calculating Scores=========================================')
-for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, test_loader_front_ir, test_loader_top_d, test_loader_top_ir)):
+print(
+    '===========================================Calculating Scores=========================================')
+for batch, (data1, data2, data3, data4) in enumerate(
+        zip(test_loader_front_d, test_loader_front_ir, test_loader_top_d, test_loader_top_ir)):
     if use_cuda:
         data1[0] = data1[0].cuda()
         data1[1] = data1[1].cuda()
@@ -196,7 +202,8 @@ for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, te
         data4[0] = data4[0].cuda()
         data4[1] = data4[1].cuda()
 
-    assert torch.sum(data1[1] == data2[1]) == torch.sum(data2[1] == data3[1]) == torch.sum(data3[1] == data4[1]) == \
+    assert torch.sum(data1[1] == data2[1]) == torch.sum(data2[1] == data3[1]) == torch.sum(
+        data3[1] == data4[1]) == \
            data1[1].size(0)
 
     out_1 = model_front_d(data1[0])[1].detach()
@@ -218,7 +225,8 @@ for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, te
     subfolder = int((batch % 60000) // 10000) + 1
 
     index = (batch % 60000) % 10000
-    img_path = os.path.join(root_path, 'val0'+str(folder)+'/rec'+str(subfolder)+'/'+show_which+'/img_'+str(index)+'.png')
+    img_path = os.path.join(root_path, 'val0' + str(folder) + '/rec' + str(
+        subfolder) + '/' + show_which + '/img_' + str(index) + '.png')
     print(f'Img: {img_path} | score: {sim} | Action: {action}')
 
     img = cv2.imread(img_path)
@@ -234,4 +242,3 @@ for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, te
     cv2.waitKey(delay)
 
 cv2.destroyAllWindows()
-

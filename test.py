@@ -1,12 +1,15 @@
-import torch
-from utils import l2_normalize
 import numpy as np
 import os
+import torch
+
+from utils import l2_normalize
 
 
-def get_normal_vector(model, train_normal_loader_for_test, cal_vec_batch_size, feature_dim, use_cuda):
+def get_normal_vector(model, train_normal_loader_for_test, cal_vec_batch_size, feature_dim,
+                      use_cuda):
     total_batch = int(len(train_normal_loader_for_test))
-    print("=====================================Calculating Average Normal Vector=====================================")
+    print(
+        "=====================================Calculating Average Normal Vector=====================================")
     if use_cuda:
         normal_vec = torch.zeros((1, 512)).cuda()
     else:
@@ -28,7 +31,8 @@ def split_acc_diff_threshold(model, normal_vec, test_loader, use_cuda):
     Search the threshold that split the scores the best and calculate the corresponding accuracy
     """
     total_batch = int(len(test_loader))
-    print("================================================Evaluating================================================")
+    print(
+        "================================================Evaluating================================================")
     total_n = 0
     total_a = 0
     threshold = np.arange(0., 1., 0.01)
@@ -45,28 +49,33 @@ def split_acc_diff_threshold(model, normal_vec, test_loader, use_cuda):
         outputs = outputs.detach()
         similarity = torch.mm(outputs, normal_vec.t())
         for i in range(len(threshold)):
-            prediction = similarity >= threshold[i]  # If similarity between sample and average normal vector is smaller than threshold, then this sample is predicted as anormal driving which is set to 0
+            prediction = similarity >= threshold[
+                i]  # If similarity between sample and average normal vector is smaller than threshold, then this sample is predicted as anormal driving which is set to 0
             correct = prediction.squeeze() == batch_data[1]
             total_correct_a[i] += torch.sum(correct[~batch_data[1].bool()])
             total_correct_n[i] += torch.sum(correct[batch_data[1].bool()])
-        print(f'Evaluating: Batch {batch + 1} / {total_batch}')
-        print('\n')
+        # print(f'Evaluating: Batch {batch + 1} / {total_batch}')
+        # print('\n')
     acc_n = [(correct_n / total_n) for correct_n in total_correct_n]
     acc_a = [(correct_a / total_a) for correct_a in total_correct_a]
-    acc = [((total_correct_n[i] + total_correct_a[i]) / (total_n + total_a)) for i in range(len(threshold))]
+    acc = [((total_correct_n[i] + total_correct_a[i]) / (total_n + total_a)) for i in
+           range(len(threshold))]
     best_acc = np.max(acc)
     idx = np.argmax(acc)
     best_threshold = idx * 0.01
     return best_acc, best_threshold, acc_n[idx], acc_a[idx], acc, acc_n, acc_a
 
 
-def cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_vec_front_d, normal_vec_front_ir,
-              normal_vec_top_d, normal_vec_top_ir, test_loader_front_d, test_loader_front_ir, test_loader_top_d,
+def cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_vec_front_d,
+              normal_vec_front_ir,
+              normal_vec_top_d, normal_vec_top_ir, test_loader_front_d, test_loader_front_ir,
+              test_loader_top_d,
               test_loader_top_ir, score_folder, use_cuda):
     """
     Generate and save scores of top_depth/top_ir/front_d/front_ir views
     """
-    assert int(len(test_loader_front_d)) == int(len(test_loader_front_ir)) == int(len(test_loader_top_d)) == int(
+    assert int(len(test_loader_front_d)) == int(len(test_loader_front_ir)) == int(
+        len(test_loader_top_d)) == int(
         len(test_loader_top_ir))
     total_batch = int(len(test_loader_front_d))
     sim_list = torch.zeros(0)
@@ -87,7 +96,8 @@ def cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_v
             data4[0] = data4[0].cuda()
             data4[1] = data4[1].cuda()
 
-        assert torch.sum(data1[1] == data2[1]) == torch.sum(data2[1] == data3[1]) == torch.sum(data3[1] == data4[1]) == \
+        assert torch.sum(data1[1] == data2[1]) == torch.sum(data2[1] == data3[1]) == torch.sum(
+            data3[1] == data4[1]) == \
                data1[1].size(0)
 
         out_1 = model_front_d(data1[0])[1].detach()
@@ -107,7 +117,7 @@ def cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_v
         sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
         sim_3_list = torch.cat((sim_3_list, sim_3.squeeze().cpu()))
         sim_4_list = torch.cat((sim_4_list, sim_4.squeeze().cpu()))
-        print(f'Evaluating: Batch {batch + 1} / {total_batch}')
+        # print(f'Evaluating: Batch {batch + 1} / {total_batch}')
 
     np.save(os.path.join(score_folder, 'score_front_d.npy'), sim_1_list.numpy())
     print('score_front_d.npy is saved')
@@ -117,4 +127,3 @@ def cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_v
     print('score_top_d.npy is saved')
     np.save(os.path.join(score_folder, 'score_top_IR.npy'), sim_4_list.numpy())
     print('score_top_IR.npy is saved')
-

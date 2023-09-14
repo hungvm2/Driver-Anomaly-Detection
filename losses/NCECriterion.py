@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
-from NCEAverage import NCEAverage
+
+from .NCEAverage import NCEAverage
 from utils import l2_normalize
 
-
 eps = 1e-7
+
 
 class NCECriterion(nn.Module):
     def __init__(self, len_neg):
@@ -28,14 +29,15 @@ class NCECriterion(nn.Module):
 
         # Second term of NCE Loss which is loss for negative pairs
         # P(0|normal_v, vi_prime) = P(origin=noise) = k*q_noise / (p_n + k*q_noise)
-        p_n = x.narrow(1, 1, k)  # narrow(dim, start, len) equal to x[:, 1:K+1] and p_n is p(vi_prime|normal_v)
-        log_D0 = torch.div(p_n.clone().fill_(k*q_noise), p_n.add(k*q_noise+eps)).log_()  # clone is just to get a same size matrix and be filled with  k*q_noise
+        p_n = x.narrow(1, 1,
+                       k)  # narrow(dim, start, len) equal to x[:, 1:K+1] and p_n is p(vi_prime|normal_v)
+        log_D0 = torch.div(p_n.clone().fill_(k * q_noise), p_n.add(
+            k * q_noise + eps)).log_()  # clone is just to get a same size matrix and be filled with  k*q_noise
 
         loss = -(log_D1.sum(0) + log_D0.view(-1, 1).sum(0)) / batch_size
 
-
-
         return loss
+
 
 if __name__ == '__main__':
     average = NCEAverage(128, 9000, 0.07, 28, 0.9).cuda()

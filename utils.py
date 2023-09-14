@@ -1,14 +1,16 @@
 import csv
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 import torch
-from torch import nn
-import matplotlib.pyplot as plt
 from sklearn import metrics
 from sklearn.metrics import auc
+from torch import nn
+
 
 def l2_normalize(x, dim=1):
-    return x / torch.sqrt(torch.sum(x**2, dim=dim).unsqueeze(dim))
+    return x / torch.sqrt(torch.sum(x ** 2, dim=dim).unsqueeze(dim))
+
 
 def adjust_learning_rate(optimizer, lr_rate):
     for param_group in optimizer.param_groups:
@@ -17,6 +19,7 @@ def adjust_learning_rate(optimizer, lr_rate):
 
 class Logger(object):
     """Logger object for training process, supporting resume training"""
+
     def __init__(self, path, header, resume=False):
         """
         :param path: logging file path
@@ -51,6 +54,7 @@ class Logger(object):
         self.logger.writerow(write_values)
         self.log_file.flush()
 
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 
@@ -81,17 +85,19 @@ def _construct_depth_model(base_model):
     motion_length = 1
     params = [x.clone() for x in conv_layer.parameters()]
     kernel_size = params[0].size()
-    new_kernel_size = kernel_size[:1] + (1*motion_length,  ) + kernel_size[2:]
+    new_kernel_size = kernel_size[:1] + (1 * motion_length,) + kernel_size[2:]
     new_kernels = params[0].data.mean(dim=1, keepdim=True).expand(new_kernel_size).contiguous()
     new_conv = nn.Conv3d(1, conv_layer.out_channels, conv_layer.kernel_size, conv_layer.stride,
                          conv_layer.padding, bias=True if len(params) == 2 else False)
     new_conv.weight.data = new_kernels
     if len(params) == 2:
-        new_conv.bias.data = params[1].data # add bias if neccessary
-    layer_name = list(container.state_dict().keys())[0][:-7] # remove .weight suffix to get the layer name
+        new_conv.bias.data = params[1].data  # add bias if neccessary
+    layer_name = list(container.state_dict().keys())[0][
+                 :-7]  # remove .weight suffix to get the layer name
     # replace the first convlution layer
     setattr(container, layer_name, new_conv)
     return base_model
+
 
 def get_fusion_label(csv_path):
     """
@@ -113,6 +119,7 @@ def get_fusion_label(csv_path):
             else:
                 continue
     return gt
+
 
 def evaluate(score, label, whether_plot):
     """
@@ -139,10 +146,10 @@ def evaluate(score, label, whether_plot):
 
     if whether_plot:
         plt.plot(fpr, tpr, color='r')
-        #plt.fill_between(fpr, tpr, color='r', y2=0, alpha=0.3)
+        # plt.fill_between(fpr, tpr, color='r', y2=0, alpha=0.3)
         plt.plot(np.array([0., 1.]), np.array([0., 1.]), color='b', linestyle='dashed')
         plt.tick_params(labelsize=23)
-        #plt.text(0.9, 0.1, f'AUC: {round(AUC, 4)}', fontsize=25)
+        # plt.text(0.9, 0.1, f'AUC: {round(AUC, 4)}', fontsize=25)
         plt.xlabel('False Positive Rate', fontsize=25)
         plt.ylabel('True Positive Rate', fontsize=25)
         plt.show()
@@ -159,7 +166,7 @@ def post_process(score, window_size=6):
     """
     processed_score = np.zeros(score.shape)
     for i in range(0, len(score)):
-        processed_score[i] = np.mean(score[max(0, i-window_size+1):i+1])
+        processed_score[i] = np.mean(score[max(0, i - window_size + 1):i + 1])
 
     return processed_score
 
@@ -172,8 +179,10 @@ def get_score(score_folder, mode):
     :param mode: top_d | top_ir | front_d | front_ir | fusion_top | fusion_front | fusion_d | fusion_ir | fusion_all
     :return: the corresponding scores according to requirements
     """
-    if mode not in ['top_d', 'top_ir', 'front_d', 'front_ir', 'fusion_top', 'fusion_front', 'fusion_d', 'fusion_ir', 'fusion_all']:
-        print('Please enter correct mode: top_d | top_ir | front_d | front_ir | fusion_top | fusion_front | fusion_d | fusion_ir | fusion_all')
+    if mode not in ['top_d', 'top_ir', 'front_d', 'front_ir', 'fusion_top', 'fusion_front',
+                    'fusion_d', 'fusion_ir', 'fusion_all']:
+        print(
+            'Please enter correct mode: top_d | top_ir | front_d | front_ir | fusion_top | fusion_front | fusion_d | fusion_ir | fusion_all')
         return
     if mode == 'top_d':
         score = np.load(os.path.join(score_folder + '/score_top_d.npy'))
@@ -186,7 +195,7 @@ def get_score(score_folder, mode):
     elif mode == 'fusion_top':
         score1 = np.load(os.path.join(score_folder + '/score_top_d.npy'))
         score2 = np.load(os.path.join(score_folder + '/score_top_IR.npy'))
-        score = np.mean((score1, score2), axis = 0)
+        score = np.mean((score1, score2), axis=0)
     elif mode == 'fusion_front':
         score3 = np.load(os.path.join(score_folder + '/score_front_d.npy'))
         score4 = np.load(os.path.join(score_folder + '/score_front_IR.npy'))
@@ -207,10 +216,3 @@ def get_score(score_folder, mode):
         score = np.mean((score1, score2, score3, score4), axis=0)
 
     return score
-
-
-
-
-
-
-

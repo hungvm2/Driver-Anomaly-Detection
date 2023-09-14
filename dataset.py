@@ -1,10 +1,9 @@
 import csv
 import os
 import sys
-import traceback
-
 import torch
 import torch.utils.data as data
+import traceback
 from PIL import Image
 
 
@@ -49,7 +48,10 @@ def get_default_image_loader():
     else:
         return pil_loader
 
+
 import cv2
+
+
 def get_video(video_path, frame_indices):
     """
     generate a video clip which is a list of selected frames

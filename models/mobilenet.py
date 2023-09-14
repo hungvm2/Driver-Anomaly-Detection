@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 def conv_bn(inp, oup, stride):
     return nn.Sequential(
-        nn.Conv3d(inp, oup, kernel_size=3, stride=stride, padding=(1,1,1), bias=False),
+        nn.Conv3d(inp, oup, kernel_size=3, stride=stride, padding=(1, 1, 1), bias=False),
         nn.BatchNorm3d(oup),
         nn.ReLU(inplace=True)
     )
@@ -18,11 +18,14 @@ def conv_bn(inp, oup, stride):
 
 class Block(nn.Module):
     '''Depthwise conv + Pointwise conv'''
+
     def __init__(self, in_planes, out_planes, stride=1):
         super(Block, self).__init__()
-        self.conv1 = nn.Conv3d(in_planes, in_planes, kernel_size=3, stride=stride, padding=1, groups=in_planes, bias=False)
+        self.conv1 = nn.Conv3d(in_planes, in_planes, kernel_size=3, stride=stride, padding=1,
+                               groups=in_planes, bias=False)
         self.bn1 = nn.BatchNorm3d(in_planes)
-        self.conv2 = nn.Conv3d(in_planes, out_planes, kernel_size=1, stride=1, padding=0, bias=False)
+        self.conv2 = nn.Conv3d(in_planes, out_planes, kernel_size=1, stride=1, padding=0,
+                               bias=False)
         self.bn2 = nn.BatchNorm3d(out_planes)
 
     def forward(self, x):
@@ -32,7 +35,7 @@ class Block(nn.Module):
 
 
 class MobileNet(nn.Module):
-    def __init__(self, sample_size=224, width_mult=1.,pre_train=False):
+    def __init__(self, sample_size=224, width_mult=1., pre_train=False):
         super(MobileNet, self).__init__()
 
         input_channel = 32
@@ -40,15 +43,15 @@ class MobileNet(nn.Module):
         input_channel = int(input_channel * width_mult)
         last_channel = int(last_channel * width_mult)
         cfg = [
-        # c, n, s
-        [64,   1, (2,2,2)],
-        [128,  2, (2,2,2)],
-        [256,  2, (2,2,2)],
-        [512,  6, (2,2,2)],
-        [1024, 2, (1,1,1)],
+            # c, n, s
+            [64, 1, (2, 2, 2)],
+            [128, 2, (2, 2, 2)],
+            [256, 2, (2, 2, 2)],
+            [512, 6, (2, 2, 2)],
+            [1024, 2, (1, 1, 1)],
         ]
         if pre_train:
-            self.features = [conv_bn(3, input_channel, (1,2,2))]
+            self.features = [conv_bn(3, input_channel, (1, 2, 2))]
         else:
             self.features = [conv_bn(1, input_channel, (1, 2, 2))]
         # building inverted residual blocks
@@ -61,7 +64,8 @@ class MobileNet(nn.Module):
         # make it nn.Sequential
         self.features = nn.Sequential(*self.features)
 
-        self.conv_head = nn.Conv3d(last_channel, 512, kernel_size=1, bias=False)  # in order to encode the image to vector with the same size to the resnet 18
+        self.conv_head = nn.Conv3d(last_channel, 512, kernel_size=1,
+                                   bias=False)  # in order to encode the image to vector with the same size to the resnet 18
 
     def forward(self, x):
         x = self.features(x)
@@ -71,6 +75,7 @@ class MobileNet(nn.Module):
         normed_x = F.normalize(x, p=2, dim=1)
 
         return x, normed_x
+
 
 class ProjectionHead(nn.Module):
     def __init__(self, output_dim):
@@ -90,7 +95,6 @@ class ProjectionHead(nn.Module):
         x = F.normalize(x, p=2, dim=1)
 
         return x
-
 
 
 def get_fine_tuning_parameters(model, ft_portion):
@@ -121,8 +125,3 @@ def get_model(**kwargs):
     """
     model = MobileNet(**kwargs)
     return model
-
-
-
-
-

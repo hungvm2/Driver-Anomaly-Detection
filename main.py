@@ -1,39 +1,53 @@
-import os
-import torch
-from dataset import DAD
-import spatial_transforms
-from model import generate_model
 import argparse
-from test import get_normal_vector, split_acc_diff_threshold, cal_score
-from utils import adjust_learning_rate, AverageMeter, Logger, get_fusion_label, l2_normalize, post_process, evaluate, \
-    get_score
-from NCEAverage import NCEAverage
-from NCECriterion import NCECriterion
-import torch.backends.cudnn as cudnn
-from temporal_transforms import TemporalSequentialCrop
-from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2
 import ast
 import numpy as np
-from dataset_test import DAD_Test
+import os
 import time
+import torch
+import torch.backends.cudnn as cudnn
+
+import spatial_transforms
+from dataset import DAD
+from dataset_test import DAD_Test
+from losses.NCEAverage import NCEAverage
+from losses.NCECriterion import NCECriterion
+from losses.cross_entroy_loss import cross_entropy_loss, CrossEntropy
+from losses.focal_loss import focal_loss
+from model import generate_model
+from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2
+from temporal_transforms import TemporalSequentialCrop
+from test import get_normal_vector, split_acc_diff_threshold, cal_score
+from utils import adjust_learning_rate, AverageMeter, Logger, get_fusion_label, l2_normalize, \
+    post_process, evaluate, \
+    get_score
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='DAD training on Videos')
     parser.add_argument('--root_path', default='', type=str, help='root path of the dataset')
     parser.add_argument('--mode', default='train', type=str, help='train | test(validation)')
-    parser.add_argument('--view', default='front_IR', type=str, help='front_depth | front_IR | top_depth | top_IR')
-    parser.add_argument('--feature_dim', default=128, type=int, help='To which dimension will video clip be embedded')
-    parser.add_argument('--sample_duration', default=16, type=int, help='Temporal duration of each video clip')
+    parser.add_argument('--view', default='front_IR', type=str,
+                        help='front_depth | front_IR | top_depth | top_IR')
+    parser.add_argument('--feature_dim', default=128, type=int,
+                        help='To which dimension will video clip be embedded')
+    parser.add_argument('--sample_duration', default=16, type=int,
+                        help='Temporal duration of each video clip')
     parser.add_argument('--sample_size', default=112, type=int, help='Height and width of inputs')
     parser.add_argument('--model_type', default='resnet', type=str, help='so far only resnet')
-    parser.add_argument('--model_depth', default=18, type=int, help='Depth of resnet (18 | 50 | 101)')
-    parser.add_argument('--shortcut_type', default='B', type=str, help='Shortcut type of resnet (A | B)')
-    parser.add_argument('--pre_train_model', default=True, type=ast.literal_eval, help='Whether use pre-trained model')
-    parser.add_argument('--use_cuda', default=True, type=ast.literal_eval, help='If true, cuda is used.')
-    parser.add_argument('--n_train_batch_size', default=3, type=int, help='Batch Size for normal training data')
-    parser.add_argument('--a_train_batch_size', default=25, type=int, help='Batch Size for anormal training data')
-    parser.add_argument('--val_batch_size', default=25, type=int, help='Batch Size for validation data')
+    parser.add_argument('--model_depth', default=18, type=int,
+                        help='Depth of resnet (18 | 50 | 101)')
+    parser.add_argument('--shortcut_type', default='B', type=str,
+                        help='Shortcut type of resnet (A | B)')
+    parser.add_argument('--pre_train_model', default=True, type=ast.literal_eval,
+                        help='Whether use pre-trained model')
+    parser.add_argument('--use_cuda', default=True, type=ast.literal_eval,
+                        help='If true, cuda is used.')
+    parser.add_argument('--n_train_batch_size', default=3, type=int,
+                        help='Batch Size for normal training data')
+    parser.add_argument('--a_train_batch_size', default=25, type=int,
+                        help='Batch Size for anormal training data')
+    parser.add_argument('--val_batch_size', default=25, type=int,
+                        help='Batch Size for validation data')
     parser.add_argument('--learning_rate', default=0.01, type=float,
                         help='Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
@@ -55,39 +69,58 @@ def parse_args():
     parser.set_defaults(nesterov=False)
     parser.add_argument('--lr_decay', default=100, type=int,
                         help='Number of epochs after which learning rate will be reduced to 1/10 of original value')
-    parser.add_argument('--resume_path', default='', type=str, help='path of previously trained model')
-    parser.add_argument('--resume_head_path', default='', type=str, help='path of previously trained model head')
-    parser.add_argument('--initial_scales', default=1.0, type=float, help='Initial scale for multiscale cropping')
-    parser.add_argument('--scale_step', default=0.9, type=float, help='Scale step for multiscale cropping')
-    parser.add_argument('--n_scales', default=3, type=int, help='Number of scales for multiscale cropping')
+    parser.add_argument('--resume_path', default='', type=str,
+                        help='path of previously trained model')
+    parser.add_argument('--resume_head_path', default='', type=str,
+                        help='path of previously trained model head')
+    parser.add_argument('--initial_scales', default=1.0, type=float,
+                        help='Initial scale for multiscale cropping')
+    parser.add_argument('--scale_step', default=0.9, type=float,
+                        help='Scale step for multiscale cropping')
+    parser.add_argument('--n_scales', default=3, type=int,
+                        help='Number of scales for multiscale cropping')
     parser.add_argument('--train_crop', default='corner', type=str,
                         help='Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center.  (random | corner | center)')
-    parser.add_argument('--checkpoint_folder', default='./checkpoints', type=str, help='folder to store checkpoints')
-    parser.add_argument('--log_folder', default='./logs/', type=str, help='folder to store log files')
-    parser.add_argument('--log_resume', default=False, type=ast.literal_eval, help='True|False: a flag controlling whether to create a new log file')
-    parser.add_argument('--normvec_folder', default='./normvec', type=str, help='folder to store norm vectors')
-    parser.add_argument('--score_folder', default='./score', type=str, help='folder to store scores')
-    parser.add_argument('--Z_momentum', default=0.9, help='momentum for normalization constant Z updates')
-    parser.add_argument('--groups', default=3, type=int, help='hyper-parameters when using shufflenet')
+    parser.add_argument('--checkpoint_folder', default='./checkpoints', type=str,
+                        help='folder to store checkpoints')
+    parser.add_argument('--log_folder', default='./logs/', type=str,
+                        help='folder to store log files')
+    parser.add_argument('--log_resume', default=False, type=ast.literal_eval,
+                        help='True|False: a flag controlling whether to create a new log file')
+    parser.add_argument('--normvec_folder', default='./normvec', type=str,
+                        help='folder to store norm vectors')
+    parser.add_argument('--score_folder', default='./score', type=str,
+                        help='folder to store scores')
+    parser.add_argument('--Z_momentum', default=0.9,
+                        help='momentum for normalization constant Z updates')
+    parser.add_argument('--groups', default=3, type=int,
+                        help='hyper-parameters when using shufflenet')
     parser.add_argument('--width_mult', default=2.0, type=float,
                         help='hyper-parameters when using shufflenet|mobilenet')
     parser.add_argument('--val_step', default=10, type=int, help='validate per val_step epochs')
-    parser.add_argument('--downsample', default=2, type=int, help='Downsampling. Select 1 frame out of N')
-    parser.add_argument('--save_step', default=10, type=int, help='checkpoint will be saved every save_step epochs')
+    parser.add_argument('--downsample', default=2, type=int,
+                        help='Downsampling. Select 1 frame out of N')
+    parser.add_argument('--save_step', default=10, type=int,
+                        help='checkpoint will be saved every save_step epochs')
     parser.add_argument('--n_split_ratio', default=1.0, type=float,
                         help='the ratio of normal driving samples will be used during training')
     parser.add_argument('--a_split_ratio', default=1.0, type=float,
                         help='the ratio of normal driving samples will be used during training')
-    parser.add_argument('--window_size', default=6, type=int, help='the window size for post-processing')
+    parser.add_argument('--window_size', default=6, type=int,
+                        help='the window size for post-processing')
     parser.add_argument('--name', required=True, type=str, help='name of this training session')
     parser.add_argument('--opt', default="sgd", type=str, help='name of optimizer: sgd/adam')
-    parser.add_argument('--test_pret', default=False, type=bool, help='Test using pretrained model or not.')
+    parser.add_argument('--test_pret', default=False, type=bool,
+                        help='Test using pretrained model or not.')
+    parser.add_argument('--loss', default="nce", type=str,
+                        help='Select Loss.')
 
     args = parser.parse_args()
     return args
 
 
-def train(train_normal_loader, train_anormal_loader, model, model_head, nce_average, criterion, optimizer, epoch, args,
+def train(train_normal_loader, train_anormal_loader, model, model_head, nce_average, criterion,
+          optimizer, epoch, args,
           batch_logger, epoch_logger, memory_bank=None):
     losses = AverageMeter()
     prob_meter = AverageMeter()
@@ -96,37 +129,43 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
     model_head.train()
     for batch, ((normal_data, idx_n), (anormal_data, idx_a)) in enumerate(
             zip(train_normal_loader, train_anormal_loader)):
-        start_1 = time.time()
         if normal_data.size(0) != args.n_train_batch_size:
             break
-        # print(f"{epoch} - {batch} - 1: ", time.time() - start_1)
-        start_2 = time.time()
-        data = torch.cat((normal_data, anormal_data), dim=0)  # n_vec as well as a_vec are all normalized value
-        # print(f"{epoch} - {batch} - 2: ", time.time() - start_2)
+        # print("normal_data: ", normal_data.size(0), "anormal_data: ", anormal_data.size(0))
+        labels = torch.tensor([1]*normal_data.size(0) + [0]*anormal_data.size(0))
+        data = torch.cat((normal_data, anormal_data),
+                         dim=0)  # n_vec as well as a_vec are all normalized value
+        if args.loss == "ce":
+            indices = torch.randperm(len(labels))
+            labels = labels[indices]
+            data = data[indices]
         if args.use_cuda:
             data = data.cuda()
             idx_a = idx_a.cuda()
             idx_n = idx_n.cuda()
             normal_data = normal_data.cuda()
 
-        start_3 = time.time()
         # ================forward====================
         unnormed_vec, normed_vec = model(data)
         vec = model_head(unnormed_vec)
         n_vec = vec[0:args.n_train_batch_size]
         a_vec = vec[args.n_train_batch_size:]
-        outs, probs = nce_average(n_vec, a_vec, idx_n, idx_a, normed_vec[0:args.n_train_batch_size])
-        loss = criterion(outs)
-        # print(f"{epoch} - {batch} - 3: ", time.time() - start_3)
-        start_4 = time.time()
-
+        if args.loss == "ce":
+            # loss, outs, probs = cross_entropy_loss(vec, torch.tensor([1] * n_vec.shape[0] + [0] * a_vec.shape[0]), eps=0.2)
+            loss, outs, probs = criterion(vec, labels)
+            # loss = criterion(vec, np.array([1] * n_vec.shape[0] + [0] * a_vec.shape[0]))
+        elif args.loss == "fl":
+            loss, outs, probs = (vec)
+        else:
+            outs, probs = nce_average(n_vec, a_vec, idx_n, idx_a,
+                                      normed_vec[0:args.n_train_batch_size])
+            loss = criterion(outs)
+        # print("probs: ", probs.size(), "val: ", probs, 'loss: ', loss.size(), "val: ", loss)
         # ================backward====================
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        # print(f"{epoch} - {batch} - 4: ", time.time() - start_4)
 
-        start_5 = time.time()
         # ===========update memory bank===============
         model.eval()
         _, n = model(normal_data)
@@ -137,16 +176,11 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         else:
             memory_bank.pop(0)
             memory_bank.append(average)
-        # print(f"{epoch} - {batch} - 5: ", time.time() - start_5)
-        start_6 = time.time()
         model.train()
-        # print(f"{epoch} - {batch} - 6: ", time.time() - start_6)
-        start_7 = time.time()
         # ===============update meters ===============
+
         losses.update(loss.item(), outs.size(0))
         prob_meter.update(probs.item(), outs.size(0))
-        # print(f"{epoch} - {batch} - 7: ", time.time() - start_7)
-
         # =================logging=====================
         batch_logger.log({
             'epoch': epoch,
@@ -192,7 +226,8 @@ if __name__ == '__main__':
     elif args.train_crop == 'corner':
         crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size)
     elif args.train_crop == 'center':
-        crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size, crop_positions=['c'])
+        crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size,
+                                                              crop_positions=['c'])
     before_crop_duration = int(args.sample_duration * args.downsample)
 
     if args.mode == 'train':
@@ -234,7 +269,8 @@ if __name__ == '__main__':
                                     )
 
         training_anormal_size = int(len(training_anormal_data) * args.a_split_ratio)
-        training_anormal_data = torch.utils.data.Subset(training_anormal_data, np.arange(training_anormal_size))
+        training_anormal_data = torch.utils.data.Subset(training_anormal_data,
+                                                        np.arange(training_anormal_size))
 
         train_anormal_loader = torch.utils.data.DataLoader(
             training_anormal_data,
@@ -244,7 +280,8 @@ if __name__ == '__main__':
             pin_memory=True,
         )
 
-        print("=================================Loading Normal-Driving Training Data!=================================")
+        print(
+            "=================================Loading Normal-Driving Training Data!=================================")
         training_normal_data = DAD(root_path=args.root_path,
                                    subset='train',
                                    view=args.view,
@@ -255,7 +292,8 @@ if __name__ == '__main__':
                                    )
 
         training_normal_size = int(len(training_normal_data) * args.n_split_ratio)
-        training_normal_data = torch.utils.data.Subset(training_normal_data, np.arange(training_normal_size))
+        training_normal_data = torch.utils.data.Subset(training_normal_data,
+                                                       np.arange(training_normal_size))
 
         train_normal_loader = torch.utils.data.DataLoader(
             training_normal_data,
@@ -265,7 +303,8 @@ if __name__ == '__main__':
             pin_memory=True,
         )
 
-        print("========================================Loading Validation Data========================================")
+        print(
+            "========================================Loading Validation Data========================================")
         val_spatial_transform = spatial_transforms.Compose([
             spatial_transforms.Scale(args.sample_size),
             spatial_transforms.CenterCrop(args.sample_size),
@@ -297,7 +336,7 @@ if __name__ == '__main__':
             "============================================Generating Model============================================")
 
         if args.model_type == 'resnet':
-            model_head = resnet.ProjectionHead(args.feature_dim, args.model_depth)
+            model_head = resnet.ProjectionHead(args.feature_dim, args.model_depth, args.loss)
         elif args.model_type == 'shufflenet':
             model_head = shufflenet.ProjectionHead(args.feature_dim)
         elif args.model_type == 'shufflenetv2':
@@ -313,14 +352,24 @@ if __name__ == '__main__':
             # ===============generate new model or pre-trained model===============
             model = generate_model(args)
             if args.opt == "sgd":
-                print("========================================== Used SGD Optimizer ==========================================")
-                optimizer = torch.optim.SGD(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, momentum=args.momentum,
-                                            dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+                print(
+                    "========================================== Used SGD Optimizer ==========================================")
+                optimizer = torch.optim.SGD(
+                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                    momentum=args.momentum,
+                    dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
             else:
-                print("========================================== Used Adam Optimizer ==========================================")
-                optimizer = torch.optim.Adam(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, weight_decay=args.weight_decay)
-            nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau, args.Z_momentum)
-            criterion = NCECriterion(len_neg)
+                print(
+                    "========================================== Used Adam Optimizer ==========================================")
+                optimizer = torch.optim.Adam(
+                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                    weight_decay=args.weight_decay)
+            nce_average = None
+            if args.loss == "ce":
+                criterion = CrossEntropy(eps=0.1)
+            else:
+                nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau, args.Z_momentum)
+                criterion = NCECriterion(len_neg)
             begin_epoch = 1
             best_acc = 0
             memory_bank = []
@@ -331,17 +380,24 @@ if __name__ == '__main__':
             resume_path = os.path.join(args.checkpoint_folder, args.resume_path)
             resume_checkpoint = torch.load(resume_path)
             model.load_state_dict(resume_checkpoint['state_dict'])
-            resume_head_checkpoint = torch.load(os.path.join(args.checkpoint_folder, args.resume_head_path))
+            resume_head_checkpoint = torch.load(
+                os.path.join(args.checkpoint_folder, args.resume_head_path))
             model_head.load_state_dict(resume_head_checkpoint['state_dict'])
             if args.use_cuda:
                 model_head.cuda()
             if args.opt == "sgd":
-                print("========================================== Used SGD Optimizer ==========================================")
-                optimizer = torch.optim.SGD(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, momentum=args.momentum,
-                                            dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+                print(
+                    "========================================== Used SGD Optimizer ==========================================")
+                optimizer = torch.optim.SGD(
+                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                    momentum=args.momentum,
+                    dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
             else:
-                print("========================================== Used Adam Optimizer ==========================================")
-                optimizer = torch.optim.Adam(list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate, weight_decay=args.weight_decay)
+                print(
+                    "========================================== Used Adam Optimizer ==========================================")
+                optimizer = torch.optim.Adam(
+                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                    weight_decay=args.weight_decay)
             optimizer.load_state_dict(resume_checkpoint['optimizer'])
             nce_average = resume_checkpoint['nce_average']
             criterion = NCECriterion(len_neg)
@@ -356,17 +412,22 @@ if __name__ == '__main__':
             "==========================================!!!START TRAINING!!!==========================================")
         start = time.time()
         cudnn.benchmark = True
-        batch_logger = Logger(os.path.join(args.log_folder, 'batch.log'), ['epoch', 'batch', 'loss', 'probs', 'lr'],
+        batch_logger = Logger(os.path.join(args.log_folder, 'batch.log'),
+                              ['epoch', 'batch', 'loss', 'probs', 'lr'],
                               args.log_resume)
-        epoch_logger = Logger(os.path.join(args.log_folder, 'epoch.log'), ['epoch', 'loss', 'probs', 'lr'],
+        epoch_logger = Logger(os.path.join(args.log_folder, 'epoch.log'),
+                              ['epoch', 'loss', 'probs', 'lr'],
                               args.log_resume)
         val_logger = Logger(os.path.join(args.log_folder, 'val.log'),
-                            ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold', 'acc_list',
+                            ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold',
+                             'acc_list',
                              'normal_acc_list', 'anormal_acc_list'], args.log_resume)
 
         for epoch in range(begin_epoch, begin_epoch + args.epochs):
-            memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head, nce_average,
-                                      criterion, optimizer, epoch, args, batch_logger, epoch_logger, memory_bank)
+            memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head,
+                                      nce_average,
+                                      criterion, optimizer, epoch, args, batch_logger, epoch_logger,
+                                      memory_bank)
 
             if epoch % args.val_step == 0:
 
@@ -489,7 +550,8 @@ if __name__ == '__main__':
             spatial_transforms.Normalize([0], [1]),
         ])
 
-        print("========================================Loading Test Data========================================")
+        print(
+            "========================================Loading Test Data========================================")
         test_data_front_d = DAD_Test(root_path=args.root_path,
                                      subset='validation',
                                      view='front_depth',
@@ -559,7 +621,8 @@ if __name__ == '__main__':
         print('Top IR view is done')
         assert num_val_data_front_d == num_val_data_front_ir == num_val_data_top_d == num_val_data_top_ir
 
-        print("==========================================Loading Normal Data==========================================")
+        print(
+            "==========================================Loading Normal Data==========================================")
         training_normal_data_front_d = DAD(root_path=args.root_path,
                                            subset='train',
                                            view='front_depth',
@@ -651,24 +714,30 @@ if __name__ == '__main__':
                                                args.cal_vec_batch_size,
                                                args.feature_dim,
                                                args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_front_d.npy'), normal_vec_front_d.cpu().numpy())
+        np.save(os.path.join(args.normvec_folder, 'normal_vec_front_d.npy'),
+                normal_vec_front_d.cpu().numpy())
 
-        normal_vec_front_ir = get_normal_vector(model_front_ir, train_normal_loader_for_test_front_ir,
+        normal_vec_front_ir = get_normal_vector(model_front_ir,
+                                                train_normal_loader_for_test_front_ir,
                                                 args.cal_vec_batch_size,
                                                 args.feature_dim,
                                                 args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_front_ir.npy'), normal_vec_front_ir.cpu().numpy())
+        np.save(os.path.join(args.normvec_folder, 'normal_vec_front_ir.npy'),
+                normal_vec_front_ir.cpu().numpy())
 
-        normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d, args.cal_vec_batch_size,
+        normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d,
+                                             args.cal_vec_batch_size,
                                              args.feature_dim,
                                              args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_top_d.npy'), normal_vec_top_d.cpu().numpy())
+        np.save(os.path.join(args.normvec_folder, 'normal_vec_top_d.npy'),
+                normal_vec_top_d.cpu().numpy())
 
         normal_vec_top_ir = get_normal_vector(model_top_ir, train_normal_loader_for_test_top_ir,
                                               args.cal_vec_batch_size,
                                               args.feature_dim,
                                               args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_top_ir.npy'), normal_vec_top_ir.cpu().numpy())
+        np.save(os.path.join(args.normvec_folder, 'normal_vec_top_ir.npy'),
+                normal_vec_top_ir.cpu().numpy())
 
         cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_vec_front_d,
                   normal_vec_front_ir,
@@ -699,4 +768,3 @@ if __name__ == '__main__':
             print(
                 f'View: {mode_name}(post-processed):       Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)} \n')
         print("Total testing time: ", time.time() - start_testing)
-

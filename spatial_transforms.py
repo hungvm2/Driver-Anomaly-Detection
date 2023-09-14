@@ -1,12 +1,13 @@
-import random
-import numbers
 import collections
+import numbers
 import numpy as np
+import random
+import scipy.ndimage
 import torch
 import torchvision
 import torchvision.transforms.functional as F
-import scipy.ndimage
 from PIL import Image
+
 try:
     import accimage
 except ImportError:
@@ -35,6 +36,7 @@ class Compose(object):
     def randomize_parameters(self):
         for t in self.transforms:
             t.randomize_parameters()
+
 
 class ToTensor(object):
     """Convert a ``PIL.Image`` or ``numpy.ndarray`` to tensor.
@@ -365,15 +367,9 @@ class MultiScaleRandomCrop(object):
 
     def randomize_parameters(self):
         self.scale = self.scales[random.randint(0, len(self.scales) - 1)]
-        #self.scale = 1
+        # self.scale = 1
         self.tl_x = random.random()
         self.tl_y = random.random()
-
-
-
-
-
-
 
 
 class SpatialElasticDisplacement(object):
@@ -393,7 +389,8 @@ class SpatialElasticDisplacement(object):
 
             image = img
             image_first_channel = np.squeeze(image[..., 0])
-            indices_x, indices_y = self._generate_indices(image_first_channel.shape, alpha=self.alpha, sigma=self.sigma)
+            indices_x, indices_y = self._generate_indices(image_first_channel.shape,
+                                                          alpha=self.alpha, sigma=self.sigma)
             ret_image = (self._map_coordinates(
                 image,
                 indices_x,
@@ -410,15 +407,17 @@ class SpatialElasticDisplacement(object):
             return img
 
     def _generate_indices(self, shape, alpha, sigma):
-        assert (len(shape) == 2),"shape: Should be of size 2!"
-        dx = scipy.ndimage.gaussian_filter((np.random.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
-        dy = scipy.ndimage.gaussian_filter((np.random.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
+        assert (len(shape) == 2), "shape: Should be of size 2!"
+        dx = scipy.ndimage.gaussian_filter((np.random.rand(*shape) * 2 - 1), sigma, mode="constant",
+                                           cval=0) * alpha
+        dy = scipy.ndimage.gaussian_filter((np.random.rand(*shape) * 2 - 1), sigma, mode="constant",
+                                           cval=0) * alpha
 
         x, y = np.meshgrid(np.arange(shape[0]), np.arange(shape[1]), indexing='ij')
-        return np.reshape(x+dx, (-1, 1)), np.reshape(y+dy, (-1, 1))
+        return np.reshape(x + dx, (-1, 1)), np.reshape(y + dy, (-1, 1))
 
     def _map_coordinates(self, image, indices_x, indices_y, order=1, cval=0, mode="constant"):
-        assert (len(image.shape) == 3),"image.shape: Should be of size 3!"
+        assert (len(image.shape) == 3), "image.shape: Should be of size 3!"
         result = np.copy(image)
         height, width = image.shape[0:2]
         for c in range(image.shape[2]):
@@ -434,7 +433,7 @@ class SpatialElasticDisplacement(object):
         return result
 
     def randomize_parameters(self):
-       self.p = random.random()
+        self.p = random.random()
 
 
 class RandomRotate(object):
@@ -452,7 +451,6 @@ class RandomRotate(object):
         self.rotate_angle = random.randint(-5, 5)
 
 
-
 class RandomResize(object):
 
     def __init__(self):
@@ -460,13 +458,12 @@ class RandomResize(object):
 
     def __call__(self, img):
         im_size = img.size
-        ret_img = img.resize((int(im_size[0]*self.resize_const),
-                              int(im_size[1]*self.resize_const)))
+        ret_img = img.resize((int(im_size[0] * self.resize_const),
+                              int(im_size[1] * self.resize_const)))
         return ret_img
 
     def randomize_parameters(self):
         self.resize_const = random.uniform(0.9, 1.1)
-
 
 
 class Gaussian_blur(object):
@@ -573,7 +570,8 @@ class ColorJitter(object):
         self.brightness = self._check_input(brightness, 'brightness')
         self.contrast = self._check_input(contrast, 'contrast')
         self.saturation = self._check_input(saturation, 'saturation')
-        self.hue = self._check_input(hue, 'hue', center=0, bound=(-0.5, 0.5), clip_first_on_zero=False)
+        self.hue = self._check_input(hue, 'hue', center=0, bound=(-0.5, 0.5),
+                                     clip_first_on_zero=False)
 
         self.threshold = p
 
@@ -588,7 +586,8 @@ class ColorJitter(object):
             if not bound[0] <= value[0] <= value[1] <= bound[1]:
                 raise ValueError("{} values should be between {}".format(name, bound))
         else:
-            raise TypeError("{} should be a single number or a list/tuple with lenght 2.".format(name))
+            raise TypeError(
+                "{} should be a single number or a list/tuple with lenght 2.".format(name))
 
         # if value is 0 or (1., 1.) for brightness/contrast/saturation
         # or (0., 0.) for hue, do nothing
@@ -610,9 +609,12 @@ class ColorJitter(object):
         hue_factor = random.uniform(self.hue[0], self.hue[1])
 
         transforms = []
-        transforms.append(torchvision.transforms.Lambda(lambda img: F.adjust_brightness(img, brightness_factor)))
-        transforms.append(torchvision.transforms.Lambda(lambda img: F.adjust_contrast(img, contrast_factor)))
-        transforms.append(torchvision.transforms.Lambda(lambda img: F.adjust_saturation(img, saturation_factor)))
+        transforms.append(
+            torchvision.transforms.Lambda(lambda img: F.adjust_brightness(img, brightness_factor)))
+        transforms.append(
+            torchvision.transforms.Lambda(lambda img: F.adjust_contrast(img, contrast_factor)))
+        transforms.append(
+            torchvision.transforms.Lambda(lambda img: F.adjust_saturation(img, saturation_factor)))
         transforms.append(torchvision.transforms.Lambda(lambda img: F.adjust_hue(img, hue_factor)))
 
         random.shuffle(transforms)

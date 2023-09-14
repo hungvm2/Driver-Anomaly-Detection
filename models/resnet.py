@@ -1,7 +1,7 @@
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
 from functools import partial
 
 __all__ = [
@@ -23,7 +23,8 @@ def conv3x3x3(in_planes, out_planes, stride=1):
 
 def downsample_basic_block(x, planes, stride):
     out = F.avg_pool3d(x, kernel_size=1, stride=stride)
-    zero_pads = torch.zeros(out.size(0), planes-out.size(1), out.size(2), out.size(3), out.size(4))
+    zero_pads = torch.zeros(out.size(0), planes - out.size(1), out.size(2), out.size(3),
+                            out.size(4))
     if out.is_cuda:
         zero_pads = zero_pads.cuda()
     out = torch.cat([out, zero_pads], dim=1)
@@ -103,6 +104,7 @@ class Bottleneck(nn.Module):
 
         return out
 
+
 class ResNet(nn.Module):
 
     def __init__(self,
@@ -169,7 +171,8 @@ class ResNet(nn.Module):
                         planes * block.expansion,
                         kernel_size=1,
                         stride=stride,
-                        bias=False), nn.BatchNorm3d(planes * block.expansion, track_running_stats=self.tracking))
+                        bias=False),
+                    nn.BatchNorm3d(planes * block.expansion, track_running_stats=self.tracking))
 
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample, tracking=self.tracking))
@@ -191,14 +194,16 @@ class ResNet(nn.Module):
         x = self.layer4(x)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
-        normed_x = F.normalize(x, p=2, dim=1)   #normalized value, in order to eliminate influences of length during contrastive learning
+        normed_x = F.normalize(x, p=2,
+                               dim=1)  # normalized value, in order to eliminate influences of length during contrastive learning
 
         return x, normed_x
 
 
 class ProjectionHead(nn.Module):
-    def __init__(self, output_dim, model_depth):
+    def __init__(self, output_dim, model_depth, loss_type="nce"):
         super(ProjectionHead, self).__init__()
+        self.loss_type = loss_type
         if model_depth == 18:
             self.hidden = nn.Linear(512, 256)
         elif model_depth == 50:
@@ -206,7 +211,13 @@ class ProjectionHead(nn.Module):
         elif model_depth == 101:
             self.hidden = nn.Linear(2048, 256)
         self.relu = nn.ReLU(inplace=True)
-        self.out = nn.Linear(256, output_dim)
+        if self.loss_type == "ce":
+            self.hidden2 = nn.Linear(256, 64)
+            self.relu2 = nn.ReLU(inplace=True)
+            self.out = nn.Linear(64, output_dim)
+            # print("out here: ", self.out)
+        else:
+            self.out = nn.Linear(256, output_dim)
         for m in self.modules():
             if isinstance(m, nn.Linear):
                 m.weight = nn.init.kaiming_normal_(m.weight, mode='fan_out')
@@ -215,10 +226,16 @@ class ProjectionHead(nn.Module):
     def forward(self, x):
         x = self.hidden(x)
         x = self.relu(x)
-        x = self.out(x)
+        if self.loss_type == "ce":
+            x = self.hidden2(x)
+            x = self.relu2(x)
+            x = self.out(x)
+        else:
+            x = self.out(x)
         x = F.normalize(x, p=2, dim=1)
 
         return x
+
 
 class LinearHead(nn.Module):
     def __init__(self, MLP_dim):
@@ -270,7 +287,6 @@ def resnet18(**kwargs):
     return model
 
 
-
 def resnet50(**kwargs):
     """Constructs a ResNet-50 model.
     """
@@ -283,5 +299,3 @@ def resnet101(**kwargs):
     """
     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
     return model
-
-

@@ -2,18 +2,16 @@
 
 See the paper "MobileNetV2: Inverted Residuals and Linear Bottlenecks" for more details.
 '''
-import torch
 import math
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-
-
 def conv_bn(inp, oup, stride):
     return nn.Sequential(
-        nn.Conv3d(inp, oup, kernel_size=3, stride=stride, padding=(1,1,1), bias=False),
+        nn.Conv3d(inp, oup, kernel_size=3, stride=stride, padding=(1, 1, 1), bias=False),
         nn.BatchNorm3d(oup),
         nn.ReLU6(inplace=True)
     )
@@ -33,7 +31,7 @@ class InvertedResidual(nn.Module):
         self.stride = stride
 
         hidden_dim = round(inp * expand_ratio)
-        self.use_res_connect = self.stride == (1,1,1) and inp == oup
+        self.use_res_connect = self.stride == (1, 1, 1) and inp == oup
 
         if expand_ratio == 1:
             self.conv = nn.Sequential(
@@ -75,13 +73,13 @@ class MobileNetV2(nn.Module):
         last_channel = 1280
         interverted_residual_setting = [
             # t, c, n, s
-            [1,  16, 1, (1,1,1)],
-            [6,  24, 2, (2,2,2)],
-            [6,  32, 3, (2,2,2)],
-            [6,  64, 4, (2,2,2)],
-            [6,  96, 3, (1,1,1)],
-            [6, 160, 3, (2,2,2)],
-            [6, 320, 1, (1,1,1)],
+            [1, 16, 1, (1, 1, 1)],
+            [6, 24, 2, (2, 2, 2)],
+            [6, 32, 3, (2, 2, 2)],
+            [6, 64, 4, (2, 2, 2)],
+            [6, 96, 3, (1, 1, 1)],
+            [6, 160, 3, (2, 2, 2)],
+            [6, 320, 1, (1, 1, 1)],
         ]
 
         # building first layer
@@ -89,14 +87,14 @@ class MobileNetV2(nn.Module):
         input_channel = int(input_channel * width_mult)
         self.last_channel = int(last_channel * width_mult) if width_mult > 1.0 else last_channel
         if pre_train:
-            self.features = [conv_bn(3, input_channel, (1,2,2))]
+            self.features = [conv_bn(3, input_channel, (1, 2, 2))]
         else:
             self.features = [conv_bn(1, input_channel, (1, 2, 2))]
         # building inverted residual blocks
         for t, c, n, s in interverted_residual_setting:
             output_channel = int(c * width_mult)
             for i in range(n):
-                stride = s if i == 0 else (1,1,1)
+                stride = s if i == 0 else (1, 1, 1)
                 self.features.append(block(input_channel, output_channel, stride, expand_ratio=t))
                 input_channel = output_channel
         # building last several layers
@@ -105,10 +103,12 @@ class MobileNetV2(nn.Module):
         self.features = nn.Sequential(*self.features)
 
         self._initialize_weights()
-        self.conv_head = nn.Conv3d(self.last_channel, 512, kernel_size=1, bias=False)  # in order to encode the image to vector with the same size to the resnet 18
+        self.conv_head = nn.Conv3d(self.last_channel, 512, kernel_size=1,
+                                   bias=False)  # in order to encode the image to vector with the same size to the resnet 18
+
     def forward(self, x):
         x = self.features(x)
-        #print(x.shape)
+        # print(x.shape)
         x = self.conv_head(x)
         x = F.avg_pool3d(x, x.data.size()[-3:])
         x = x.view(x.size(0), -1)
@@ -141,7 +141,7 @@ class ProjectionHead(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Linear):
                 m.weight = nn.init.kaiming_normal_(m.weight, mode='fan_out')
-                #torch.nn.init.xavier_uniform(m.weight)
+                # torch.nn.init.xavier_uniform(m.weight)
                 m.bias.data.fill_(0.01)
 
     def forward(self, x):
@@ -151,6 +151,7 @@ class ProjectionHead(nn.Module):
         x = F.normalize(x, p=2, dim=1)
 
         return x
+
 
 def get_fine_tuning_parameters(model, ft_portion):
     if ft_portion == "complete":
@@ -173,15 +174,10 @@ def get_fine_tuning_parameters(model, ft_portion):
     else:
         raise ValueError("Unsupported ft_portion: 'complete' or 'last_layer' expected")
 
-    
+
 def get_model(**kwargs):
     """
     Returns the model.
     """
     model = MobileNetV2(**kwargs)
     return model
-
-
-
-
-

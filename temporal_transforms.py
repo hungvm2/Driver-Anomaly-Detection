@@ -1,6 +1,6 @@
-import random
 import math
 import numpy as np
+import random
 
 
 class LoopPadding(object):
@@ -10,7 +10,7 @@ class LoopPadding(object):
         self.downsample = downsample
 
     def __call__(self, frame_indices):
-        vid_duration  = len(frame_indices)
+        vid_duration = len(frame_indices)
         clip_duration = self.size * self.downsample
         out = frame_indices
 
@@ -39,7 +39,7 @@ class TemporalBeginCrop(object):
         self.downsample = downsample
 
     def __call__(self, frame_indices):
-        vid_duration  = len(frame_indices)
+        vid_duration = len(frame_indices)
         clip_duration = self.size * self.downsample
 
         out = frame_indices[:clip_duration]
@@ -75,7 +75,7 @@ class TemporalCenterCrop(object):
         Returns:
             list: Cropped frame indices.
         """
-        vid_duration  = len(frame_indices)
+        vid_duration = len(frame_indices)
         clip_duration = self.size * self.downsample
 
         center_index = len(frame_indices) // 2
@@ -116,7 +116,7 @@ class TemporalRandomCrop(object):
             list: Cropped frame indices.
         """
 
-        vid_duration  = len(frame_indices)
+        vid_duration = len(frame_indices)
         clip_duration = self.size * self.downsample
 
         rand_end = max(0, vid_duration - clip_duration - 1)
@@ -147,7 +147,8 @@ class TemporalSelectCrop(object):
         vid_duration = len(frame_indices)
 
         outs = []
-        if (self.clip_duration + self.clip_interval) * self.number_clips - self.clip_interval <= vid_duration:
+        if (
+                self.clip_duration + self.clip_interval) * self.number_clips - self.clip_interval <= vid_duration:
             center_index = len(frame_indices) // 2
             begin_index = max(0, center_index -
                               (self.clip_duration // 2 +
@@ -222,17 +223,18 @@ class TemporalRandomMultipleCrop(object):
                 rand_end = max(0, vid_duration - self.clip_duration - 1)
                 begin_index = random.randint(0, rand_end)
                 end_index = min(begin_index + self.clip_duration, vid_duration)
-                out = frame_indices[begin_index : end_index]
+                out = frame_indices[begin_index: end_index]
                 outs.append(out)
         else:
-            rand_begin = vid_duration - self.clip_duration * (self.number_clips-1) - self.clip_interval * (self.number_clips-1)
+            rand_begin = vid_duration - self.clip_duration * (
+                        self.number_clips - 1) - self.clip_interval * (self.number_clips - 1)
             if rand_begin < 0:
                 begin_index = random.randint(0, rand_begin)
             else:
                 begin_index = 0
             for i in range(self.number_clips):
                 end_index = min(begin_index + self.clip_duration, vid_duration)
-                out = frame_indices[begin_index : end_index]
+                out = frame_indices[begin_index: end_index]
                 outs.append(out)
                 begin_index = min(begin_index)
 
@@ -248,9 +250,6 @@ class TemporalRandomMultipleCrop(object):
         return total_frames
 
 
-
-
-
 class TemporalSequentialCrop(object):
     def __init__(self, duration=32, downsample=2):
         self.duration = duration
@@ -258,12 +257,10 @@ class TemporalSequentialCrop(object):
         if self.duration % self.downsample != 0:
             print('Error! Sample duration should be be an integral multiple of downsample!')
             assert 0
+
     def __call__(self, frame_indices):
         help = []
         step = self.downsample
         for i in range(0, self.duration, step):
             help.append(frame_indices[i])
         return help
-
-
-
