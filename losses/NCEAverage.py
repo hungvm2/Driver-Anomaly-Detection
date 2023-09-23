@@ -39,7 +39,8 @@ class NCEAverage(nn.Module):
         probs = out / torch.sum(out, dim=1, keepdim=True)
         return probs[:, 0].mean()
 
-    def forward(self, n_vec, a_vec, indices_n, indices_a, normed_vec):
+    # def forward(self, n_vec, a_vec, indices_n, indices_a, normed_vec):
+    def forward(self, n_vec, a_vec):
         n_scores = torch.mm(n_vec, n_vec.t())
         pos_logits = n_scores[~torch.eye(n_scores.shape[0], dtype=bool)].reshape(n_vec.size(0),
                                                                                  -1).view(-1, 1)

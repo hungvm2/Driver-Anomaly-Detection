@@ -17,6 +17,17 @@ def adjust_learning_rate(optimizer, lr_rate):
         param_group['lr'] = lr_rate
 
 
+class CommonLogger:
+    def __init__(self, path):
+        self.path = path
+        open(self.path, "w").close()
+
+    def write(self, content):
+        print(content)
+        with open(self.path, "a", encoding="utf-8") as f:
+            f.write(f"{content}\n")
+
+
 class Logger(object):
     """Logger object for training process, supporting resume training"""
 

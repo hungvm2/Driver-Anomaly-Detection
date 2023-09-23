@@ -211,13 +211,13 @@ class ProjectionHead(nn.Module):
         elif model_depth == 101:
             self.hidden = nn.Linear(2048, 256)
         self.relu = nn.ReLU(inplace=True)
-        if self.loss_type == "ce":
-            self.hidden2 = nn.Linear(256, 64)
-            self.relu2 = nn.ReLU(inplace=True)
-            self.out = nn.Linear(64, output_dim)
-            # print("out here: ", self.out)
-        else:
-            self.out = nn.Linear(256, output_dim)
+        # if self.loss_type == "ce":
+        #     self.hidden2 = nn.Linear(256, 64)
+        #     self.relu2 = nn.ReLU(inplace=True)
+        #     self.out = nn.Linear(64, output_dim)
+        #     # print("out here: ", self.out)
+        # else:
+        self.out = nn.Linear(256, output_dim)
         for m in self.modules():
             if isinstance(m, nn.Linear):
                 m.weight = nn.init.kaiming_normal_(m.weight, mode='fan_out')
@@ -226,12 +226,12 @@ class ProjectionHead(nn.Module):
     def forward(self, x):
         x = self.hidden(x)
         x = self.relu(x)
-        if self.loss_type == "ce":
-            x = self.hidden2(x)
-            x = self.relu2(x)
-            x = self.out(x)
-        else:
-            x = self.out(x)
+        # if self.loss_type == "ce":
+        #     x = self.hidden2(x)
+        #     x = self.relu2(x)
+        #     x = self.out(x)
+        # else:
+        x = self.out(x)
         x = F.normalize(x, p=2, dim=1)
 
         return x

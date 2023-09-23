@@ -11,6 +11,7 @@ from dataset import DAD
 from dataset_test import DAD_Test
 from losses.NCEAverage import NCEAverage
 from losses.NCECriterion import NCECriterion
+from losses.ce_nce_loss import CENCE
 from losses.cross_entroy_loss import cross_entropy_loss, CrossEntropy
 from losses.focal_loss import focal_loss
 from model import generate_model
@@ -19,8 +20,7 @@ from temporal_transforms import TemporalSequentialCrop
 from test import get_normal_vector, split_acc_diff_threshold, cal_score
 from utils import adjust_learning_rate, AverageMeter, Logger, get_fusion_label, l2_normalize, \
     post_process, evaluate, \
-    get_score
-
+    get_score, CommonLogger
 
 def parse_args():
     parser = argparse.ArgumentParser(description='DAD training on Videos')
@@ -121,7 +121,7 @@ def parse_args():
 
 def train(train_normal_loader, train_anormal_loader, model, model_head, nce_average, criterion,
           optimizer, epoch, args,
-          batch_logger, epoch_logger, memory_bank=None):
+          batch_logger, epoch_logger, c_logger, memory_bank=None):
     losses = AverageMeter()
     prob_meter = AverageMeter()
 
@@ -132,7 +132,7 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         if normal_data.size(0) != args.n_train_batch_size:
             break
         # print("normal_data: ", normal_data.size(0), "anormal_data: ", anormal_data.size(0))
-        labels = torch.tensor([1]*normal_data.size(0) + [0]*anormal_data.size(0))
+        labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
         data = torch.cat((normal_data, anormal_data),
                          dim=0)  # n_vec as well as a_vec are all normalized value
         if args.loss == "ce":
@@ -141,24 +141,25 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
             data = data[indices]
         if args.use_cuda:
             data = data.cuda()
-            idx_a = idx_a.cuda()
-            idx_n = idx_n.cuda()
+            # idx_a = idx_a.cuda()
+            # idx_n = idx_n.cuda()
             normal_data = normal_data.cuda()
 
         # ================forward====================
         unnormed_vec, normed_vec = model(data)
         vec = model_head(unnormed_vec)
-        n_vec = vec[0:args.n_train_batch_size]
-        a_vec = vec[args.n_train_batch_size:]
         if args.loss == "ce":
             # loss, outs, probs = cross_entropy_loss(vec, torch.tensor([1] * n_vec.shape[0] + [0] * a_vec.shape[0]), eps=0.2)
             loss, outs, probs = criterion(vec, labels)
             # loss = criterion(vec, np.array([1] * n_vec.shape[0] + [0] * a_vec.shape[0]))
+        elif args.loss == "cence":
+            loss, outs, probs = criterion(vec, args.n_train_batch_size, labels)
         elif args.loss == "fl":
             loss, outs, probs = (vec)
         else:
-            outs, probs = nce_average(n_vec, a_vec, idx_n, idx_a,
-                                      normed_vec[0:args.n_train_batch_size])
+            n_vec = vec[0:args.n_train_batch_size]
+            a_vec = vec[args.n_train_batch_size:]
+            outs, probs = nce_average(n_vec, a_vec)
             loss = criterion(outs)
         # print("probs: ", probs.size(), "val: ", probs, 'loss: ', loss.size(), "val: ", loss)
         # ================backward====================
@@ -189,7 +190,7 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
             'probs': prob_meter.val,
             'lr': optimizer.param_groups[0]['lr']
         })
-        print(
+        c_logger.write(
             f'Training Process is running: {epoch}/{args.epochs}  | Batch: {batch} | Loss: {losses.val} ({losses.avg}) | Probs: {prob_meter.val} ({prob_meter.avg})')
     epoch_logger.log({
         'epoch': epoch,
@@ -229,6 +230,10 @@ if __name__ == '__main__':
         crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size,
                                                               crop_positions=['c'])
     before_crop_duration = int(args.sample_duration * args.downsample)
+    common_logger_file_path = os.path.join(args.log_folder, f'common_{args.name}_{args.view}.log')
+    c_logger = CommonLogger(common_logger_file_path)
+    test_logger_file_path = os.path.join(args.log_folder, f'test_{args.name}.log')
+    test_logger = CommonLogger(test_logger_file_path)
 
     if args.mode == 'train':
         temporal_transform = TemporalSequentialCrop(before_crop_duration, args.downsample)
@@ -257,7 +262,7 @@ if __name__ == '__main__':
                 spatial_transforms.Normalize([0], [1])
             ])
 
-        print(
+        c_logger.write(
             "=================================Loading Anormal-Driving Training Data!=================================")
         training_anormal_data = DAD(root_path=args.root_path,
                                     subset='train',
@@ -280,7 +285,7 @@ if __name__ == '__main__':
             pin_memory=True,
         )
 
-        print(
+        c_logger.write(
             "=================================Loading Normal-Driving Training Data!=================================")
         training_normal_data = DAD(root_path=args.root_path,
                                    subset='train',
@@ -303,7 +308,7 @@ if __name__ == '__main__':
             pin_memory=True,
         )
 
-        print(
+        c_logger.write(
             "========================================Loading Validation Data========================================")
         val_spatial_transform = spatial_transforms.Compose([
             spatial_transforms.Scale(args.sample_size),
@@ -330,9 +335,9 @@ if __name__ == '__main__':
         len_neg = training_anormal_data.__len__()
         len_pos = training_normal_data.__len__()
         num_val_data = validation_data.__len__()
-        print(f'len_neg: {len_neg}')
-        print(f'len_pos: {len_pos}')
-        print(
+        c_logger.write(f'len_neg: {len_neg}')
+        c_logger.write(f'len_pos: {len_pos}')
+        c_logger.write(
             "============================================Generating Model============================================")
 
         if args.model_type == 'resnet':
@@ -352,23 +357,32 @@ if __name__ == '__main__':
             # ===============generate new model or pre-trained model===============
             model = generate_model(args)
             if args.opt == "sgd":
-                print(
+                c_logger.write(
                     "========================================== Used SGD Optimizer ==========================================")
                 optimizer = torch.optim.SGD(
                     list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
                     momentum=args.momentum,
                     dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
             else:
-                print(
+                c_logger.write(
                     "========================================== Used Adam Optimizer ==========================================")
                 optimizer = torch.optim.Adam(
                     list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
                     weight_decay=args.weight_decay)
             nce_average = None
             if args.loss == "ce":
+                c_logger.write(
+                    "========================================== Used Cross Entropy Loss ==========================================")
                 criterion = CrossEntropy(eps=0.1)
+            elif args.loss == "cence":
+                c_logger.write(
+                    "========================================== Used CENCE Loss ==========================================")
+                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.1)
             else:
-                nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau, args.Z_momentum)
+                c_logger.write(
+                    "========================================== Used NCE Loss ==========================================")
+                nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau,
+                                         args.Z_momentum)
                 criterion = NCECriterion(len_neg)
             begin_epoch = 1
             best_acc = 0
@@ -386,14 +400,14 @@ if __name__ == '__main__':
             if args.use_cuda:
                 model_head.cuda()
             if args.opt == "sgd":
-                print(
+                c_logger.write(
                     "========================================== Used SGD Optimizer ==========================================")
                 optimizer = torch.optim.SGD(
                     list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
                     momentum=args.momentum,
                     dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
             else:
-                print(
+                c_logger.write(
                     "========================================== Used Adam Optimizer ==========================================")
                 optimizer = torch.optim.Adam(
                     list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
@@ -408,30 +422,29 @@ if __name__ == '__main__':
             torch.cuda.empty_cache()
             adjust_learning_rate(optimizer, args.learning_rate)
 
-        print(
+        c_logger.write(
             "==========================================!!!START TRAINING!!!==========================================")
         start = time.time()
         cudnn.benchmark = True
-        batch_logger = Logger(os.path.join(args.log_folder, 'batch.log'),
+        batch_logger = Logger(os.path.join(args.log_folder, f'batch_{args.name}_{args.view}.log'),
                               ['epoch', 'batch', 'loss', 'probs', 'lr'],
                               args.log_resume)
-        epoch_logger = Logger(os.path.join(args.log_folder, 'epoch.log'),
+        epoch_logger = Logger(os.path.join(args.log_folder, f'epoch_{args.name}_{args.view}.log'),
                               ['epoch', 'loss', 'probs', 'lr'],
                               args.log_resume)
-        val_logger = Logger(os.path.join(args.log_folder, 'val.log'),
+        val_logger = Logger(os.path.join(args.log_folder, f'val_{args.name}_{args.view}.log'),
                             ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold',
                              'acc_list',
                              'normal_acc_list', 'anormal_acc_list'], args.log_resume)
-
         for epoch in range(begin_epoch, begin_epoch + args.epochs):
             memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head,
                                       nce_average,
-                                      criterion, optimizer, epoch, args, batch_logger, epoch_logger,
+                                      criterion, optimizer, epoch, args, batch_logger, epoch_logger, c_logger,
                                       memory_bank)
 
             if epoch % args.val_step == 0:
 
-                print(
+                c_logger.write(
                     "==========================================!!!Evaluating!!!==========================================")
                 normal_vec = torch.mean(torch.cat(memory_bank, dim=0), dim=0, keepdim=True)
                 normal_vec = l2_normalize(normal_vec)
@@ -439,9 +452,9 @@ if __name__ == '__main__':
                 model.eval()
                 accuracy, best_threshold, acc_n, acc_a, acc_list, acc_n_list, acc_a_list = split_acc_diff_threshold(
                     model, normal_vec, validation_loader, args.use_cuda)
-                print(
+                c_logger.write(
                     f'Epoch: {epoch}/{args.epochs} | Accuracy: {accuracy} | Normal Acc: {acc_n} | Anormal Acc: {acc_a} | Threshold: {best_threshold}')
-                print(
+                c_logger.write(
                     "==========================================!!!Logging!!!==========================================")
                 val_logger.log({
                     'epoch': epoch,
@@ -455,7 +468,7 @@ if __name__ == '__main__':
                 })
                 if accuracy > best_acc:
                     best_acc = accuracy
-                    print(
+                    c_logger.write(
                         "==========================================!!!Saving!!!==========================================")
                     checkpoint_path = os.path.join(args.checkpoint_folder,
                                                    f'best_model_{args.model_type}_{args.view}_{args.name}.pth')
@@ -478,7 +491,7 @@ if __name__ == '__main__':
                     torch.save(states_head, head_checkpoint_path)
 
             if epoch % args.save_step == 0:
-                print(
+                c_logger.write(
                     "==========================================!!!Saving!!!==========================================")
                 checkpoint_path = os.path.join(args.checkpoint_folder,
                                                f'{args.model_type}_{args.view}_{epoch}.pth')
@@ -503,7 +516,7 @@ if __name__ == '__main__':
                 lr = args.learning_rate * (0.1 ** (epoch // args.lr_decay))
                 adjust_learning_rate(optimizer, lr)
                 print(f'New learning rate: {lr}')
-        print("Total training time: ", time.time() - start)
+        c_logger.write(f"Total training time: {time.time() - start}")
     elif args.mode == 'test':
         if not os.path.exists(args.normvec_folder):
             os.makedirs(args.normvec_folder)
@@ -528,19 +541,25 @@ if __name__ == '__main__':
             resume_path_top_d = './checkpoints/best_model_' + args.model_type + '_top_depth_' + args.name + '.pth'
             resume_path_top_ir = './checkpoints/best_model_' + args.model_type + '_top_IR_' + args.name + '.pth'
 
+        is_resume_path_front_d_existed = os.path.exists(resume_path_front_d)
+        is_resume_path_front_ir_existed = os.path.exists(resume_path_front_ir)
+        is_resume_path_top_d_existed = os.path.exists(resume_path_top_d)
+        is_resume_path_top_ir_existed = os.path.exists(resume_path_top_ir)
+
         resume_checkpoint_front_d = torch.load(resume_path_front_d)
-        resume_checkpoint_front_ir = torch.load(resume_path_front_ir)
-        resume_checkpoint_top_d = torch.load(resume_path_top_d)
-        resume_checkpoint_top_ir = torch.load(resume_path_top_ir)
-
         model_front_d.load_state_dict(resume_checkpoint_front_d['state_dict'])
-        model_front_ir.load_state_dict(resume_checkpoint_front_ir['state_dict'])
-        model_top_d.load_state_dict(resume_checkpoint_top_d['state_dict'])
-        model_top_ir.load_state_dict(resume_checkpoint_top_ir['state_dict'])
-
         model_front_d.eval()
+
+        resume_checkpoint_front_ir = torch.load(resume_path_front_ir)
+        model_front_ir.load_state_dict(resume_checkpoint_front_ir['state_dict'])
         model_front_ir.eval()
+
+        resume_checkpoint_top_d = torch.load(resume_path_top_d)
+        model_top_d.load_state_dict(resume_checkpoint_top_d['state_dict'])
         model_top_d.eval()
+
+        resume_checkpoint_top_ir = torch.load(resume_path_top_ir)
+        model_top_ir.load_state_dict(resume_checkpoint_top_ir['state_dict'])
         model_top_ir.eval()
 
         val_spatial_transform = spatial_transforms.Compose([
@@ -550,7 +569,7 @@ if __name__ == '__main__':
             spatial_transforms.Normalize([0], [1]),
         ])
 
-        print(
+        test_logger.write(
             "========================================Loading Test Data========================================")
         test_data_front_d = DAD_Test(root_path=args.root_path,
                                      subset='validation',
@@ -567,7 +586,7 @@ if __name__ == '__main__':
             pin_memory=True,
         )
         num_val_data_front_d = test_data_front_d.__len__()
-        print('Front depth view is done')
+        test_logger.write('Front depth view is done')
 
         test_data_front_ir = DAD_Test(root_path=args.root_path,
                                       subset='validation',
@@ -584,7 +603,7 @@ if __name__ == '__main__':
             pin_memory=True,
         )
         num_val_data_front_ir = test_data_front_ir.__len__()
-        print('Front IR view is done')
+        test_logger.write('Front IR view is done')
 
         test_data_top_d = DAD_Test(root_path=args.root_path,
                                    subset='validation',
@@ -601,7 +620,7 @@ if __name__ == '__main__':
             pin_memory=True,
         )
         num_val_data_top_d = test_data_top_d.__len__()
-        print('Top depth view is done')
+        test_logger.write('Top depth view is done')
 
         test_data_top_ir = DAD_Test(root_path=args.root_path,
                                     subset='validation',
@@ -618,10 +637,10 @@ if __name__ == '__main__':
             pin_memory=True,
         )
         num_val_data_top_ir = test_data_top_ir.__len__()
-        print('Top IR view is done')
+        test_logger.write('Top IR view is done')
         assert num_val_data_front_d == num_val_data_front_ir == num_val_data_top_d == num_val_data_top_ir
 
-        print(
+        test_logger.write(
             "==========================================Loading Normal Data==========================================")
         training_normal_data_front_d = DAD(root_path=args.root_path,
                                            subset='train',
@@ -642,7 +661,7 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        print(f'Front depth view is done (size: {len(training_normal_data_front_d)})')
+        test_logger.write(f'Front depth view is done (size: {len(training_normal_data_front_d)})')
 
         training_normal_data_front_ir = DAD(root_path=args.root_path,
                                             subset='train',
@@ -663,7 +682,7 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        print(f'Front IR view is done (size: {len(training_normal_data_front_ir)})')
+        test_logger.write(f'Front IR view is done (size: {len(training_normal_data_front_ir)})')
 
         training_normal_data_top_d = DAD(root_path=args.root_path,
                                          subset='train',
@@ -684,7 +703,7 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        print(f'Top depth view is done (size: {len(training_normal_data_top_d)})')
+        test_logger.write(f'Top depth view is done (size: {len(training_normal_data_top_d)})')
 
         training_normal_data_top_ir = DAD(root_path=args.root_path,
                                           subset='train',
@@ -705,10 +724,10 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        print(f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
+        test_logger.write(f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
 
         start_testing = time.time()
-        print(
+        test_logger.write(
             "============================================START EVALUATING============================================")
         normal_vec_front_d = get_normal_vector(model_front_d, train_normal_loader_for_test_front_d,
                                                args.cal_vec_batch_size,
@@ -761,10 +780,10 @@ if __name__ == '__main__':
         for mode, mode_name in hashmap.items():
             score = get_score(score_folder, mode)
             best_acc, best_threshold, AUC = evaluate(score, gt, False)
-            print(
+            test_logger.write(
                 f'Mode: {mode_name}:      Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)}')
             score = post_process(score, args.window_size)
             best_acc, best_threshold, AUC = evaluate(score, gt, False)
-            print(
+            test_logger.write(
                 f'View: {mode_name}(post-processed):       Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)} \n')
-        print("Total testing time: ", time.time() - start_testing)
+        test_logger.write(f"Total testing time: {time.time() - start_testing}")
