@@ -12,7 +12,7 @@ from dataset_test import DAD_Test
 from losses.NCEAverage import NCEAverage
 from losses.NCECriterion import NCECriterion
 from losses.ce_nce_loss import CENCE
-from losses.cross_entroy_loss import cross_entropy_loss, CrossEntropy
+from losses.cross_entroy_loss import CrossEntropy
 from losses.focal_loss import focal_loss
 from model import generate_model
 from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2
@@ -135,7 +135,7 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
         data = torch.cat((normal_data, anormal_data),
                          dim=0)  # n_vec as well as a_vec are all normalized value
-        if args.loss == "ce":
+        if args.loss in {"cence", "ce"}:
             indices = torch.randperm(len(labels))
             labels = labels[indices]
             data = data[indices]
@@ -147,16 +147,19 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
 
         # ================forward====================
         unnormed_vec, normed_vec = model(data)
-        vec = model_head(unnormed_vec)
         if args.loss == "ce":
             # loss, outs, probs = cross_entropy_loss(vec, torch.tensor([1] * n_vec.shape[0] + [0] * a_vec.shape[0]), eps=0.2)
+            vec = model_head(unnormed_vec)
             loss, outs, probs = criterion(vec, labels)
             # loss = criterion(vec, np.array([1] * n_vec.shape[0] + [0] * a_vec.shape[0]))
         elif args.loss == "cence":
-            loss, outs, probs = criterion(vec, args.n_train_batch_size, labels)
+            vec1, vec2 = model_head(unnormed_vec)
+            loss, outs, probs = criterion(vec1, vec2, args.n_train_batch_size, labels)
         elif args.loss == "fl":
+            vec = model_head(unnormed_vec)
             loss, outs, probs = (vec)
         else:
+            vec = model_head(unnormed_vec)
             n_vec = vec[0:args.n_train_batch_size]
             a_vec = vec[args.n_train_batch_size:]
             outs, probs = nce_average(n_vec, a_vec)
@@ -377,7 +380,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.1)
+                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.0)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")

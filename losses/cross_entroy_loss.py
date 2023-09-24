@@ -58,7 +58,8 @@ class CrossEntropy(torch.nn.Module):
             targets = torch.ones_like(log_probs)
             targets *= smooth_param / (num_classes - 1)
             targets.scatter_(1, gt_classes.to("cuda:0").data.unsqueeze(1), (1 - smooth_param))
-        # print("targets: ", targets)
+        print("targets: ", targets)
+        print("gt_classes: ", gt_classes)
         loss = (-targets * log_probs).sum(dim=1)
 
         with torch.no_grad():
@@ -72,36 +73,36 @@ class CrossEntropy(torch.nn.Module):
         #       "loss: ", loss, "non_zero_cnt: ", non_zero_cnt)
         return loss, pred_class_outputs, probs_mean
 
-
-def cross_entropy_loss(pred_class_outputs, gt_classes, eps, alpha=0.2):
-    num_classes = pred_class_outputs.size(1)
-
-    if eps >= 0:
-        smooth_param = eps
-    else:
-        # Adaptive label smooth regularization
-        soft_label = F.softmax(pred_class_outputs, dim=1)
-        smooth_param = alpha * soft_label[torch.arange(soft_label.size(0)), gt_classes].unsqueeze(1)
-
-    outs = F.softmax(pred_class_outputs, dim=1)
-    print("outs size: ", outs.size())
-    probs, _ = torch.max(outs, dim=1)
-    log_probs = torch.log(outs)
-    # log_probs = F.log_softmax(pred_class_outputs, dim=1)
-    with torch.no_grad():
-        targets = torch.ones_like(log_probs)
-        targets *= smooth_param / (num_classes - 1)
-        targets.scatter_(1, gt_classes.to("cuda:0").data.unsqueeze(1), (1 - smooth_param))
-    print("targets size: ", targets.size())
-    loss = (-targets * log_probs).sum(dim=1)
-
-    with torch.no_grad():
-        non_zero_cnt = max(loss.nonzero(as_tuple=False).size(0), 1)
-
-    print("loss before averaging: ", loss)
-    loss = loss.sum() / non_zero_cnt
-    # probs_mean = 1
-    probs_mean = probs.mean()
-    print("probs size: ", probs.size(), "mean: ", probs_mean, "num_classes: ", num_classes,
-          "loss: ", loss, "non_zero_cnt: ", non_zero_cnt)
-    return loss, pred_class_outputs, probs_mean
+#
+# def cross_entropy_loss(pred_class_outputs, gt_classes, eps, alpha=0.2):
+#     num_classes = pred_class_outputs.size(1)
+#
+#     if eps >= 0:
+#         smooth_param = eps
+#     else:
+#         # Adaptive label smooth regularization
+#         soft_label = F.softmax(pred_class_outputs, dim=1)
+#         smooth_param = alpha * soft_label[torch.arange(soft_label.size(0)), gt_classes].unsqueeze(1)
+#
+#     outs = F.softmax(pred_class_outputs, dim=1)
+#     print("outs size: ", outs.size())
+#     probs, _ = torch.max(outs, dim=1)
+#     log_probs = torch.log(outs)
+#     # log_probs = F.log_softmax(pred_class_outputs, dim=1)
+#     with torch.no_grad():
+#         targets = torch.ones_like(log_probs)
+#         targets *= smooth_param / (num_classes - 1)
+#         targets.scatter_(1, gt_classes.to("cuda:0").data.unsqueeze(1), (1 - smooth_param))
+#     print("targets size: ", targets.size())
+#     loss = (-targets * log_probs).sum(dim=1)
+#
+#     with torch.no_grad():
+#         non_zero_cnt = max(loss.nonzero(as_tuple=False).size(0), 1)
+#
+#     print("loss before averaging: ", loss)
+#     loss = loss.sum() / non_zero_cnt
+#     # probs_mean = 1
+#     probs_mean = probs.mean()
+#     print("probs size: ", probs.size(), "mean: ", probs_mean, "num_classes: ", num_classes,
+#           "loss: ", loss, "non_zero_cnt: ", non_zero_cnt)
+#     return loss, pred_class_outputs, probs_mean

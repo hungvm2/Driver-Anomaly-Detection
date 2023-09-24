@@ -217,7 +217,13 @@ class ProjectionHead(nn.Module):
         #     self.out = nn.Linear(64, output_dim)
         #     # print("out here: ", self.out)
         # else:
-        self.out = nn.Linear(256, output_dim)
+        if self.loss_type == "ce":
+            self.out = nn.Linear(256, 2)
+        if self.loss_type == "cence":
+            self.out1 = nn.Linear(256, output_dim)
+            self.out2 = nn.Linear(256, 2)
+        else:
+            self.out = nn.Linear(256, output_dim)
         for m in self.modules():
             if isinstance(m, nn.Linear):
                 m.weight = nn.init.kaiming_normal_(m.weight, mode='fan_out')
@@ -231,10 +237,16 @@ class ProjectionHead(nn.Module):
         #     x = self.relu2(x)
         #     x = self.out(x)
         # else:
-        x = self.out(x)
-        x = F.normalize(x, p=2, dim=1)
-
-        return x
+        if self.loss_type == "cence":
+            x1 = self.out1(x)
+            x1 = F.normalize(x1, p=2, dim=1)
+            x2 = self.out2(x)
+            x2 = F.normalize(x2, p=2, dim=1)
+            return x1, x2
+        else:
+            x = self.out(x)
+            x = F.normalize(x, p=2, dim=1)
+            return x
 
 
 class LinearHead(nn.Module):

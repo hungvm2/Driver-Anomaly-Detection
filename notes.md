@@ -474,7 +474,6 @@ View: Fusion(DIR)(post-processed):       Best Acc: 91.4 | Threshold: 0.71 | AUC:
 Total testing time: 4006.5820257663727
 
 # Experiment 8:
-
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.0)
 
 ## Train:
@@ -486,3 +485,63 @@ python main.py   --root_path /home/username/DAD/   --mode train   --view top_IR 
 python main.py   --root_path /home/username/DAD/   --mode train   --view front_IR   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
 python main.py   --root_path /home/username/DAD/   --mode train   --view front_depth   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
 ```
+
+*front depth*
+Training Process is running: 250/250  | Batch: 264 | Loss: 3.6291306018829346 (3.6308324121079356) | Probs: 0.18508762121200562 (0.18492844093520686)
+Training Process is running: 250/250  | Batch: 265 | Loss: 3.6310863494873047 (3.6308333667597377) | Probs: 0.1844446212053299 (0.18492662206404192)
+Training Process is running: 250/250  | Batch: 266 | Loss: 3.628255605697632 (3.6308237122239246) | Probs: 0.18512874841690063 (0.18492737909158072)
+Training Process is running: 250/250  | Batch: 267 | Loss: 3.63374924659729 (3.6308346283969595) | Probs: 0.18509167432785034 (0.18492799213350708)
+Training Process is running: 250/250  | Batch: 268 | Loss: 3.404473304748535 (3.630097980667746) | Probs: 0.19139045476913452 (0.1849490229277653)
+==========================================!!!Evaluating!!!==========================================
+Epoch: 250/250 | Accuracy: 0.8019958675869345 | Normal Acc: 0.9251596593932943 | Anormal Acc: 0.5620220349967595 | Threshold: 0.8
+==========================================!!!Logging!!!==========================================
+==========================================!!!Saving!!!==========================================
+Total training time: 23848.42882323265
+
+*top depth*
+Training Process is running: 250/250  | Batch: 264 | Loss: 3.629951000213623 (3.629771798511721) | Probs: 0.18509888648986816 (0.1850946845873347)
+Training Process is running: 250/250  | Batch: 265 | Loss: 3.6293740272521973 (3.629770303131046) | Probs: 0.18511153757572174 (0.1850947479444339)
+Training Process is running: 250/250  | Batch: 266 | Loss: 3.6295502185821533 (3.629769478844346) | Probs: 0.18510785698890686 (0.18509479704197873)
+Training Process is running: 250/250  | Batch: 267 | Loss: 3.638030529022217 (3.6298003036584428) | Probs: 0.18511690199375153 (0.18509487952314205)
+Training Process is running: 250/250  | Batch: 268 | Loss: 3.4033331871032715 (3.629063311647338) | Probs: 0.19286751747131348 (0.18512017402134626)
+==========================================!!!Evaluating!!!==========================================
+Epoch: 250/250 | Accuracy: 0.7707829603903812 | Normal Acc: 0.8920968600319319 | Anormal Acc: 0.5344134802333117 | Threshold: 0.9500000000000001
+==========================================!!!Logging!!!==========================================
+==========================================!!!Saving!!!==========================================
+Total training time: 24005.303787708282
+
+*top ir*
+Training Process is running: 250/250  | Batch: 264 | Loss: 3.6341335773468018 (3.630328317858138) | Probs: 0.18502730131149292 (0.18509904067471342)
+Training Process is running: 250/250  | Batch: 265 | Loss: 3.6294193267822266 (3.6303249005984544) | Probs: 0.1851039081811905 (0.18509905897360995)
+Training Process is running: 250/250  | Batch: 266 | Loss: 3.6339242458343506 (3.630338381292222) | Probs: 0.18511229753494263 (0.18509910855623668)
+Training Process is running: 250/250  | Batch: 267 | Loss: 3.628708600997925 (3.630332300022467) | Probs: 0.18512043356895447 (0.18509918812717965)
+Training Process is running: 250/250  | Batch: 268 | Loss: 3.403804302215576 (3.629595109885485) | Probs: 0.1928521692752838 (0.18512441865625298)
+==========================================!!!Evaluating!!!==========================================
+Epoch: 250/250 | Accuracy: 0.7605838132500989 | Normal Acc: 0.864888238424694 | Anormal Acc: 0.5573558003888529 | Threshold: 0.9
+==========================================!!!Logging!!!==========================================
+==========================================!!!Saving!!!==========================================
+Total training time: 24533.764451742172
+
+*front ir*
+Training Process is running: 250/250  | Batch: 264 | Loss: 3.6407716274261475 (3.630613044522843) | Probs: 0.18473120033740997 (0.1849340928050707)
+Training Process is running: 250/250  | Batch: 265 | Loss: 3.632228374481201 (3.6306191171918596) | Probs: 0.18445584177970886 (0.18493229486888513)
+Training Process is running: 250/250  | Batch: 266 | Loss: 3.6289494037628174 (3.630612863583511) | Probs: 0.18512673676013947 (0.18493302311566884)
+Training Process is running: 250/250  | Batch: 267 | Loss: 3.6331918239593506 (3.630622486569988) | Probs: 0.18513035774230957 (0.18493375943890258)
+Training Process is running: 250/250  | Batch: 268 | Loss: 3.403326988220215 (3.6298827987557396) | Probs: 0.19283327460289001 (0.18495946683367148)
+==========================================!!!Evaluating!!!==========================================
+Epoch: 250/250 | Accuracy: 0.7557040488855673 | Normal Acc: 0.9163783927621075 | Anormal Acc: 0.4426441996111471 | Threshold: 0.81
+==========================================!!!Logging!!!==========================================
+==========================================!!!Saving!!!==========================================
+Total training time: 24217.14488005638
+
+
+## Test
+```bash
+python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
+```
+
+# Eperiment 9:
+
+- leaky relu
+- csp network
+- new project head for ce
