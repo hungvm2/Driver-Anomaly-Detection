@@ -114,7 +114,8 @@ def parse_args():
                         help='Test using pretrained model or not.')
     parser.add_argument('--loss', default="nce", type=str,
                         help='Select Loss.')
-
+    parser.add_argument('--head', default="nce", type=str,
+                        help='Select head.')
     args = parser.parse_args()
     return args
 
@@ -344,7 +345,10 @@ if __name__ == '__main__':
             "============================================Generating Model============================================")
 
         if args.model_type == 'resnet':
-            model_head = resnet.ProjectionHead(args.feature_dim, args.model_depth, args.loss)
+            if args.head == "two_heads_cence":
+                model_head = resnet.CENCEProjectionHead(args.feature_dim, args.model_depth)
+            else:
+                model_head = resnet.ProjectionHead(args.feature_dim, args.model_depth, args.loss)
         elif args.model_type == 'shufflenet':
             model_head = shufflenet.ProjectionHead(args.feature_dim)
         elif args.model_type == 'shufflenetv2':

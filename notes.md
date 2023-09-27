@@ -539,9 +539,65 @@ Total training time: 24217.14488005638
 ```bash
 python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
 ```
+Mode: Top(D):      Best Acc: 85.11 | Threshold: 0.91 | AUC: 0.8881
+View: Top(D)(post-processed):       Best Acc: 85.16 | Threshold: 0.91 | AUC: 0.89
+
+Mode: Top(IR):      Best Acc: 78.71 | Threshold: 0.88 | AUC: 0.8313
+View: Top(IR)(post-processed):       Best Acc: 78.78 | Threshold: 0.88 | AUC: 0.8331
+
+Mode: Top(DIR):      Best Acc: 83.31 | Threshold: 0.87 | AUC: 0.8864
+View: Top(DIR)(post-processed):       Best Acc: 83.36 | Threshold: 0.88 | AUC: 0.8878
+
+Mode: Front(D):      Best Acc: 85.25 | Threshold: 0.9 | AUC: 0.8952
+View: Front(D)(post-processed):       Best Acc: 85.36 | Threshold: 0.9 | AUC: 0.8968
+
+Mode: Front(IR):      Best Acc: 81.66 | Threshold: 0.91 | AUC: 0.842
+View: Front(IR)(post-processed):       Best Acc: 81.79 | Threshold: 0.91 | AUC: 0.8445
+
+Mode: Front(DIR):      Best Acc: 86.98 | Threshold: 0.92 | AUC: 0.9117
+View: Front(DIR)(post-processed):       Best Acc: 87.11 | Threshold: 0.92 | AUC: 0.9135
+
+Mode: Fusion(D):      Best Acc: 89.44 | Threshold: 0.92 | AUC: 0.9455
+View: Fusion(D)(post-processed):       Best Acc: 89.54 | Threshold: 0.92 | AUC: 0.9469
+
+Mode: Fusion(IR):      Best Acc: 84.08 | Threshold: 0.9 | AUC: 0.91
+View: Fusion(IR)(post-processed):       Best Acc: 84.2 | Threshold: 0.9 | AUC: 0.9119
+
+Mode: Fusion(DIR):      Best Acc: 89.22 | Threshold: 0.91 | AUC: 0.9496
+View: Fusion(DIR)(post-processed):       Best Acc: 89.3 | Threshold: 0.91 | AUC: 0.951
+
+Total testing time: 4004.694367170334
 
 # Eperiment 9:
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.0), 2 separated projection heads
 
+## Train:
+### Command:
+
+```
+python main.py   --root_path /home/username/DAD/   --mode train   --view top_depth   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py   --root_path /home/username/DAD/   --mode train   --view top_IR   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py   --root_path /home/username/DAD/   --mode train   --view front_IR   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py   --root_path /home/username/DAD/   --mode train   --view front_depth   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+```
+
+## Test:
+```bash
+python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
+```
+
+# Eperiment 10:
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.1), 2 separated projection heads
+
+## Train:
+### Command:
+
+```
+python main.py   --root_path /home/username/DAD/   --mode train   --view top_depth   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_2heads_beta0.8_eps0.1_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py   --root_path /home/username/DAD/   --mode train   --view top_IR   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_2heads_beta0.8_eps0.1_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py   --root_path /home/username/DAD/   --mode train   --view front_IR   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_2heads_beta0.8_eps0.1_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py   --root_path /home/username/DAD/   --mode train   --view front_depth   --model_type resnet   --model_depth 18   --shortcut_type A   --pre_train_model False   --n_train_batch_size 32   --a_train_batch_size 32   --val_batch_size 70  --learning_rate 0.01   --epochs 250   --cal_vec_batch_size 100   --tau 0.1   --train_crop 'random'   --n_scales 5   --downsample 2   --n_split_ratio 1.0   --a_split_ratio 1.0   --save_step 10   --val_step 10 --n_threads 4 --name cence_2heads_beta0.8_eps0.1_nthreads4_na32 --loss cence --head two_heads_cence
+```
 - leaky relu
 - csp network
 - new project head for ce
