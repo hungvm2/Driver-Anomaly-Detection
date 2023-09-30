@@ -196,6 +196,8 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         })
         c_logger.write(
             f'Training Process is running: {epoch}/{args.epochs}  | Batch: {batch} | Loss: {losses.val} ({losses.avg}) | Probs: {prob_meter.val} ({prob_meter.avg})')
+        losses.reset()
+        prob_meter.reset()
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
@@ -384,7 +386,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.1)
+                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.0)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")
@@ -394,6 +396,7 @@ if __name__ == '__main__':
             begin_epoch = 1
             best_acc = 0
             memory_bank = []
+
         else:
             # ===============load previously trained model ===============
             args.pre_train_model = False

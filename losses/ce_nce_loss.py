@@ -72,3 +72,4 @@ class CENCE(torch.nn.Module):
         loss = (1 - self.beta) * ce_loss + self.beta * nce_loss
         probs = (1 - self.beta) * ce_probs + self.beta * nce_probs
         return loss, pred_class_outputs1, probs
+
