@@ -21,6 +21,7 @@ from test import get_normal_vector, split_acc_diff_threshold, cal_score
 from utils import adjust_learning_rate, AverageMeter, Logger, get_fusion_label, l2_normalize, \
     post_process, evaluate, \
     get_score, CommonLogger
+import random
 
 def parse_args():
     parser = argparse.ArgumentParser(description='DAD training on Videos')
@@ -133,13 +134,22 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         if normal_data.size(0) != args.n_train_batch_size:
             break
         # print("normal_data: ", normal_data.size(0), "anormal_data: ", anormal_data.size(0))
+
+        # if args.loss in {"cence", "ce"}:
+        #     if bool(random.getrandbits(1)):
+        #         data = torch.cat((normal_data, anormal_data), dim=0)
+        #         labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
+        #     else:
+        #         data = torch.cat((anormal_data, normal_data), dim=0)
+        #         labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
+        #
+        #     # indices = torch.randperm(len(labels))
+        #     # labels = labels[indices]
+        #     # data = data[indices]
+        # else:
+        data = torch.cat((normal_data, anormal_data), dim=0)  # n_vec as well as a_vec are all normalized value
         labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
-        data = torch.cat((normal_data, anormal_data),
-                         dim=0)  # n_vec as well as a_vec are all normalized value
-        if args.loss in {"cence", "ce"}:
-            indices = torch.randperm(len(labels))
-            labels = labels[indices]
-            data = data[indices]
+
         if args.use_cuda:
             data = data.cuda()
             # idx_a = idx_a.cuda()
@@ -196,8 +206,6 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         })
         c_logger.write(
             f'Training Process is running: {epoch}/{args.epochs}  | Batch: {batch} | Loss: {losses.val} ({losses.avg}) | Probs: {prob_meter.val} ({prob_meter.avg})')
-        losses.reset()
-        prob_meter.reset()
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
@@ -476,6 +484,7 @@ if __name__ == '__main__':
                     'normal_acc_list': acc_n_list,
                     'anormal_acc_list': acc_a_list
                 })
+
                 if accuracy > best_acc:
                     best_acc = accuracy
                     c_logger.write(
