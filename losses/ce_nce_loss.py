@@ -63,6 +63,8 @@ class CENCE(torch.nn.Module):
         #       "loss: ", loss, "non_zero_cnt: ", non_zero_cnt)
 
         ### NCE loss
+        # ones_indices = gt_classes > 0
+        # zeros_indices = gt_classes == 0
         n_vec = pred_class_outputs1[0:n_train_batch_size]
         a_vec = pred_class_outputs1[n_train_batch_size:]
         nce_outs, nce_probs = self.nce_a(n_vec, a_vec)
