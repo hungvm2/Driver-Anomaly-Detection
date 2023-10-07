@@ -135,20 +135,13 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
             break
         # print("normal_data: ", normal_data.size(0), "anormal_data: ", anormal_data.size(0))
 
-        # if args.loss in {"cence", "ce"}:
-        #     # if bool(random.getrandbits(1)):
-        #     data = torch.cat((normal_data, anormal_data), dim=0)
-        #     labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
-        #     # else:
-        #     #     data = torch.cat((anormal_data, normal_data), dim=0)
-        #     #     labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
-        #
-        #     indices = torch.randperm(len(labels))
-        #     labels = labels[indices]
-        #     data = data[indices]
-        # else:
-        data = torch.cat((normal_data, anormal_data), dim=0)  # n_vec as well as a_vec are all normalized value
+        data = torch.cat((normal_data, anormal_data), dim=0)
         labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
+
+        if args.loss in {"cence", "ce"}:
+            indices = torch.randperm(len(labels))
+            labels = labels[indices]
+            data = data[indices]
 
         if args.use_cuda:
             data = data.cuda()

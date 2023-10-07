@@ -725,6 +725,101 @@ python main.py --root_path /home/username/DAD/ --mode train --view front_depth -
 ```bash
 python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment12
 ```
+Mode: Top(D):      Best Acc: 86.87 | Threshold: 0.78 | AUC: 0.8999
+View: Top(D)(post-processed):       Best Acc: 86.95 | Threshold: 0.8 | AUC: 0.9013
+
+Mode: Top(IR):      Best Acc: 79.57 | Threshold: 0.68 | AUC: 0.8456
+View: Top(IR)(post-processed):       Best Acc: 79.67 | Threshold: 0.68 | AUC: 0.8478
+
+Mode: Top(DIR):      Best Acc: 84.1 | Threshold: 0.66 | AUC: 0.8936
+View: Top(DIR)(post-processed):       Best Acc: 84.16 | Threshold: 0.67 | AUC: 0.8951
+
+Mode: Front(D):      Best Acc: 83.49 | Threshold: 0.26 | AUC: 0.8656
+View: Front(D)(post-processed):       Best Acc: 83.52 | Threshold: 0.26 | AUC: 0.8668
+
+Mode: Front(IR):      Best Acc: 83.58 | Threshold: 0.51 | AUC: 0.8721
+View: Front(IR)(post-processed):       Best Acc: 83.68 | Threshold: 0.51 | AUC: 0.8748
+
+Mode: Front(DIR):      Best Acc: 85.67 | Threshold: 0.46 | AUC: 0.8991
+View: Front(DIR)(post-processed):       Best Acc: 85.81 | Threshold: 0.47 | AUC: 0.9009
+
+Mode: Fusion(D):      Best Acc: 88.69 | Threshold: 0.6 | AUC: 0.9205
+View: Fusion(D)(post-processed):       Best Acc: 88.77 | Threshold: 0.6 | AUC: 0.9218
+
+Mode: Fusion(IR):      Best Acc: 86.95 | Threshold: 0.65 | AUC: 0.9234
+View: Fusion(IR)(post-processed):       Best Acc: 87.08 | Threshold: 0.65 | AUC: 0.9255
+
+Mode: Fusion(DIR):      Best Acc: 90.02 | Threshold: 0.63 | AUC: 0.9446
+View: Fusion(DIR)(post-processed):       Best Acc: 90.12 | Threshold: 0.64 | AUC: 0.9462
+
+Total testing time: 3944.7568674087524
+
+# Eperiment 13:
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.1), 2 projection heads correct output, correct data shuffle
+
+## Train:
+### Command:
+
+```
+python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+```
+
+## Test:
+```bash
+python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment13
+```
+
+Mode: Top(D):      Best Acc: 84.56 | Threshold: 0.79 | AUC: 0.8859
+View: Top(D)(post-processed):       Best Acc: 84.62 | Threshold: 0.79 | AUC: 0.8871
+
+Mode: Top(IR):      Best Acc: 81.47 | Threshold: 0.64 | AUC: 0.864
+View: Top(IR)(post-processed):       Best Acc: 81.51 | Threshold: 0.64 | AUC: 0.8658
+
+Mode: Top(DIR):      Best Acc: 85.72 | Threshold: 0.7 | AUC: 0.8967
+View: Top(DIR)(post-processed):       Best Acc: 85.77 | Threshold: 0.7 | AUC: 0.898
+
+Mode: Front(D):      Best Acc: 85.59 | Threshold: 0.62 | AUC: 0.8971
+View: Front(D)(post-processed):       Best Acc: 85.72 | Threshold: 0.63 | AUC: 0.8992
+
+Mode: Front(IR):      Best Acc: 82.11 | Threshold: 0.38 | AUC: 0.8472
+View: Front(IR)(post-processed):       Best Acc: 82.16 | Threshold: 0.38 | AUC: 0.8485
+
+Mode: Front(DIR):      Best Acc: 87.02 | Threshold: 0.59 | AUC: 0.9113
+View: Front(DIR)(post-processed):       Best Acc: 87.16 | Threshold: 0.58 | AUC: 0.9131
+
+Mode: Fusion(D):      Best Acc: 88.92 | Threshold: 0.72 | AUC: 0.9435
+View: Fusion(D)(post-processed):       Best Acc: 89.03 | Threshold: 0.72 | AUC: 0.945
+
+Mode: Fusion(IR):      Best Acc: 85.58 | Threshold: 0.6 | AUC: 0.9125
+View: Fusion(IR)(post-processed):       Best Acc: 85.7 | Threshold: 0.61 | AUC: 0.9143
+
+Mode: Fusion(DIR):      Best Acc: 90.7 | Threshold: 0.68 | AUC: 0.9541
+View: Fusion(DIR)(post-processed):       Best Acc: 90.8 | Threshold: 0.68 | AUC: 0.9556
+
+Total testing time: 4018.727103471756
+
+
+# Eperiment 14:
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.5, eps 0.0), 2 projection heads correct output, correct data shuffle
+
+## Train:
+### Command:
+
+```
+python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+```
+
+## Test:
+```bash
+python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment14
+```
+
 
 - leaky relu
 - csp network

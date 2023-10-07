@@ -27,7 +27,7 @@ class CENCE(torch.nn.Module):
     def forward(self, pred_class_outputs1, pred_class_outputs2, n_train_batch_size, gt_classes):
 
         ### CE loss
-        num_classes = pred_class_outputs2.size(1)
+        ce_num_classes = pred_class_outputs2.size(1)
         # print("gt_classes: ", gt_classes)
         if self.eps >= 0:
             smooth_param = self.eps
@@ -44,7 +44,7 @@ class CENCE(torch.nn.Module):
         # log_probs = F.log_softmax(pred_class_outputs2, dim=1)
         with torch.no_grad():
             targets = torch.ones_like(log_probs)
-            targets *= smooth_param / (num_classes - 1)
+            targets *= smooth_param / (ce_num_classes - 1)
             targets.scatter_(1, gt_classes.to("cuda:0").data.unsqueeze(1), (1 - smooth_param))
         # print("targets: ", targets)
         # print("targets shape: ", targets.size())
@@ -63,10 +63,15 @@ class CENCE(torch.nn.Module):
         #       "loss: ", loss, "non_zero_cnt: ", non_zero_cnt)
 
         ### NCE loss
-        # ones_indices = gt_classes > 0
-        # zeros_indices = gt_classes == 0
-        n_vec = pred_class_outputs1[0:n_train_batch_size]
-        a_vec = pred_class_outputs1[n_train_batch_size:]
+        ones_indices = gt_classes > 0
+        zeros_indices = gt_classes == 0
+        n_vec = pred_class_outputs1[ones_indices]
+        a_vec = pred_class_outputs1[zeros_indices]
+        # n_labels = gt_classes[ones_indices]
+        # a_labels = gt_classes[zeros_indices]
+        # print("gt_classes: ", gt_classes)
+        # print("n_labels: ", n_labels)
+        # print("a_labels: ", a_labels)
         nce_outs, nce_probs = self.nce_a(n_vec, a_vec)
         nce_loss = self.nce(nce_outs)
 
