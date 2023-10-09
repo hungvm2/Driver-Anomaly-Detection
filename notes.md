@@ -803,7 +803,7 @@ Total testing time: 4018.727103471756
 
 
 # Eperiment 14:
-SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.5, eps 0.0), 2 projection heads correct output, correct data shuffle
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.0), no ce label smoothing, 2 projection heads correct output, correct data shuffle
 
 ## Train:
 ### Command:
@@ -820,6 +820,34 @@ python main.py --root_path /home/username/DAD/ --mode train --view front_depth -
 python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment14
 ```
 
+Mode: Top(D):      Best Acc: 85.31 | Threshold: 0.74 | AUC: 0.8998
+View: Top(D)(post-processed):       Best Acc: 85.41 | Threshold: 0.75 | AUC: 0.9009
+
+Mode: Top(IR):      Best Acc: 81.98 | Threshold: 0.71 | AUC: 0.8636
+View: Top(IR)(post-processed):       Best Acc: 82.07 | Threshold: 0.71 | AUC: 0.8657
+
+Mode: Top(DIR):      Best Acc: 85.93 | Threshold: 0.7 | AUC: 0.9008
+View: Top(DIR)(post-processed):       Best Acc: 86.0 | Threshold: 0.7 | AUC: 0.9021
+
+Mode: Front(D):      Best Acc: 86.23 | Threshold: 0.47 | AUC: 0.8896
+View: Front(D)(post-processed):       Best Acc: 86.29 | Threshold: 0.47 | AUC: 0.8916
+
+Mode: Front(IR):      Best Acc: 82.88 | Threshold: 0.39 | AUC: 0.8697
+View: Front(IR)(post-processed):       Best Acc: 82.99 | Threshold: 0.39 | AUC: 0.8713
+
+Mode: Front(DIR):      Best Acc: 86.51 | Threshold: 0.45 | AUC: 0.9134
+View: Front(DIR)(post-processed):       Best Acc: 86.59 | Threshold: 0.45 | AUC: 0.915
+
+Mode: Fusion(D):      Best Acc: 89.14 | Threshold: 0.65 | AUC: 0.9403
+View: Fusion(D)(post-processed):       Best Acc: 89.21 | Threshold: 0.66 | AUC: 0.9417
+
+Mode: Fusion(IR):      Best Acc: 86.32 | Threshold: 0.63 | AUC: 0.9211
+View: Fusion(IR)(post-processed):       Best Acc: 86.46 | Threshold: 0.63 | AUC: 0.9228
+
+Mode: Fusion(DIR):      Best Acc: 89.77 | Threshold: 0.65 | AUC: 0.9519
+View: Fusion(DIR)(post-processed):       Best Acc: 89.87 | Threshold: 0.65 | AUC: 0.9533
+
+Total testing time: 4004.8939015865326
 
 - leaky relu
 - csp network
