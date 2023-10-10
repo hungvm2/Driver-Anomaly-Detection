@@ -853,3 +853,38 @@ Total testing time: 4004.8939015865326
 - csp network
 - new project head for ce
 
+# Eperiment 15:
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.0), no ce label smoothing, 2 projection heads correct output, correct data shuffle, ce head only has 1 hidden layer 64 nodes.
+
+## Test:
+```bash
+python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment15
+```
+Mode: Top(D):      Best Acc: 84.74 | Threshold: 0.68 | AUC: 0.8875
+View: Top(D)(post-processed):       Best Acc: 84.78 | Threshold: 0.68 | AUC: 0.8888 
+
+Mode: Top(IR):      Best Acc: 81.27 | Threshold: 0.65 | AUC: 0.8698
+View: Top(IR)(post-processed):       Best Acc: 81.37 | Threshold: 0.67 | AUC: 0.8714 
+
+Mode: Top(DIR):      Best Acc: 84.65 | Threshold: 0.65 | AUC: 0.8989
+View: Top(DIR)(post-processed):       Best Acc: 84.72 | Threshold: 0.65 | AUC: 0.9001 
+
+Mode: Front(D):      Best Acc: 84.83 | Threshold: 0.64 | AUC: 0.8672
+View: Front(D)(post-processed):       Best Acc: 84.95 | Threshold: 0.66 | AUC: 0.8698 
+
+Mode: Front(IR):      Best Acc: 79.87 | Threshold: 0.31 | AUC: 0.8317
+View: Front(IR)(post-processed):       Best Acc: 79.95 | Threshold: 0.33 | AUC: 0.8335 
+
+Mode: Front(DIR):      Best Acc: 85.1 | Threshold: 0.55 | AUC: 0.8827
+View: Front(DIR)(post-processed):       Best Acc: 85.23 | Threshold: 0.54 | AUC: 0.8847 
+
+Mode: Fusion(D):      Best Acc: 90.67 | Threshold: 0.73 | AUC: 0.9462
+View: Fusion(D)(post-processed):       Best Acc: 90.78 | Threshold: 0.73 | AUC: 0.948 
+
+Mode: Fusion(IR):      Best Acc: 84.31 | Threshold: 0.57 | AUC: 0.905
+View: Fusion(IR)(post-processed):       Best Acc: 84.45 | Threshold: 0.57 | AUC: 0.9067 
+
+Mode: Fusion(DIR):      Best Acc: 89.35 | Threshold: 0.68 | AUC: 0.9454
+View: Fusion(DIR)(post-processed):       Best Acc: 89.48 | Threshold: 0.68 | AUC: 0.947 
+
+Total testing time: 4020.322322368622

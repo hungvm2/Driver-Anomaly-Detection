@@ -4,7 +4,7 @@ COMMAND = "python main.py --root_path /home/username/DAD/ --mode train --view %s
 
 if __name__ == "__main__":
     datasets = ["front_IR", "front_depth", "top_depth", "top_IR"]
-    name = "experiment14"
+    name = "experiment15"
     for dataset in datasets:
         print(f"==== START DATASET: {dataset} - NAME: {name} ====")
         os.system(COMMAND % (dataset, name))
