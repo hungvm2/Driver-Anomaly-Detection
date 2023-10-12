@@ -31,5 +31,5 @@ n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden l
 Best Acc: 90.24 | Threshold: 0.77 | AUC: 0.9522
 
 # Eperiment 17: (ongoing)
-n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden layer 256 & 64 nodes, CENCE loss (beta0.5, eps 0.1 - CE label smoothing).
+n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden layer 256 & 64 nodes, CENCE loss (beta0.8, eps 0.2 - CE label smoothing).
 

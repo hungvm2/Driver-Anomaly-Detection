@@ -932,7 +932,7 @@ View: Fusion(DIR)(post-processed):       Best Acc: 90.35 | Threshold: 0.77 | AUC
 Total testing time: 4017.3832199573517
 
 # Eperiment 17:
-SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.5, eps 0.1), ce label smoothing, 2 projection heads correct output, correct data shuffle.
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.2), ce label smoothing, 2 projection heads correct output, correct data shuffle.
 
 ## Train:
 ### Command:
