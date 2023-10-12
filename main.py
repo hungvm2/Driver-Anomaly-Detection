@@ -387,7 +387,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.0)
+                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.1)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")
