@@ -940,8 +940,46 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment17 --loss cence
 ```
 
+Mode: Top(D):      Best Acc: 82.8 | Threshold: 0.88 | AUC: 0.8827
+View: Top(D)(post-processed):       Best Acc: 82.86 | Threshold: 0.88 | AUC: 0.8841
+
+Mode: Top(IR):      Best Acc: 82.56 | Threshold: 0.78 | AUC: 0.8787
+View: Top(IR)(post-processed):       Best Acc: 82.64 | Threshold: 0.78 | AUC: 0.8807
+
+Mode: Top(DIR):      Best Acc: 84.36 | Threshold: 0.84 | AUC: 0.8982
+View: Top(DIR)(post-processed):       Best Acc: 84.44 | Threshold: 0.83 | AUC: 0.8995
+
+Mode: Front(D):      Best Acc: 85.32 | Threshold: 0.66 | AUC: 0.8935
+View: Front(D)(post-processed):       Best Acc: 85.43 | Threshold: 0.67 | AUC: 0.8953
+
+Mode: Front(IR):      Best Acc: 81.13 | Threshold: 0.59 | AUC: 0.849
+View: Front(IR)(post-processed):       Best Acc: 81.21 | Threshold: 0.59 | AUC: 0.8515
+
+Mode: Front(DIR):      Best Acc: 86.45 | Threshold: 0.69 | AUC: 0.9084
+View: Front(DIR)(post-processed):       Best Acc: 86.55 | Threshold: 0.69 | AUC: 0.9103
+
+Mode: Fusion(D):      Best Acc: 87.55 | Threshold: 0.76 | AUC: 0.9349
+View: Fusion(D)(post-processed):       Best Acc: 87.66 | Threshold: 0.77 | AUC: 0.9363
+
+Mode: Fusion(IR):      Best Acc: 85.65 | Threshold: 0.73 | AUC: 0.9176
+View: Fusion(IR)(post-processed):       Best Acc: 85.77 | Threshold: 0.73 | AUC: 0.9196
+
+Mode: Fusion(DIR):      Best Acc: 88.88 | Threshold: 0.78 | AUC: 0.9469
+View: Fusion(DIR)(post-processed):       Best Acc: 88.99 | Threshold: 0.78 | AUC: 0.9484
+
+Total testing time: 4041.0384356975555
+
+# Eperiment 18:
+SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.5, eps 0.1), ce label smoothing, 2 projection heads correct output, correct data shuffle.
+
+## Train:
+### Command:
+```bash
+python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment18 --loss cence
+```
+
 - leaky relu
 - csp network
-- new project head for ce
+
 
 

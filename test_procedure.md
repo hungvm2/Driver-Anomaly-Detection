@@ -8,10 +8,7 @@ n_threads 4, Adam optimizer
 # Experiment 21: (not yet)
 n_threads 4, n/a_train_batch_size 32
 
-# Experiment 19: (not yet)
-n_threads 4, lr 0.001
-
-# Eperiment 18: (not yet)
+# Eperiment : (not yet)
 n_threads 4, n/a_train_batch_size 32, 1 projection heads, CENCE loss (beta0.8, eps 0.0 - no CE label smoothing).
 
 # Eperiment 15:
@@ -26,10 +23,13 @@ Best Acc: 89.77 | AUC: 0.9519
 n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden layer 256 & 64 nodes, CENCE loss (beta0.8, eps 0.1 - CE label smoothing).
 Best Acc: 90.7 | AUC: 0.9541
 
-# Eperiment 16:
-n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden layer 256 & 64 nodes, CENCE loss (beta0.8, eps 0.1 - ce label smoothing), lr 0.001.
-Best Acc: 90.24 | Threshold: 0.77 | AUC: 0.9522
-
-# Eperiment 17: (ongoing)
+# Eperiment 17:
 n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden layer 256 & 64 nodes, CENCE loss (beta0.8, eps 0.2 - CE label smoothing).
+Best Acc: 88.88 | Threshold: 0.78 | AUC: 0.9469
+
+# Eperiment 18 (not yet): 
+n_threads 4, n/a_train_batch_size 32, 2 projection heads, ce head has 2 hidden layer 256 & 64 nodes, CENCE loss (beta0.5, eps 0.1 - CE label smoothing).
+
+
+
 
