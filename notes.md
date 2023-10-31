@@ -1,5 +1,5 @@
 ```bash
-cd ~/MoD_Thesis/Driver-Anomaly-Detection
+cd /mnt/dad/hungvm/Driver-Anomaly-Detection
 conda activate dad
 ```
 
@@ -10,7 +10,7 @@ Default, n_threads 0
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 0 --name nthreads0
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 0 --name nthreads0
 ```
 
 ### Results:
@@ -68,10 +68,10 @@ Default, n_threads 4
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4
 ```
 
 ### Results:
@@ -136,7 +136,7 @@ Total training time: 13632.874663591385
 ## Test:
 ### Command: 
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name nthreads4
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name nthreads4
 ```
 
 ### Results:
@@ -176,7 +176,7 @@ Adam optimizer, n_threads 4, nce loss, n/a batch size 10/150
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4 --opt adam
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4 --opt adam
 ```
 
 ### Results:
@@ -217,7 +217,7 @@ Total training time:  12304.389201164246
 Cross entropy eps 0.1
 ### command:
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_ce --opt adam --loss ce --feature_dim 2
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_ce --opt adam --loss ce --feature_dim 2
 ```
 
 ### Results:
@@ -239,7 +239,7 @@ Total training time:  12777.573498487473
 Cross entropy eps 0.1, n/a_train_batch_size 32
 ### command:
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_ce_na32 --opt adam --loss ce --feature_dim 2
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_ce_na32 --opt adam --loss ce --feature_dim 2
 ```
 
 ### Results:
@@ -267,10 +267,10 @@ Adam optimizer, n_threads 4, n/a_train_batch_size 32
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name adam_nthreads4_na32 --opt adam
 ```
 
 ### Results:
@@ -340,10 +340,10 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name nthreads4_na32
 ```
 **top_depth**
 Training Process is running: 250/250  | Batch: 263 | Loss: 0.6787092089653015 (0.6797690296714957) | Probs: 0.9999678730964661 (0.9997282111735055)
@@ -383,10 +383,10 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_0.8_nthreads4_na32 --loss cence
 ```
 
 **front_IR**
@@ -441,7 +441,7 @@ Total training time: 24135.391688346863
 ## Test:
 ### Command: 
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_0.8_nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_0.8_nthreads4_na32
 ```
 
 Mode: Top(D):      Best Acc: 82.85 | Threshold: 0.77 | AUC: 0.8809                                                                                                                                                    
@@ -480,10 +480,10 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence
 ```
 
 *front depth*
@@ -537,7 +537,7 @@ Total training time: 24217.14488005638
 
 ## Test
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
 ```
 Mode: Top(D):      Best Acc: 85.11 | Threshold: 0.91 | AUC: 0.8881
 View: Top(D)(post-processed):       Best Acc: 85.16 | Threshold: 0.91 | AUC: 0.89
@@ -575,15 +575,15 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32 --loss cence --head two_heads_cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0_nthreads4_na32
 ```
 Mode: Top(D):      Best Acc: 84.02 | Threshold: 0.97 | AUC: 0.8695
 View: Top(D)(post-processed):       Best Acc: 84.11 | Threshold: 0.97 | AUC: 0.8714
@@ -621,15 +621,15 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32 --loss cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name cence_beta0.8_eps0.1_nthreads4_na32
 ```
 Mode: Top(D):      Best Acc: 80.92 | Threshold: 0.97 | AUC: 0.8398
 View: Top(D)(post-processed):       Best Acc: 80.98 | Threshold: 0.97 | AUC: 0.8414
@@ -668,15 +668,15 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment11 --loss cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment11
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment11
 ```
 
 Mode: Top(D):      Best Acc: 85.33 | Threshold: 0.79 | AUC: 0.903
@@ -715,15 +715,15 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment12 --loss cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment12
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment12
 ```
 Mode: Top(D):      Best Acc: 86.87 | Threshold: 0.78 | AUC: 0.8999
 View: Top(D)(post-processed):       Best Acc: 86.95 | Threshold: 0.8 | AUC: 0.9013
@@ -761,15 +761,15 @@ SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment13 --loss cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment13
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment13
 ```
 
 Mode: Top(D):      Best Acc: 84.56 | Threshold: 0.79 | AUC: 0.8859
@@ -802,22 +802,22 @@ View: Fusion(DIR)(post-processed):       Best Acc: 90.8 | Threshold: 0.68 | AUC:
 Total testing time: 4018.727103471756
 
 
-# Eperiment 14:
+# Experiment 14:
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.0), no ce label smoothing, 2 projection heads correct output, correct data shuffle
 
 ## Train:
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment14 --loss cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment14
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment14
 ```
 
 Mode: Top(D):      Best Acc: 85.31 | Threshold: 0.74 | AUC: 0.8998
@@ -849,12 +849,12 @@ View: Fusion(DIR)(post-processed):       Best Acc: 89.87 | Threshold: 0.65 | AUC
 
 Total testing time: 4004.8939015865326
 
-# Eperiment 15:
+# Experiment 15:
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.0), no ce label smoothing, 2 projection heads correct output, correct data shuffle, ce head only has 1 hidden layer 64 nodes.
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment15
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment15
 ```
 Mode: Top(D):      Best Acc: 84.74 | Threshold: 0.68 | AUC: 0.8875
 View: Top(D)(post-processed):       Best Acc: 84.78 | Threshold: 0.68 | AUC: 0.8888 
@@ -885,22 +885,22 @@ View: Fusion(DIR)(post-processed):       Best Acc: 89.48 | Threshold: 0.68 | AUC
 
 Total testing time: 4020.322322368622
 
-# Eperiment 16:
+# Experiment 16:
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.1), ce label smoothing, 2 projection heads correct output, correct data shuffle, lr 0.001. (not good since source code already has lr schedule, * 0.1 every 100 epoches)
 
 ## Train:
 ### Command:
 
 ```
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
-python main.py --root_path /home/username/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70  --learning_rate 0.001 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment16 --loss cence
 ```
 
 ## Test:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment16
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name experiment16
 ```
 Mode: Top(D):      Best Acc: 83.81 | Threshold: 0.78 | AUC: 0.8789
 View: Top(D)(post-processed):       Best Acc: 83.89 | Threshold: 0.78 | AUC: 0.8802 
@@ -931,13 +931,13 @@ View: Fusion(DIR)(post-processed):       Best Acc: 90.35 | Threshold: 0.77 | AUC
 
 Total testing time: 4017.3832199573517
 
-# Eperiment 17:
+# Experiment 17:
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.2), ce label smoothing, 2 projection heads correct output, correct data shuffle.
 
 ## Train:
 ### Command:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment17 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment17 --loss cence
 ```
 
 Mode: Top(D):      Best Acc: 82.8 | Threshold: 0.88 | AUC: 0.8827
@@ -969,13 +969,13 @@ View: Fusion(DIR)(post-processed):       Best Acc: 88.99 | Threshold: 0.78 | AUC
 
 Total testing time: 4041.0384356975555
 
-# Eperiment 18:
+# Experiment 18:
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.5, eps 0.1), ce label smoothing, 2 projection heads correct output, correct data shuffle.
 
 ## Train:
 ### Command:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment18 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment18 --loss cence
 ```
 
 Mode: Top(D):      Best Acc: 84.38 | Threshold: 0.67 | AUC: 0.8876
@@ -1007,13 +1007,42 @@ View: Fusion(DIR)(post-processed):       Best Acc: 89.92 | Threshold: 0.71 | AUC
 
 Total testing time: 4022.2939965724945
 
-# Eperiment 19:
+# Experiment 19:
 SGD optimizer, n_threads 4, n/a_train_batch_size 32, CENCE loss (beta0.8, eps 0.1), ce label smoothing, 2 projection heads correct output, correct data shuffle. leaky relu activation.
 
 ## Train:
 ### Command:
 ```bash
-python main.py --root_path /home/username/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment19 --loss cence
+python main.py --root_path /mnt/dad/hungvm/DAD --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 32 --a_train_batch_size 32 --val_batch_size 70 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment19 --loss cence
 ```
+
+Mode: Top(D):      Best Acc: 83.52 | Threshold: 0.74 | AUC: 0.8894
+View: Top(D)(post-processed):       Best Acc: 83.58 | Threshold: 0.73 | AUC: 0.8906 
+
+Mode: Top(IR):      Best Acc: 82.21 | Threshold: 0.72 | AUC: 0.8631
+View: Top(IR)(post-processed):       Best Acc: 82.26 | Threshold: 0.74 | AUC: 0.8651 
+
+Mode: Top(DIR):      Best Acc: 85.48 | Threshold: 0.74 | AUC: 0.8951
+View: Top(DIR)(post-processed):       Best Acc: 85.54 | Threshold: 0.71 | AUC: 0.8965 
+
+Mode: Front(D):      Best Acc: 84.19 | Threshold: 0.46 | AUC: 0.8744
+View: Front(D)(post-processed):       Best Acc: 84.24 | Threshold: 0.47 | AUC: 0.8761 
+
+Mode: Front(IR):      Best Acc: 80.03 | Threshold: 0.41 | AUC: 0.8084
+View: Front(IR)(post-processed):       Best Acc: 80.1 | Threshold: 0.41 | AUC: 0.8104 
+
+Mode: Front(DIR):      Best Acc: 83.96 | Threshold: 0.53 | AUC: 0.8838
+View: Front(DIR)(post-processed):       Best Acc: 84.09 | Threshold: 0.53 | AUC: 0.8858 
+
+Mode: Fusion(D):      Best Acc: 88.8 | Threshold: 0.68 | AUC: 0.9328
+View: Fusion(D)(post-processed):       Best Acc: 88.91 | Threshold: 0.68 | AUC: 0.9343 
+
+Mode: Fusion(IR):      Best Acc: 83.75 | Threshold: 0.65 | AUC: 0.8916
+View: Fusion(IR)(post-processed):       Best Acc: 83.91 | Threshold: 0.65 | AUC: 0.8937 
+
+Mode: Fusion(DIR):      Best Acc: 89.8 | Threshold: 0.69 | AUC: 0.941
+View: Fusion(DIR)(post-processed):       Best Acc: 89.92 | Threshold: 0.69 | AUC: 0.9427 
+
+Total testing time: 3862.8063626289368
 
 - csp network

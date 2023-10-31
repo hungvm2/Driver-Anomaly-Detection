@@ -1,6 +1,6 @@
 # Experiment 2:
 Default (SGD optimizer, NCE loss, n/a batch 10/150, lr 0.01), n_threads 4
-Best Acc: 90.56 | AUC: 0.9544
+Best Acc: 89.78 | AUC: 0.9516
 
 # Experiment 20: (not yet)
 n_threads 4, Adam optimizer

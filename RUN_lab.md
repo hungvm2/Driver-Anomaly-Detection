@@ -3,6 +3,7 @@
 ```bash
 conda create -n dad python=3.9
 conda activate dad
+conda install -c "nvidia/label/cuda-11.6.0" cuda-toolkit
 pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
 pip install numpy scipy opencv-python
 pip install matplotlib scikit-learn
@@ -19,9 +20,9 @@ find . -name '*._*' -delete`
 - Training from scratch: **=> DONE**
 
 ```
-cd ~/MoD_Thesis/Driver-Anomaly-Detection
+cd /mnt/dad/hungvm/Driver-Anomaly-Detection
 python main.py \
-  --root_path /home/username/DAD/ \
+  --root_path /mnt/dad/hungvm/DAD \
   --mode train \
   --view top_depth \
   --model_type resnet \
@@ -50,7 +51,7 @@ python main.py \
 
 ```bash
 python main.py \
-  --root_path /home/username/DAD/ \
+  --root_path /mnt/dad/hungvm/DAD \
   --mode train \
   --view top_depth \
   --model_type resnet \
@@ -86,7 +87,7 @@ pre_model_path = './premodels/kinetics_resnet_18_RGB_16_best.pth'
 
 ```
 python main.py \
-  --root_path /home/username/DAD/ \
+  --root_path /mnt/dad/hungvm/DAD \
   --mode train \
   --view top_depth \
   --model_type resnet \
@@ -115,6 +116,6 @@ Config `resume_path_front_d`, `resume_path_front_ir`, `resume_path_top_d`, `resu
 paths.
 
 ```bash
-cd ~/MoD_Thesis/Driver-Anomaly-Detection
-python main.py --root_path /home/username/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100
+cd /mnt/dad/hungvm/Driver-Anomaly-Detection
+python main.py --root_path /mnt/dad/hungvm/DAD --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100
 ```
