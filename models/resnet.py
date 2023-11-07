@@ -135,8 +135,8 @@ class ResNet(nn.Module):
                 bias=False)
         self.tracking = tracking
         self.bn1 = nn.BatchNorm3d(64, track_running_stats=self.tracking)
-        # self.relu = nn.ReLU(inplace=True)
-        self.relu = nn.LeakyReLU(inplace=True)
+        self.relu = nn.ReLU(inplace=True)
+        # self.relu = nn.LeakyReLU(inplace=True)
         self.maxpool = nn.MaxPool3d(kernel_size=(3, 3, 3), stride=2, padding=1)
         self.layer1 = self._make_layer(block, 64, layers[0], shortcut_type)
         self.layer2 = self._make_layer(
@@ -374,3 +374,5 @@ def resnet101(**kwargs):
     """
     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
     return model
+
+# test

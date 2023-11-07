@@ -23,18 +23,23 @@ from utils import adjust_learning_rate, AverageMeter, Logger, get_fusion_label, 
     get_score, CommonLogger
 import random
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description='DAD training on Videos')
-    parser.add_argument('--root_path', default='', type=str, help='root path of the dataset')
-    parser.add_argument('--mode', default='train', type=str, help='train | test(validation)')
+    parser.add_argument('--root_path', default='', type=str,
+                        help='root path of the dataset')
+    parser.add_argument('--mode', default='train', type=str,
+                        help='train | test(validation)')
     parser.add_argument('--view', default='front_IR', type=str,
                         help='front_depth | front_IR | top_depth | top_IR')
     parser.add_argument('--feature_dim', default=128, type=int,
                         help='To which dimension will video clip be embedded')
     parser.add_argument('--sample_duration', default=16, type=int,
                         help='Temporal duration of each video clip')
-    parser.add_argument('--sample_size', default=112, type=int, help='Height and width of inputs')
-    parser.add_argument('--model_type', default='resnet', type=str, help='so far only resnet')
+    parser.add_argument('--sample_size', default=112,
+                        type=int, help='Height and width of inputs')
+    parser.add_argument('--model_type', default='resnet',
+                        type=str, help='so far only resnet')
     parser.add_argument('--model_depth', default=18, type=int,
                         help='Depth of resnet (18 | 50 | 101)')
     parser.add_argument('--shortcut_type', default='B', type=str,
@@ -52,10 +57,14 @@ def parse_args():
     parser.add_argument('--learning_rate', default=0.01, type=float,
                         help='Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
-    parser.add_argument('--dampening', default=0.0, type=float, help='dampening of SGD')
-    parser.add_argument('--weight_decay', default=1e-4, type=float, help='Weight Decay')
-    parser.add_argument('--epochs', default=250, type=int, help='Number of total epochs to run')
-    parser.add_argument('--n_threads', default=8, type=int, help='num of workers loading dataset')
+    parser.add_argument('--dampening', default=0.0,
+                        type=float, help='dampening of SGD')
+    parser.add_argument('--weight_decay', default=1e-4,
+                        type=float, help='Weight Decay')
+    parser.add_argument('--epochs', default=250, type=int,
+                        help='Number of total epochs to run')
+    parser.add_argument('--n_threads', default=8, type=int,
+                        help='num of workers loading dataset')
     parser.add_argument('--tracking', default=True, type=ast.literal_eval,
                         help='If true, BN uses tracking running stats')
     parser.add_argument('--norm_value', default=255, type=int,
@@ -64,9 +73,12 @@ def parse_args():
                         help='batch size for calculating normal driving average vector.')
     parser.add_argument('--tau', default=0.1, type=float,
                         help='a temperature parameter that controls the concentration level of the distribution of embedded vectors')
-    parser.add_argument('--manual_seed', default=1, type=int, help='Manually set random seed')
-    parser.add_argument('--memory_bank_size', default=200, type=int, help='Memory bank size')
-    parser.add_argument('--nesterov', action='store_true', help='Nesterov momentum')
+    parser.add_argument('--manual_seed', default=1, type=int,
+                        help='Manually set random seed')
+    parser.add_argument('--memory_bank_size', default=200,
+                        type=int, help='Memory bank size')
+    parser.add_argument('--nesterov', action='store_true',
+                        help='Nesterov momentum')
     parser.set_defaults(nesterov=False)
     parser.add_argument('--lr_decay', default=100, type=int,
                         help='Number of epochs after which learning rate will be reduced to 1/10 of original value')
@@ -82,15 +94,15 @@ def parse_args():
                         help='Number of scales for multiscale cropping')
     parser.add_argument('--train_crop', default='corner', type=str,
                         help='Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center.  (random | corner | center)')
-    parser.add_argument('--checkpoint_folder', default='./checkpoints', type=str,
+    parser.add_argument('--checkpoint_folder', default='/content/drive/MyDrive/Thesis/Checkpoints', type=str,
                         help='folder to store checkpoints')
-    parser.add_argument('--log_folder', default='./logs/', type=str,
+    parser.add_argument('--log_folder', default='/content/drive/MyDrive/Thesis/Logs', type=str,
                         help='folder to store log files')
     parser.add_argument('--log_resume', default=False, type=ast.literal_eval,
                         help='True|False: a flag controlling whether to create a new log file')
-    parser.add_argument('--normvec_folder', default='./normvec', type=str,
+    parser.add_argument('--normvec_folder', default='/content/drive/MyDrive/Thesis/NormVec', type=str,
                         help='folder to store norm vectors')
-    parser.add_argument('--score_folder', default='./score', type=str,
+    parser.add_argument('--score_folder', default='/content/drive/MyDrive/Thesis/Score', type=str,
                         help='folder to store scores')
     parser.add_argument('--Z_momentum', default=0.9,
                         help='momentum for normalization constant Z updates')
@@ -98,7 +110,8 @@ def parse_args():
                         help='hyper-parameters when using shufflenet')
     parser.add_argument('--width_mult', default=2.0, type=float,
                         help='hyper-parameters when using shufflenet|mobilenet')
-    parser.add_argument('--val_step', default=10, type=int, help='validate per val_step epochs')
+    parser.add_argument('--val_step', default=10, type=int,
+                        help='validate per val_step epochs')
     parser.add_argument('--downsample', default=2, type=int,
                         help='Downsampling. Select 1 frame out of N')
     parser.add_argument('--save_step', default=10, type=int,
@@ -109,8 +122,10 @@ def parse_args():
                         help='the ratio of normal driving samples will be used during training')
     parser.add_argument('--window_size', default=6, type=int,
                         help='the window size for post-processing')
-    parser.add_argument('--name', required=True, type=str, help='name of this training session')
-    parser.add_argument('--opt', default="sgd", type=str, help='name of optimizer: sgd/adam')
+    parser.add_argument('--name', required=True, type=str,
+                        help='name of this training session')
+    parser.add_argument('--opt', default="sgd", type=str,
+                        help='name of optimizer: sgd/adam')
     parser.add_argument('--test_pret', default=False, type=bool,
                         help='Test using pretrained model or not.')
     parser.add_argument('--loss', default="nce", type=str,
@@ -136,12 +151,13 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         # print("normal_data: ", normal_data.size(0), "anormal_data: ", anormal_data.size(0))
 
         data = torch.cat((normal_data, anormal_data), dim=0)
-        labels = torch.tensor([1] * normal_data.size(0) + [0] * anormal_data.size(0))
+        labels = torch.tensor([1] * normal_data.size(0) +
+                              [0] * anormal_data.size(0))
 
-        if args.loss in {"cence", "ce"}:
-            indices = torch.randperm(len(labels))
-            labels = labels[indices]
-            data = data[indices]
+        # if args.loss in {"cence", "ce"}:
+        #     indices = torch.randperm(len(labels))
+        #     labels = labels[indices]
+        #     data = data[indices]
 
         if args.use_cuda:
             data = data.cuda()
@@ -158,7 +174,8 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
             # loss = criterion(vec, np.array([1] * n_vec.shape[0] + [0] * a_vec.shape[0]))
         elif args.loss == "cence":
             vec1, vec2 = model_head(unnormed_vec)
-            loss, outs, probs = criterion(vec1, vec2, args.n_train_batch_size, labels)
+            loss, outs, probs = criterion(
+                vec1, vec2, args.n_train_batch_size, labels)
         elif args.loss == "fl":
             vec = model_head(unnormed_vec)
             loss, outs, probs = (vec)
@@ -230,20 +247,25 @@ if __name__ == '__main__':
         args.scales.append(args.scales[-1] * args.scale_step)
     assert args.train_crop in ['random', 'corner', 'center']
     if args.train_crop == 'random':
-        crop_method = spatial_transforms.MultiScaleRandomCrop(args.scales, args.sample_size)
+        crop_method = spatial_transforms.MultiScaleRandomCrop(
+            args.scales, args.sample_size)
     elif args.train_crop == 'corner':
-        crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size)
+        crop_method = spatial_transforms.MultiScaleCornerCrop(
+            args.scales, args.sample_size)
     elif args.train_crop == 'center':
         crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size,
                                                               crop_positions=['c'])
     before_crop_duration = int(args.sample_duration * args.downsample)
-    common_logger_file_path = os.path.join(args.log_folder, f'common_{args.name}_{args.view}.log')
+    common_logger_file_path = os.path.join(
+        args.log_folder, f'common_{args.name}_{args.view}.log')
     c_logger = CommonLogger(common_logger_file_path)
-    test_logger_file_path = os.path.join(args.log_folder, f'test_{args.name}.log')
+    test_logger_file_path = os.path.join(
+        args.log_folder, f'test_{args.name}.log')
     test_logger = CommonLogger(test_logger_file_path)
 
     if args.mode == 'train':
-        temporal_transform = TemporalSequentialCrop(before_crop_duration, args.downsample)
+        temporal_transform = TemporalSequentialCrop(
+            before_crop_duration, args.downsample)
 
         if args.view == 'front_depth' or args.view == 'front_IR':
 
@@ -280,7 +302,8 @@ if __name__ == '__main__':
                                     temporal_transform=temporal_transform
                                     )
 
-        training_anormal_size = int(len(training_anormal_data) * args.a_split_ratio)
+        training_anormal_size = int(
+            len(training_anormal_data) * args.a_split_ratio)
         training_anormal_data = torch.utils.data.Subset(training_anormal_data,
                                                         np.arange(training_anormal_size))
 
@@ -303,7 +326,8 @@ if __name__ == '__main__':
                                    temporal_transform=temporal_transform
                                    )
 
-        training_normal_size = int(len(training_normal_data) * args.n_split_ratio)
+        training_normal_size = int(
+            len(training_normal_data) * args.n_split_ratio)
         training_normal_data = torch.utils.data.Subset(training_normal_data,
                                                        np.arange(training_normal_size))
 
@@ -349,9 +373,11 @@ if __name__ == '__main__':
 
         if args.model_type == 'resnet':
             if args.head == "two_heads_cence":
-                model_head = resnet.CENCEProjectionHead(args.feature_dim, args.model_depth)
+                model_head = resnet.CENCEProjectionHead(
+                    args.feature_dim, args.model_depth)
             else:
-                model_head = resnet.ProjectionHead(args.feature_dim, args.model_depth, args.loss)
+                model_head = resnet.ProjectionHead(
+                    args.feature_dim, args.model_depth, args.loss)
         elif args.model_type == 'shufflenet':
             model_head = shufflenet.ProjectionHead(args.feature_dim)
         elif args.model_type == 'shufflenetv2':
@@ -402,7 +428,8 @@ if __name__ == '__main__':
             # ===============load previously trained model ===============
             args.pre_train_model = False
             model = generate_model(args)
-            resume_path = os.path.join(args.checkpoint_folder, args.resume_path)
+            resume_path = os.path.join(
+                args.checkpoint_folder, args.resume_path)
             resume_checkpoint = torch.load(resume_path)
             model.load_state_dict(resume_checkpoint['state_dict'])
             resume_head_checkpoint = torch.load(
@@ -453,11 +480,13 @@ if __name__ == '__main__':
                                       criterion, optimizer, epoch, args, batch_logger, epoch_logger, c_logger,
                                       memory_bank)
 
-            if epoch % args.val_step == 0:
-
+            # if epoch % args.val_step == 0:
+            if epoch > args.epochs - 3:
+                start_val_step_time = time.time()
                 c_logger.write(
                     "==========================================!!!Evaluating!!!==========================================")
-                normal_vec = torch.mean(torch.cat(memory_bank, dim=0), dim=0, keepdim=True)
+                normal_vec = torch.mean(
+                    torch.cat(memory_bank, dim=0), dim=0, keepdim=True)
                 normal_vec = l2_normalize(normal_vec)
 
                 model.eval()
@@ -501,8 +530,10 @@ if __name__ == '__main__':
                         'state_dict': model_head.state_dict()
                     }
                     torch.save(states_head, head_checkpoint_path)
+                print("---- Eval time: ", time.time() - start_val_step_time)
 
-            if epoch % args.save_step == 0:
+            # if epoch % args.save_step == 0:
+            if epoch == args.epochs:
                 c_logger.write(
                     "==========================================!!!Saving!!!==========================================")
                 checkpoint_path = os.path.join(args.checkpoint_folder,
@@ -532,7 +563,7 @@ if __name__ == '__main__':
     elif args.mode == 'test':
         if not os.path.exists(args.normvec_folder):
             os.makedirs(args.normvec_folder)
-        score_folder = './score/'
+        score_folder = args.score_folder
         if not os.path.exists(score_folder):
             os.makedirs(score_folder)
         args.pre_train_model = False
@@ -543,15 +574,23 @@ if __name__ == '__main__':
         model_top_ir = generate_model(args)
 
         if args.test_pret:
-            resume_path_front_d = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_front_depth.pth'
-            resume_path_front_ir = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_front_IR.pth'
-            resume_path_top_d = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_top_depth.pth'
-            resume_path_top_ir = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + args.model_type + '_top_IR.pth'
+            resume_path_front_d = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + \
+                args.model_type + '_front_depth.pth'
+            resume_path_front_ir = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + \
+                args.model_type + '_front_IR.pth'
+            resume_path_top_d = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + \
+                args.model_type + '_top_depth.pth'
+            resume_path_top_ir = './DAD_pretrained_files/DAD_pretrained_models/best_model_' + \
+                args.model_type + '_top_IR.pth'
         else:
-            resume_path_front_d = './checkpoints/best_model_' + args.model_type + '_front_depth_' + args.name + '.pth'
-            resume_path_front_ir = './checkpoints/best_model_' + args.model_type + '_front_IR_' + args.name + '.pth'
-            resume_path_top_d = './checkpoints/best_model_' + args.model_type + '_top_depth_' + args.name + '.pth'
-            resume_path_top_ir = './checkpoints/best_model_' + args.model_type + '_top_IR_' + args.name + '.pth'
+            resume_path_front_d = '/content/drive/MyDrive/Thesis/Checkpoints/best_model_' + \
+                args.model_type + '_front_depth_' + args.name + '.pth'
+            resume_path_front_ir = '/content/drive/MyDrive/Thesis/Checkpoints/best_model_' + \
+                args.model_type + '_front_IR_' + args.name + '.pth'
+            resume_path_top_d = '/content/drive/MyDrive/Thesis/Checkpoints/best_model_' + \
+                args.model_type + '_top_depth_' + args.name + '.pth'
+            resume_path_top_ir = '/content/drive/MyDrive/Thesis/Checkpoints/best_model_' + \
+                args.model_type + '_top_IR_' + args.name + '.pth'
 
         is_resume_path_front_d_existed = os.path.exists(resume_path_front_d)
         is_resume_path_front_ir_existed = os.path.exists(resume_path_front_ir)
@@ -563,7 +602,8 @@ if __name__ == '__main__':
         model_front_d.eval()
 
         resume_checkpoint_front_ir = torch.load(resume_path_front_ir)
-        model_front_ir.load_state_dict(resume_checkpoint_front_ir['state_dict'])
+        model_front_ir.load_state_dict(
+            resume_checkpoint_front_ir['state_dict'])
         model_front_ir.eval()
 
         resume_checkpoint_top_d = torch.load(resume_path_top_d)
@@ -662,7 +702,8 @@ if __name__ == '__main__':
                                            spatial_transform=val_spatial_transform,
                                            )
 
-        training_normal_size = int(len(training_normal_data_front_d) * args.n_split_ratio)
+        training_normal_size = int(
+            len(training_normal_data_front_d) * args.n_split_ratio)
         training_normal_data_front_d = torch.utils.data.Subset(training_normal_data_front_d,
                                                                np.arange(training_normal_size))
 
@@ -673,7 +714,8 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        test_logger.write(f'Front depth view is done (size: {len(training_normal_data_front_d)})')
+        test_logger.write(
+            f'Front depth view is done (size: {len(training_normal_data_front_d)})')
 
         training_normal_data_front_ir = DAD(root_path=args.root_path,
                                             subset='train',
@@ -683,7 +725,8 @@ if __name__ == '__main__':
                                             spatial_transform=val_spatial_transform,
                                             )
 
-        training_normal_size = int(len(training_normal_data_front_ir) * args.n_split_ratio)
+        training_normal_size = int(
+            len(training_normal_data_front_ir) * args.n_split_ratio)
         training_normal_data_front_ir = torch.utils.data.Subset(training_normal_data_front_ir,
                                                                 np.arange(training_normal_size))
 
@@ -694,7 +737,8 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        test_logger.write(f'Front IR view is done (size: {len(training_normal_data_front_ir)})')
+        test_logger.write(
+            f'Front IR view is done (size: {len(training_normal_data_front_ir)})')
 
         training_normal_data_top_d = DAD(root_path=args.root_path,
                                          subset='train',
@@ -704,7 +748,8 @@ if __name__ == '__main__':
                                          spatial_transform=val_spatial_transform,
                                          )
 
-        training_normal_size = int(len(training_normal_data_top_d) * args.n_split_ratio)
+        training_normal_size = int(
+            len(training_normal_data_top_d) * args.n_split_ratio)
         training_normal_data_top_d = torch.utils.data.Subset(training_normal_data_top_d,
                                                              np.arange(training_normal_size))
 
@@ -715,7 +760,8 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        test_logger.write(f'Top depth view is done (size: {len(training_normal_data_top_d)})')
+        test_logger.write(
+            f'Top depth view is done (size: {len(training_normal_data_top_d)})')
 
         training_normal_data_top_ir = DAD(root_path=args.root_path,
                                           subset='train',
@@ -725,7 +771,8 @@ if __name__ == '__main__':
                                           spatial_transform=val_spatial_transform,
                                           )
 
-        training_normal_size = int(len(training_normal_data_top_ir) * args.n_split_ratio)
+        training_normal_size = int(
+            len(training_normal_data_top_ir) * args.n_split_ratio)
         training_normal_data_top_ir = torch.utils.data.Subset(training_normal_data_top_ir,
                                                               np.arange(training_normal_size))
 
@@ -736,46 +783,68 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
-        test_logger.write(f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
+        test_logger.write(
+            f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
 
         start_testing = time.time()
         test_logger.write(
             "============================================START EVALUATING============================================")
-        normal_vec_front_d = get_normal_vector(model_front_d, train_normal_loader_for_test_front_d,
-                                               args.cal_vec_batch_size,
-                                               args.feature_dim,
-                                               args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_front_d.npy'),
-                normal_vec_front_d.cpu().numpy())
+        normal_vec_front_d_path = os.path.join(args.normvec_folder, 'normal_vec_front_d.npy')
+        normal_vec_front_ir_path = os.path.join(args.normvec_folder, 'normal_vec_front_ir.npy')
+        normal_vec_top_d_path = os.path.join(args.normvec_folder, 'normal_vec_top_d.npy')
+        normal_vec_top_ir_path = os.path.join(args.normvec_folder, 'normal_vec_top_ir.npy')
 
-        normal_vec_front_ir = get_normal_vector(model_front_ir,
-                                                train_normal_loader_for_test_front_ir,
-                                                args.cal_vec_batch_size,
-                                                args.feature_dim,
-                                                args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_front_ir.npy'),
-                normal_vec_front_ir.cpu().numpy())
+        if os.path.exists(normal_vec_front_d_path):
+            normal_vec_front_d = np.load(normal_vec_front_d_path)
+            normal_vec_front_ir = np.load(normal_vec_front_ir_path)
+            normal_vec_top_d = np.load(normal_vec_top_d_path)
+            normal_vec_top_ir = np.load(normal_vec_top_ir_path)
 
-        normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d,
-                                             args.cal_vec_batch_size,
-                                             args.feature_dim,
-                                             args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_top_d.npy'),
-                normal_vec_top_d.cpu().numpy())
+            normal_vec_front_d = torch.from_numpy(normal_vec_front_d)
+            normal_vec_front_ir = torch.from_numpy(normal_vec_front_ir)
+            normal_vec_top_d = torch.from_numpy(normal_vec_top_d)
+            normal_vec_top_ir = torch.from_numpy(normal_vec_top_ir)
 
-        normal_vec_top_ir = get_normal_vector(model_top_ir, train_normal_loader_for_test_top_ir,
-                                              args.cal_vec_batch_size,
-                                              args.feature_dim,
-                                              args.use_cuda)
-        np.save(os.path.join(args.normvec_folder, 'normal_vec_top_ir.npy'),
-                normal_vec_top_ir.cpu().numpy())
+            if args.use_cuda:
+                normal_vec_front_d = normal_vec_front_d.cuda()
+                normal_vec_front_ir = normal_vec_front_ir.cuda()
+                normal_vec_top_d = normal_vec_top_d.cuda()
+                normal_vec_top_ir = normal_vec_top_ir.cuda()
 
+        else:
+            normal_vec_front_d = get_normal_vector(model_front_d, train_normal_loader_for_test_front_d,
+                                                   args.cal_vec_batch_size,
+                                                   args.feature_dim,
+                                                   args.use_cuda)
+            np.save(normal_vec_front_d_path, normal_vec_front_d.cpu().numpy())
+
+            normal_vec_front_ir = get_normal_vector(model_front_ir,
+                                                    train_normal_loader_for_test_front_ir,
+                                                    args.cal_vec_batch_size,
+                                                    args.feature_dim,
+                                                    args.use_cuda)
+            np.save(normal_vec_front_ir_path, normal_vec_front_ir.cpu().numpy())
+
+            normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d,
+                                                 args.cal_vec_batch_size,
+                                                 args.feature_dim,
+                                                 args.use_cuda)
+            np.save(normal_vec_top_d_path, normal_vec_top_d.cpu().numpy())
+
+            normal_vec_top_ir = get_normal_vector(model_top_ir, train_normal_loader_for_test_top_ir,
+                                                  args.cal_vec_batch_size,
+                                                  args.feature_dim,
+                                                  args.use_cuda)
+            np.save(normal_vec_top_ir_path, normal_vec_top_ir.cpu().numpy())
+
+        test_logger.write("cal_score...")
         cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_vec_front_d,
                   normal_vec_front_ir,
                   normal_vec_top_d, normal_vec_top_ir, test_loader_front_d, test_loader_front_ir,
                   test_loader_top_d,
                   test_loader_top_ir, score_folder, args.use_cuda)
 
+        test_logger.write("get_fusion_label...")
         gt = get_fusion_label(os.path.join(args.root_path, 'LABEL.csv'))
 
         hashmap = {'top_d': 'Top(D)',
@@ -799,3 +868,4 @@ if __name__ == '__main__':
             test_logger.write(
                 f'View: {mode_name}(post-processed):       Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)} \n')
         test_logger.write(f"Total testing time: {time.time() - start_testing}")
+

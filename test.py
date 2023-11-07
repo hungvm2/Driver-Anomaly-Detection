@@ -117,7 +117,7 @@ def cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_v
         sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
         sim_3_list = torch.cat((sim_3_list, sim_3.squeeze().cpu()))
         sim_4_list = torch.cat((sim_4_list, sim_4.squeeze().cpu()))
-        # print(f'Evaluating: Batch {batch + 1} / {total_batch}')
+        print(f'Evaluating: Batch {batch + 1} / {total_batch}')
 
     np.save(os.path.join(score_folder, 'score_front_d.npy'), sim_1_list.numpy())
     print('score_front_d.npy is saved')

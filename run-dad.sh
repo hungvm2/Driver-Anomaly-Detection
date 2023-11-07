@@ -1,17 +1,17 @@
 export PYTHONPATH=$PWD
 python main.py \
-  --root_path /usr/home/kop/datasets/DAD/ \
+  --root_path /content/DAD/ \
   --mode train \
-  --view top_depth \
+  --view top_IR \
   --model_type resnet \
   --model_depth 18 \
   --shortcut_type A \
   --pre_train_model False \
   --n_train_batch_size 10 \
   --a_train_batch_size 140 \
-  --val_batch_size 70\
+  --val_batch_size 70 \
   --learning_rate 0.01 \
-  --epochs 250 \
+  --epochs 50 \
   --norm_value 255 \
   --cal_vec_batch_size 100 \
   --tau 0.1 \
@@ -19,8 +19,8 @@ python main.py \
   --memory_bank_size 200 \
   --resume_path '' \
   --resume_head_path '' \
-  --val_step 1 \
-  --save_step 10 \
+  --val_step 5 \
+  --save_step 50 \
   --train_crop 'random' \
   --n_scales 5 \
   --downsample 2 \
@@ -28,6 +28,8 @@ python main.py \
   --width_mult 2.0 \
   --n_split_ratio 1.0 \
   --a_split_ratio 1.0 \
+  --n_threads 4 \
+  --name experiment2
 
 
 

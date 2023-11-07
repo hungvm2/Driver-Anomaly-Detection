@@ -1,10 +1,9 @@
 ```bash
-cd /mnt/dad/hungvm/Driver-Anomaly-Detection
-conda activate dad
-python3 run.py -m train -n experiment
+cd /content/Driver-Anomaly-Detection
+python3 run.py -m train -n experiment<number>
 ```
 
-# Experiment 2 - new server Tesla T4:
+# Experiment 2 - new server Colab V100:
 
 Default, n_threads 4
 
@@ -12,12 +11,46 @@ Default, n_threads 4
 ### Command:
 
 ```
-python main.py --root_path /mnt/data/hungvm/DAD/ --mode train --view top_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment2
-python main.py --root_path /mnt/data/hungvm/DAD/ --mode train --view front_depth --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment2
-python main.py --root_path /mnt/data/hungvm/DAD/ --mode train --view front_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment2
-python main.py --root_path /mnt/data/hungvm/DAD/ --mode train --view top_IR --model_type resnet --model_depth 18 --shortcut_type A --pre_train_model False --n_train_batch_size 10 --a_train_batch_size 150 --val_batch_size 70  --learning_rate 0.01 --epochs 250 --cal_vec_batch_size 100 --tau 0.1 --train_crop 'random' --n_scales 5 --downsample 2 --n_split_ratio 1.0 --a_split_ratio 1.0 --save_step 10 --val_step 10 --n_threads 4 --name experiment2
-python3 run.py -m train -n experiment2
+python main.py \
+  --root_path /mnt/data/hungvm/DAD/ \
+  --mode train \
+  --view front_depth \
+  --model_type resnet \
+  --model_depth 18 \
+  --shortcut_type A \
+  --pre_train_model False \
+  --n_train_batch_size 10 \
+  --a_train_batch_size 140 \
+  --val_batch_size 70 \
+  --learning_rate 0.01 \
+  --epochs 250 \
+  --norm_value 255 \
+  --cal_vec_batch_size 100 \
+  --tau 0.1 \
+  --manual_seed 26 \
+  --memory_bank_size 200 \
+  --resume_path '' \
+  --resume_head_path '' \
+  --val_step 1 \
+  --save_step 50 \
+  --train_crop 'random' \
+  --n_scales 5 \
+  --downsample 2 \
+  --log_resume False \
+  --width_mult 2.0 \
+  --n_split_ratio 1.0 \
+  --a_split_ratio 1.0 \
+  --n_threads 4 \
+  --name experiment2
+python3 run.py -n experiment2
 ```
+
+**front depth**
+==========================================!!!Evaluating!!!==========================================
+Epoch: 250/250 | Accuracy: 0.8201521079702818 | Normal Acc: 0.9355375199574242 | Anormal Acc: 0.5953337653920934 | Threshold: 0.55
+==========================================!!!Logging!!!==========================================
+==========================================!!!Saving!!!==========================================
+Total training time: 34569.79446601868
 
 ## Test:
 ### Command: 

@@ -114,3 +114,7 @@ venv.bak/
 .mypy_cache/
 .idea/
 tmp/
+
+credentials.json
+settings.yaml
+upload.py

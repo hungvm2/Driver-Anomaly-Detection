@@ -5,7 +5,7 @@
 ```bash
 conda activate thesis
 
-cd /mnt/Data/MasterofDataScience/Thesis/Driver-Anomaly-Detection
+cd /mnt/data2/MoD_Thesis/Driver-Anomaly-Detection
 
 python3 demo_live.py
 ```
