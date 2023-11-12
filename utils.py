@@ -116,7 +116,7 @@ def get_fusion_label(csv_path):
     :param csv_path: path of csv file
     :return: ground truth labels
     """
-    gt = np.zeros(360000)
+    gt = np.zeros(120000)
     base = -10000
     with open(csv_path) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')

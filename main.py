@@ -413,7 +413,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.8, eps=0.1)
+                criterion = CENCE(args, len_neg, len_pos, beta=0.5, eps=0.0)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")
@@ -480,8 +480,8 @@ if __name__ == '__main__':
                                       criterion, optimizer, epoch, args, batch_logger, epoch_logger, c_logger,
                                       memory_bank)
 
-            # if epoch % args.val_step == 0:
-            if epoch > args.epochs - 3:
+            if epoch % args.val_step == 0:
+            # if epoch in {150, 151} or epoch > args.epochs - 10:
                 start_val_step_time = time.time()
                 c_logger.write(
                     "==========================================!!!Evaluating!!!==========================================")
@@ -511,6 +511,7 @@ if __name__ == '__main__':
                     best_acc = accuracy
                     c_logger.write(
                         "==========================================!!!Saving!!!==========================================")
+                    c_logger.write(f"The Best result of {args.view} on val set is currently at epoch {epoch}...")
                     checkpoint_path = os.path.join(args.checkpoint_folder,
                                                    f'best_model_{args.model_type}_{args.view}_{args.name}.pth')
                     states = {
@@ -530,30 +531,30 @@ if __name__ == '__main__':
                         'state_dict': model_head.state_dict()
                     }
                     torch.save(states_head, head_checkpoint_path)
-                print("---- Eval time: ", time.time() - start_val_step_time)
+                c_logger.write(f"---- Eval time: {time.time() - start_val_step_time}")
 
             # if epoch % args.save_step == 0:
-            if epoch == args.epochs:
-                c_logger.write(
-                    "==========================================!!!Saving!!!==========================================")
-                checkpoint_path = os.path.join(args.checkpoint_folder,
-                                               f'{args.model_type}_{args.view}_{epoch}.pth')
-                states = {
-                    'epoch': epoch,
-                    'state_dict': model.state_dict(),
-                    'optimizer': optimizer.state_dict(),
-                    'acc': accuracy,
-                    'nce_average': nce_average,
-                    'memory_bank': memory_bank
-                }
-                torch.save(states, checkpoint_path)
-
-                head_checkpoint_path = os.path.join(args.checkpoint_folder,
-                                                    f'{args.model_type}_{args.view}_{epoch}_head.pth')
-                states_head = {
-                    'state_dict': model_head.state_dict()
-                }
-                torch.save(states_head, head_checkpoint_path)
+            # if epoch == args.epochs or epoch in {150, 151}:
+            #     c_logger.write(
+            #         "==========================================!!!Saving!!!==========================================")
+            #     checkpoint_path = os.path.join(args.checkpoint_folder,
+            #                                    f'{args.model_type}_{args.view}_{epoch}.pth')
+            #     states = {
+            #         'epoch': epoch,
+            #         'state_dict': model.state_dict(),
+            #         'optimizer': optimizer.state_dict(),
+            #         'acc': accuracy,
+            #         'nce_average': nce_average,
+            #         'memory_bank': memory_bank
+            #     }
+            #     torch.save(states, checkpoint_path)
+            #
+            #     head_checkpoint_path = os.path.join(args.checkpoint_folder,
+            #                                         f'{args.model_type}_{args.view}_{epoch}_head.pth')
+            #     states_head = {
+            #         'state_dict': model_head.state_dict()
+            #     }
+            #     torch.save(states_head, head_checkpoint_path)
 
             if epoch % args.lr_decay == 0:
                 lr = args.learning_rate * (0.1 ** (epoch // args.lr_decay))
