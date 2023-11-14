@@ -119,7 +119,7 @@ TRAIN_COMMAND = "python main.py \
  --shortcut_type A \
  --pre_train_model False \
  --n_train_batch_size 10 \
- --a_train_batch_size 140 \
+ --a_train_batch_size 150 \
  --val_batch_size 70 \
  --learning_rate 0.01 \
  --epochs 100 \
@@ -146,3 +146,30 @@ TRAIN_COMMAND = "python main.py \
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
 
 ### result
+
+Mode: Top(D): Best Acc: 85.37 | Threshold: 0.96 | AUC: 0.9145
+View: Top(D)(post-processed): Best Acc: 85.51 | Threshold: 0.96 | AUC: 0.916
+
+Mode: Top(IR): Best Acc: 79.96 | Threshold: 0.92 | AUC: 0.8674
+View: Top(IR)(post-processed): Best Acc: 80.15 | Threshold: 0.92 | AUC: 0.8703
+
+Mode: Top(DIR): Best Acc: 84.66 | Threshold: 0.93 | AUC: 0.9127
+View: Top(DIR)(post-processed): Best Acc: 84.82 | Threshold: 0.93 | AUC: 0.9145
+
+Mode: Front(D): Best Acc: 74.04 | Threshold: 0.92 | AUC: 0.7478
+View: Front(D)(post-processed): Best Acc: 74.12 | Threshold: 0.92 | AUC: 0.7491
+
+Mode: Front(IR): Best Acc: 77.43 | Threshold: 0.81 | AUC: 0.8335
+View: Front(IR)(post-processed): Best Acc: 77.6 | Threshold: 0.83 | AUC: 0.8361
+
+Mode: Front(DIR): Best Acc: 79.17 | Threshold: 0.89 | AUC: 0.8437
+View: Front(DIR)(post-processed): Best Acc: 79.37 | Threshold: 0.89 | AUC: 0.8459
+
+Mode: Fusion(D): Best Acc: 86.65 | Threshold: 0.94 | AUC: 0.9207
+View: Fusion(D)(post-processed): Best Acc: 86.76 | Threshold: 0.94 | AUC: 0.9222
+
+Mode: Fusion(IR): Best Acc: 85.31 | Threshold: 0.87 | AUC: 0.9162
+View: Fusion(IR)(post-processed): Best Acc: 85.46 | Threshold: 0.87 | AUC: 0.9185
+
+Mode: Fusion(DIR): Best Acc: 88.34 | Threshold: 0.9 | AUC: 0.9407
+View: Fusion(DIR)(post-processed): Best Acc: 88.48 | Threshold: 0.9 | AUC: 0.9424
