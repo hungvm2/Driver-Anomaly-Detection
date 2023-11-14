@@ -11,10 +11,10 @@ TRAIN_COMMAND = "python main.py \
   --shortcut_type A \
   --pre_train_model False \
   --n_train_batch_size 10 \
-  --a_train_batch_size 140 \
+  --a_train_batch_size 150 \
   --val_batch_size 70 \
   --learning_rate 0.01 \
-  --epochs 200 \
+  --epochs 100 \
   --norm_value 255 \
   --cal_vec_batch_size 100 \
   --tau 0.1 \
@@ -32,8 +32,10 @@ TRAIN_COMMAND = "python main.py \
   --n_split_ratio 1.0 \
   --a_split_ratio 1.0 \
   --n_threads 4 \
+  --loss cence \
+  --head two_heads_cence \
   --name %s"
-TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 20 --cal_vec_batch_size 10 --n_threads 4 --name %s"
+TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run')
@@ -45,7 +47,8 @@ if __name__ == "__main__":
     name = args.n
     sleep_time = int(args.s)
     print("Sleeping time: ", sleep_time)
-    datasets = ["front_IR", "front_depth", "top_depth", "top_IR"]
+    datasets = [ "front_IR" ]
+    # datasets = ["front_IR", "front_depth", "top_depth", "top_IR"]
     # datasets = ["front_IR", "front_depth", "top_IR"]
     if not args.m:
         for dataset in datasets:

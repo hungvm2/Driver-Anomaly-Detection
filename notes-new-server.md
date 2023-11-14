@@ -9,7 +9,7 @@ epoches 100
 val_step 1
 nthreads 4
 
-# Experiment 2 - new server Colab:
+# Experiment 2:
 
 Default (SGD optimizer, NCE loss, n/a batch 10/140, lr 0.01)
 Epoches 250
@@ -122,7 +122,7 @@ TRAIN_COMMAND = "python main.py \
  --a_train_batch_size 140 \
  --val_batch_size 70 \
  --learning_rate 0.01 \
- --epochs 200 \
+ --epochs 100 \
  --norm_value 255 \
  --cal_vec_batch_size 100 \
  --tau 0.1 \
