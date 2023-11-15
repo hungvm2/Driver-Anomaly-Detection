@@ -11,8 +11,8 @@ nthreads 4
 
 # Experiment 2:
 
-Default (SGD optimizer, NCE loss, n/a batch 10/140, lr 0.01)
-Epoches 250
+Default (SGD optimizer, NCE loss, n/a batch 10/150, lr 0.01)
+Epoches 100
 
 TRAIN_COMMAND = "python main.py \
  --root_path /content/DAD/ \
@@ -23,10 +23,10 @@ TRAIN_COMMAND = "python main.py \
  --shortcut_type A \
  --pre_train_model False \
  --n_train_batch_size 10 \
- --a_train_batch_size 140 \
+ --a_train_batch_size 150 \
  --val_batch_size 70 \
  --learning_rate 0.01 \
- --epochs 200 \
+ --epochs 100 \
  --norm_value 255 \
  --cal_vec_batch_size 100 \
  --tau 0.1 \
@@ -45,37 +45,37 @@ TRAIN_COMMAND = "python main.py \
  --a_split_ratio 1.0 \
  --n_threads 4 \
  --name %s"
-TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 20 --cal_vec_batch_size 10 --n_threads 4 --name %s"
+TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
 
 ### Results:
 
 **On Colab**
-Mode: Top(D): Best Acc: 73.96 | Threshold: 0.64 | AUC: 0.6745
-View: Top(D)(post-processed): Best Acc: 73.99 | Threshold: 0.64 | AUC: 0.6771
+Mode: Top(D): Best Acc: 86.58 | Threshold: 0.91 | AUC: 0.92
+View: Top(D)(post-processed): Best Acc: 86.75 | Threshold: 0.91 | AUC: 0.9219
 
-Mode: Top(IR): Best Acc: 80.67 | Threshold: 0.7 | AUC: 0.846
-View: Top(IR)(post-processed): Best Acc: 80.88 | Threshold: 0.7 | AUC: 0.8491
+Mode: Top(IR): Best Acc: 79.06 | Threshold: 0.83 | AUC: 0.8442
+View: Top(IR)(post-processed): Best Acc: 79.18 | Threshold: 0.83 | AUC: 0.8463
 
-Mode: Top(DIR): Best Acc: 81.66 | Threshold: 0.68 | AUC: 0.8423
-View: Top(DIR)(post-processed): Best Acc: 81.85 | Threshold: 0.68 | AUC: 0.8456
+Mode: Top(DIR): Best Acc: 85.14 | Threshold: 0.87 | AUC: 0.912
+View: Top(DIR)(post-processed): Best Acc: 85.3 | Threshold: 0.87 | AUC: 0.9136
 
-Mode: Front(D): Best Acc: 71.48 | Threshold: 0.51 | AUC: 0.7327
-View: Front(D)(post-processed): Best Acc: 71.51 | Threshold: 0.51 | AUC: 0.7344
+Mode: Front(D): Best Acc: 71.61 | Threshold: 0.98 | AUC: 0.7196
+View: Front(D)(post-processed): Best Acc: 71.68 | Threshold: 0.98 | AUC: 0.721
 
-Mode: Front(IR): Best Acc: 71.73 | Threshold: 0.63 | AUC: 0.7502
-View: Front(IR)(post-processed): Best Acc: 71.92 | Threshold: 0.64 | AUC: 0.7541
+Mode: Front(IR): Best Acc: 71.18 | Threshold: 0.86 | AUC: 0.7713
+View: Front(IR)(post-processed): Best Acc: 71.36 | Threshold: 0.84 | AUC: 0.7741
 
-Mode: Front(DIR): Best Acc: 74.32 | Threshold: 0.58 | AUC: 0.7887
-View: Front(DIR)(post-processed): Best Acc: 74.44 | Threshold: 0.58 | AUC: 0.792
+Mode: Front(DIR): Best Acc: 71.93 | Threshold: 0.91 | AUC: 0.78
+View: Front(DIR)(post-processed): Best Acc: 72.07 | Threshold: 0.91 | AUC: 0.7825
 
-Mode: Fusion(D): Best Acc: 81.29 | Threshold: 0.59 | AUC: 0.8388
-View: Fusion(D)(post-processed): Best Acc: 81.4 | Threshold: 0.59 | AUC: 0.8414
+Mode: Fusion(D): Best Acc: 88.74 | Threshold: 0.94 | AUC: 0.9429
+View: Fusion(D)(post-processed): Best Acc: 88.9 | Threshold: 0.94 | AUC: 0.9447
 
-Mode: Fusion(IR): Best Acc: 78.75 | Threshold: 0.66 | AUC: 0.8684
-View: Fusion(IR)(post-processed): Best Acc: 79.02 | Threshold: 0.66 | AUC: 0.8716
+Mode: Fusion(IR): Best Acc: 80.03 | Threshold: 0.83 | AUC: 0.8638
+View: Fusion(IR)(post-processed): Best Acc: 80.2 | Threshold: 0.83 | AUC: 0.8661
 
-Mode: Fusion(DIR): Best Acc: 84.08 | Threshold: 0.62 | AUC: 0.9051
-View: Fusion(DIR)(post-processed): Best Acc: 84.28 | Threshold: 0.62 | AUC: 0.9077
+Mode: Fusion(DIR): Best Acc: 84.66 | Threshold: 0.87 | AUC: 0.9213
+View: Fusion(DIR)(post-processed): Best Acc: 84.84 | Threshold: 0.88 | AUC: 0.9232
 
 **250 epoches on colab**
 get_fusion_label...

@@ -701,142 +701,142 @@ if __name__ == '__main__':
         normal_vec_top_d_path = os.path.join(args.normvec_folder, 'normal_vec_top_d.npy')
         normal_vec_top_ir_path = os.path.join(args.normvec_folder, 'normal_vec_top_ir.npy')
 
-        if os.path.exists(normal_vec_front_d_path):
-            normal_vec_front_d = np.load(normal_vec_front_d_path)
-            normal_vec_front_ir = np.load(normal_vec_front_ir_path)
-            normal_vec_top_d = np.load(normal_vec_top_d_path)
-            normal_vec_top_ir = np.load(normal_vec_top_ir_path)
+        # if os.path.exists(normal_vec_front_d_path):
+        #     normal_vec_front_d = np.load(normal_vec_front_d_path)
+        #     normal_vec_front_ir = np.load(normal_vec_front_ir_path)
+        #     normal_vec_top_d = np.load(normal_vec_top_d_path)
+        #     normal_vec_top_ir = np.load(normal_vec_top_ir_path)
 
-            normal_vec_front_d = torch.from_numpy(normal_vec_front_d)
-            normal_vec_front_ir = torch.from_numpy(normal_vec_front_ir)
-            normal_vec_top_d = torch.from_numpy(normal_vec_top_d)
-            normal_vec_top_ir = torch.from_numpy(normal_vec_top_ir)
+        #     normal_vec_front_d = torch.from_numpy(normal_vec_front_d)
+        #     normal_vec_front_ir = torch.from_numpy(normal_vec_front_ir)
+        #     normal_vec_top_d = torch.from_numpy(normal_vec_top_d)
+        #     normal_vec_top_ir = torch.from_numpy(normal_vec_top_ir)
 
-            if args.use_cuda:
-                normal_vec_front_d = normal_vec_front_d.cuda()
-                normal_vec_front_ir = normal_vec_front_ir.cuda()
-                normal_vec_top_d = normal_vec_top_d.cuda()
-                normal_vec_top_ir = normal_vec_top_ir.cuda()
+        #     if args.use_cuda:
+        #         normal_vec_front_d = normal_vec_front_d.cuda()
+        #         normal_vec_front_ir = normal_vec_front_ir.cuda()
+        #         normal_vec_top_d = normal_vec_top_d.cuda()
+        #         normal_vec_top_ir = normal_vec_top_ir.cuda()
 
-        else:
-            test_logger.write(
-                "==========================================Loading Normal Data==========================================")
-            training_normal_data_front_d = DAD(root_path=args.root_path,
+        # else:
+        test_logger.write(
+            "==========================================Loading Normal Data==========================================")
+        training_normal_data_front_d = DAD(root_path=args.root_path,
+                                        subset='train',
+                                        view='front_depth',
+                                        sample_duration=args.sample_duration,
+                                        type='normal',
+                                        spatial_transform=val_spatial_transform,
+                                        )
+
+        training_normal_size = int(
+            len(training_normal_data_front_d) * args.n_split_ratio)
+        training_normal_data_front_d = torch.utils.data.Subset(training_normal_data_front_d,
+                                                            np.arange(training_normal_size))
+
+        train_normal_loader_for_test_front_d = torch.utils.data.DataLoader(
+            training_normal_data_front_d,
+            batch_size=args.cal_vec_batch_size,
+            shuffle=True,
+            num_workers=args.n_threads,
+            pin_memory=True,
+        )
+        test_logger.write(
+            f'Front depth view is done (size: {len(training_normal_data_front_d)})')
+
+        training_normal_data_front_ir = DAD(root_path=args.root_path,
                                             subset='train',
-                                            view='front_depth',
+                                            view='front_IR',
                                             sample_duration=args.sample_duration,
                                             type='normal',
                                             spatial_transform=val_spatial_transform,
                                             )
 
-            training_normal_size = int(
-                len(training_normal_data_front_d) * args.n_split_ratio)
-            training_normal_data_front_d = torch.utils.data.Subset(training_normal_data_front_d,
+        training_normal_size = int(
+            len(training_normal_data_front_ir) * args.n_split_ratio)
+        training_normal_data_front_ir = torch.utils.data.Subset(training_normal_data_front_ir,
                                                                 np.arange(training_normal_size))
 
-            train_normal_loader_for_test_front_d = torch.utils.data.DataLoader(
-                training_normal_data_front_d,
-                batch_size=args.cal_vec_batch_size,
-                shuffle=True,
-                num_workers=args.n_threads,
-                pin_memory=True,
-            )
-            test_logger.write(
-                f'Front depth view is done (size: {len(training_normal_data_front_d)})')
+        train_normal_loader_for_test_front_ir = torch.utils.data.DataLoader(
+            training_normal_data_front_ir,
+            batch_size=args.cal_vec_batch_size,
+            shuffle=True,
+            num_workers=args.n_threads,
+            pin_memory=True,
+        )
+        test_logger.write(
+            f'Front IR view is done (size: {len(training_normal_data_front_ir)})')
 
-            training_normal_data_front_ir = DAD(root_path=args.root_path,
-                                                subset='train',
-                                                view='front_IR',
-                                                sample_duration=args.sample_duration,
-                                                type='normal',
-                                                spatial_transform=val_spatial_transform,
-                                                )
+        training_normal_data_top_d = DAD(root_path=args.root_path,
+                                        subset='train',
+                                        view='top_depth',
+                                        sample_duration=args.sample_duration,
+                                        type='normal',
+                                        spatial_transform=val_spatial_transform,
+                                        )
 
-            training_normal_size = int(
-                len(training_normal_data_front_ir) * args.n_split_ratio)
-            training_normal_data_front_ir = torch.utils.data.Subset(training_normal_data_front_ir,
-                                                                    np.arange(training_normal_size))
+        training_normal_size = int(
+            len(training_normal_data_top_d) * args.n_split_ratio)
+        training_normal_data_top_d = torch.utils.data.Subset(training_normal_data_top_d,
+                                                            np.arange(training_normal_size))
 
-            train_normal_loader_for_test_front_ir = torch.utils.data.DataLoader(
-                training_normal_data_front_ir,
-                batch_size=args.cal_vec_batch_size,
-                shuffle=True,
-                num_workers=args.n_threads,
-                pin_memory=True,
-            )
-            test_logger.write(
-                f'Front IR view is done (size: {len(training_normal_data_front_ir)})')
+        train_normal_loader_for_test_top_d = torch.utils.data.DataLoader(
+            training_normal_data_top_d,
+            batch_size=args.cal_vec_batch_size,
+            shuffle=True,
+            num_workers=args.n_threads,
+            pin_memory=True,
+        )
+        test_logger.write(
+            f'Top depth view is done (size: {len(training_normal_data_top_d)})')
 
-            training_normal_data_top_d = DAD(root_path=args.root_path,
-                                            subset='train',
-                                            view='top_depth',
-                                            sample_duration=args.sample_duration,
-                                            type='normal',
-                                            spatial_transform=val_spatial_transform,
-                                            )
+        training_normal_data_top_ir = DAD(root_path=args.root_path,
+                                        subset='train',
+                                        view='top_IR',
+                                        sample_duration=args.sample_duration,
+                                        type='normal',
+                                        spatial_transform=val_spatial_transform,
+                                        )
 
-            training_normal_size = int(
-                len(training_normal_data_top_d) * args.n_split_ratio)
-            training_normal_data_top_d = torch.utils.data.Subset(training_normal_data_top_d,
-                                                                np.arange(training_normal_size))
+        training_normal_size = int(
+            len(training_normal_data_top_ir) * args.n_split_ratio)
+        training_normal_data_top_ir = torch.utils.data.Subset(training_normal_data_top_ir,
+                                                            np.arange(training_normal_size))
 
-            train_normal_loader_for_test_top_d = torch.utils.data.DataLoader(
-                training_normal_data_top_d,
-                batch_size=args.cal_vec_batch_size,
-                shuffle=True,
-                num_workers=args.n_threads,
-                pin_memory=True,
-            )
-            test_logger.write(
-                f'Top depth view is done (size: {len(training_normal_data_top_d)})')
+        train_normal_loader_for_test_top_ir = torch.utils.data.DataLoader(
+            training_normal_data_top_ir,
+            batch_size=args.cal_vec_batch_size,
+            shuffle=True,
+            num_workers=args.n_threads,
+            pin_memory=True,
+        )
+        test_logger.write(
+            f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
 
-            training_normal_data_top_ir = DAD(root_path=args.root_path,
-                                            subset='train',
-                                            view='top_IR',
-                                            sample_duration=args.sample_duration,
-                                            type='normal',
-                                            spatial_transform=val_spatial_transform,
-                                            )
+        normal_vec_front_d = get_normal_vector(model_front_d, train_normal_loader_for_test_front_d,
+                                                args.cal_vec_batch_size,
+                                                args.feature_dim,
+                                                args.use_cuda)
+        np.save(normal_vec_front_d_path, normal_vec_front_d.cpu().numpy())
 
-            training_normal_size = int(
-                len(training_normal_data_top_ir) * args.n_split_ratio)
-            training_normal_data_top_ir = torch.utils.data.Subset(training_normal_data_top_ir,
-                                                                np.arange(training_normal_size))
+        normal_vec_front_ir = get_normal_vector(model_front_ir,
+                                                train_normal_loader_for_test_front_ir,
+                                                args.cal_vec_batch_size,
+                                                args.feature_dim,
+                                                args.use_cuda)
+        np.save(normal_vec_front_ir_path, normal_vec_front_ir.cpu().numpy())
 
-            train_normal_loader_for_test_top_ir = torch.utils.data.DataLoader(
-                training_normal_data_top_ir,
-                batch_size=args.cal_vec_batch_size,
-                shuffle=True,
-                num_workers=args.n_threads,
-                pin_memory=True,
-            )
-            test_logger.write(
-                f'Top IR view is done (size: {len(training_normal_data_top_ir)})')
+        normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d,
+                                                args.cal_vec_batch_size,
+                                                args.feature_dim,
+                                                args.use_cuda)
+        np.save(normal_vec_top_d_path, normal_vec_top_d.cpu().numpy())
 
-            normal_vec_front_d = get_normal_vector(model_front_d, train_normal_loader_for_test_front_d,
-                                                   args.cal_vec_batch_size,
-                                                   args.feature_dim,
-                                                   args.use_cuda)
-            np.save(normal_vec_front_d_path, normal_vec_front_d.cpu().numpy())
-
-            normal_vec_front_ir = get_normal_vector(model_front_ir,
-                                                    train_normal_loader_for_test_front_ir,
-                                                    args.cal_vec_batch_size,
-                                                    args.feature_dim,
-                                                    args.use_cuda)
-            np.save(normal_vec_front_ir_path, normal_vec_front_ir.cpu().numpy())
-
-            normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d,
-                                                 args.cal_vec_batch_size,
-                                                 args.feature_dim,
-                                                 args.use_cuda)
-            np.save(normal_vec_top_d_path, normal_vec_top_d.cpu().numpy())
-
-            normal_vec_top_ir = get_normal_vector(model_top_ir, train_normal_loader_for_test_top_ir,
-                                                  args.cal_vec_batch_size,
-                                                  args.feature_dim,
-                                                  args.use_cuda)
-            np.save(normal_vec_top_ir_path, normal_vec_top_ir.cpu().numpy())
+        normal_vec_top_ir = get_normal_vector(model_top_ir, train_normal_loader_for_test_top_ir,
+                                                args.cal_vec_batch_size,
+                                                args.feature_dim,
+                                                args.use_cuda)
+        np.save(normal_vec_top_ir_path, normal_vec_top_ir.cpu().numpy())
 
         test_logger.write("cal_score...")
         cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_vec_front_d,
