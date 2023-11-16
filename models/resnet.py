@@ -65,6 +65,135 @@ class BasicBlock(nn.Module):
         return out
 
 
+class CrossStage(nn.Module):
+    """Cross Stage."""
+    def __init__(
+            self,
+            in_chs,
+            out_chs,
+            stride,
+            dilation,
+            depth,
+            block_ratio=1.,
+            bottle_ratio=1.,
+            expand_ratio=1.,
+            groups=1,
+            first_dilation=None,
+            avg_down=False,
+            down_growth=False,
+            cross_linear=False,
+            block_dpr=None,
+            block_fn=BottleneckBlock,
+            **block_kwargs,
+    ):
+        super(CrossStage, self).__init__()
+        first_dilation = first_dilation or dilation
+        down_chs = out_chs if down_growth else in_chs  # grow downsample channels to output channels
+        self.expand_chs = exp_chs = int(round(out_chs * expand_ratio))
+        block_out_chs = int(round(out_chs * block_ratio))
+        conv_kwargs = dict(act_layer=block_kwargs.get('act_layer'), norm_layer=block_kwargs.get('norm_layer'))
+        aa_layer = block_kwargs.pop('aa_layer', None)
+
+        if stride != 1 or first_dilation != dilation:
+            if avg_down:
+                self.conv_down = nn.Sequential(
+                    nn.AvgPool2d(2) if stride == 2 else nn.Identity(),  # FIXME dilation handling
+                    ConvNormActAa(in_chs, out_chs, kernel_size=1, stride=1, groups=groups, **conv_kwargs)
+                )
+            else:
+                self.conv_down = ConvNormActAa(
+                    in_chs, down_chs, kernel_size=3, stride=stride, dilation=first_dilation, groups=groups,
+                    aa_layer=aa_layer, **conv_kwargs)
+            prev_chs = down_chs
+        else:
+            self.conv_down = nn.Identity()
+            prev_chs = in_chs
+
+        # FIXME this 1x1 expansion is pushed down into the cross and block paths in the darknet cfgs. Also,
+        # there is also special case for the first stage for some of the model that results in uneven split
+        # across the two paths. I did it this way for simplicity for now.
+        self.conv_exp = ConvNormAct(prev_chs, exp_chs, kernel_size=1, apply_act=not cross_linear, **conv_kwargs)
+        prev_chs = exp_chs // 2  # output of conv_exp is always split in two
+
+        self.blocks = nn.Sequential()
+        for i in range(depth):
+            self.blocks.add_module(str(i), block_fn(
+                in_chs=prev_chs,
+                out_chs=block_out_chs,
+                dilation=dilation,
+                bottle_ratio=bottle_ratio,
+                groups=groups,
+                drop_path=block_dpr[i] if block_dpr is not None else 0.,
+                **block_kwargs,
+            ))
+            prev_chs = block_out_chs
+
+        # transition convs
+        self.conv_transition_b = ConvNormAct(prev_chs, exp_chs // 2, kernel_size=1, **conv_kwargs)
+        self.conv_transition = ConvNormAct(exp_chs, out_chs, kernel_size=1, **conv_kwargs)
+
+    def forward(self, x):
+        x = self.conv_down(x)
+        x = self.conv_exp(x)
+        xs, xb = x.split(self.expand_chs // 2, dim=1)
+        xb = self.blocks(xb)
+        xb = self.conv_transition_b(xb).contiguous()
+        out = self.conv_transition(torch.cat([xs, xb], dim=1))
+        return out
+
+
+class BasicCSPBlock(nn.Module):
+    expansion = 1
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None, tracking=True):
+        super(BasicBlock, self).__init__()
+        self.tracking = tracking
+        self.conv1 = conv3x3x3(inplanes, planes, stride)
+        self.bn1 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = conv3x3x3(planes, planes)
+        self.bn2 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+        self.downsample = downsample
+        self.stride = stride
+
+        # transition layers
+        self.conv3 = conv3x3x3(inplanes//2, inplanes//2)
+        self.bn3 = nn.BatchNorm3d(planes//2, track_running_stats=self.tracking)
+        self.conv4 = conv3x3x3(planes, planes)
+        self.bn4 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+
+
+    def forward(self, x):
+        numb_of_channels = x.shape[1]
+        x1, x2 = x.split(numb_of_channels//2, dim=1)
+
+        # Part 1 go through residual block
+        residual = x1
+        out = self.conv1(x1)
+        out = self.bn1(out)
+        out = self.relu(out)
+        out = self.conv2(out)
+        out = self.bn2(out)
+        if self.downsample is not None:
+            residual = self.downsample(x1)
+        out += residual
+        out = self.relu(out)
+
+        # Transitional layer 1
+        out = self.conv3(out)
+        out = self.bn3(out)
+        out = self.relu(out)
+
+        # Concat 2 parts
+        out = torch.cat([x1, x2], dim=1)
+
+        # Transitional layer 2
+        out = self.conv4(out)
+        out = self.bn4(out)
+        out = self.relu(out)
+        return out
+
+
 class Bottleneck(nn.Module):
     expansion = 4
 
@@ -358,7 +487,11 @@ def get_fine_tuning_parameters(model, ft_portion):
 def resnet18(**kwargs):
     """Constructs a ResNet-18 model.
     """
-    model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
+    block_type = kwargs.get("block_type", "basic")
+    if block_type == "basic":
+        model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
+    elif block_type == "basiccsp":
+        model = ResNet(BasicCSPBlock, [2, 2, 2, 2], **kwargs)
     return model
 
 

@@ -19,7 +19,8 @@ def generate_model(args):
                     sample_duration=args.sample_duration,
                     shortcut_type=args.shortcut_type,
                     tracking=args.tracking,
-                    pre_train=args.pre_train_model
+                    pre_train=args.pre_train_model,
+                    block_type=args.block
                 )
 
             elif args.model_depth == 50:

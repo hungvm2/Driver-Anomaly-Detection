@@ -132,6 +132,8 @@ def parse_args():
                         help='Select Loss.')
     parser.add_argument('--head', default="nce", type=str,
                         help='Select head.')
+    parser.add_argument('--block', default="basic", type=str,
+                        help='Select backbone block.')
     args = parser.parse_args()
     return args
 
@@ -413,7 +415,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.5, eps=0.0)
+                criterion = CENCE(args, len_neg, len_pos, beta=0.5, eps=0.1)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")
@@ -693,7 +695,6 @@ if __name__ == '__main__':
         test_logger.write('Top IR view is done')
         assert num_val_data_front_d == num_val_data_front_ir == num_val_data_top_d == num_val_data_top_ir
 
-        start_testing = time.time()
         test_logger.write(
             "============================================START EVALUATING============================================")
         normal_vec_front_d_path = os.path.join(args.normvec_folder, 'normal_vec_front_d.npy')
@@ -839,6 +840,7 @@ if __name__ == '__main__':
         np.save(normal_vec_top_ir_path, normal_vec_top_ir.cpu().numpy())
 
         test_logger.write("cal_score...")
+        start_testing = time.time()
         cal_score(model_front_d, model_front_ir, model_top_d, model_top_ir, normal_vec_front_d,
                   normal_vec_front_ir,
                   normal_vec_top_d, normal_vec_top_ir, test_loader_front_d, test_loader_front_ir,

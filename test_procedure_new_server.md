@@ -6,13 +6,20 @@ nthreads 4
 
 # Experiment 2:
 
-Default (SGD optimizer, NCE loss, n/a batch 10/140, lr 0.01)
-Epoches 250
-Best Acc: 84.08 | AUC: 0.9051
+Default (SGD optimizer, NCE loss, n/a batch 10/150, lr 0.01)
+Epoches 100
+Best Acc: 84.66 | Threshold: 0.87 | AUC: 0.9213
 
 # Experiment 22:
 
-SGD optimizer, CENCE loss (beta0.5, eps 0.0), no ce label smoothing, n/a batch 10/140
+SGD optimizer, CENCE loss (beta0.5, eps 0.0), no ce label smoothing, n/a batch 10/150
+Best Acc: 88.34 | Threshold: 0.9 | AUC: 0.9407
+
+# Experiment 23:
+SGD optimizer, CENCE loss (beta0.5, eps 0.1), ce label smoothing, n/a batch 10/150
+
+# Experiment 24:
+SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone
 
 # Experiment 20: (not yet)
 
