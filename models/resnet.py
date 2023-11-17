@@ -21,10 +21,14 @@ def conv3x3x3(in_planes, out_planes, stride=1):
         bias=False)
 
 
-def downsample_basic_block(x, planes, stride):
+def downsample_basic_block(x, planes, stride, block_type):
     out = F.avg_pool3d(x, kernel_size=1, stride=stride)
+    if block_type == "basiccsp":
+        planes = planes//2
+
     zero_pads = torch.zeros(out.size(0), planes - out.size(1), out.size(2), out.size(3),
-                            out.size(4))
+                                out.size(4))
+                            
     if out.is_cuda:
         zero_pads = zero_pads.cuda()
     out = torch.cat([out, zero_pads], dim=1)
@@ -65,101 +69,104 @@ class BasicBlock(nn.Module):
         return out
 
 
-class CrossStage(nn.Module):
-    """Cross Stage."""
-    def __init__(
-            self,
-            in_chs,
-            out_chs,
-            stride,
-            dilation,
-            depth,
-            block_ratio=1.,
-            bottle_ratio=1.,
-            expand_ratio=1.,
-            groups=1,
-            first_dilation=None,
-            avg_down=False,
-            down_growth=False,
-            cross_linear=False,
-            block_dpr=None,
-            block_fn=BottleneckBlock,
-            **block_kwargs,
-    ):
-        super(CrossStage, self).__init__()
-        first_dilation = first_dilation or dilation
-        down_chs = out_chs if down_growth else in_chs  # grow downsample channels to output channels
-        self.expand_chs = exp_chs = int(round(out_chs * expand_ratio))
-        block_out_chs = int(round(out_chs * block_ratio))
-        conv_kwargs = dict(act_layer=block_kwargs.get('act_layer'), norm_layer=block_kwargs.get('norm_layer'))
-        aa_layer = block_kwargs.pop('aa_layer', None)
+# class CrossStage(nn.Module):
+#     """Cross Stage."""
+#     def __init__(
+#             self,
+#             in_chs,
+#             out_chs,
+#             stride,
+#             dilation,
+#             depth,
+#             block_ratio=1.,
+#             bottle_ratio=1.,
+#             expand_ratio=1.,
+#             groups=1,
+#             first_dilation=None,
+#             avg_down=False,
+#             down_growth=False,
+#             cross_linear=False,
+#             block_dpr=None,
+#             block_fn=BottleneckBlock,
+#             **block_kwargs,
+#     ):
+#         super(CrossStage, self).__init__()
+#         first_dilation = first_dilation or dilation
+#         down_chs = out_chs if down_growth else in_chs  # grow downsample channels to output channels
+#         self.expand_chs = exp_chs = int(round(out_chs * expand_ratio))
+#         block_out_chs = int(round(out_chs * block_ratio))
+#         conv_kwargs = dict(act_layer=block_kwargs.get('act_layer'), norm_layer=block_kwargs.get('norm_layer'))
+#         aa_layer = block_kwargs.pop('aa_layer', None)
 
-        if stride != 1 or first_dilation != dilation:
-            if avg_down:
-                self.conv_down = nn.Sequential(
-                    nn.AvgPool2d(2) if stride == 2 else nn.Identity(),  # FIXME dilation handling
-                    ConvNormActAa(in_chs, out_chs, kernel_size=1, stride=1, groups=groups, **conv_kwargs)
-                )
-            else:
-                self.conv_down = ConvNormActAa(
-                    in_chs, down_chs, kernel_size=3, stride=stride, dilation=first_dilation, groups=groups,
-                    aa_layer=aa_layer, **conv_kwargs)
-            prev_chs = down_chs
-        else:
-            self.conv_down = nn.Identity()
-            prev_chs = in_chs
+#         if stride != 1 or first_dilation != dilation:
+#             if avg_down:
+#                 self.conv_down = nn.Sequential(
+#                     nn.AvgPool2d(2) if stride == 2 else nn.Identity(),  # FIXME dilation handling
+#                     ConvNormActAa(in_chs, out_chs, kernel_size=1, stride=1, groups=groups, **conv_kwargs)
+#                 )
+#             else:
+#                 self.conv_down = ConvNormActAa(
+#                     in_chs, down_chs, kernel_size=3, stride=stride, dilation=first_dilation, groups=groups,
+#                     aa_layer=aa_layer, **conv_kwargs)
+#             prev_chs = down_chs
+#         else:
+#             self.conv_down = nn.Identity()
+#             prev_chs = in_chs
 
-        # FIXME this 1x1 expansion is pushed down into the cross and block paths in the darknet cfgs. Also,
-        # there is also special case for the first stage for some of the model that results in uneven split
-        # across the two paths. I did it this way for simplicity for now.
-        self.conv_exp = ConvNormAct(prev_chs, exp_chs, kernel_size=1, apply_act=not cross_linear, **conv_kwargs)
-        prev_chs = exp_chs // 2  # output of conv_exp is always split in two
+#         # FIXME this 1x1 expansion is pushed down into the cross and block paths in the darknet cfgs. Also,
+#         # there is also special case for the first stage for some of the model that results in uneven split
+#         # across the two paths. I did it this way for simplicity for now.
+#         self.conv_exp = ConvNormAct(prev_chs, exp_chs, kernel_size=1, apply_act=not cross_linear, **conv_kwargs)
+#         prev_chs = exp_chs // 2  # output of conv_exp is always split in two
 
-        self.blocks = nn.Sequential()
-        for i in range(depth):
-            self.blocks.add_module(str(i), block_fn(
-                in_chs=prev_chs,
-                out_chs=block_out_chs,
-                dilation=dilation,
-                bottle_ratio=bottle_ratio,
-                groups=groups,
-                drop_path=block_dpr[i] if block_dpr is not None else 0.,
-                **block_kwargs,
-            ))
-            prev_chs = block_out_chs
+#         self.blocks = nn.Sequential()
+#         for i in range(depth):
+#             self.blocks.add_module(str(i), block_fn(
+#                 in_chs=prev_chs,
+#                 out_chs=block_out_chs,
+#                 dilation=dilation,
+#                 bottle_ratio=bottle_ratio,
+#                 groups=groups,
+#                 drop_path=block_dpr[i] if block_dpr is not None else 0.,
+#                 **block_kwargs,
+#             ))
+#             prev_chs = block_out_chs
 
-        # transition convs
-        self.conv_transition_b = ConvNormAct(prev_chs, exp_chs // 2, kernel_size=1, **conv_kwargs)
-        self.conv_transition = ConvNormAct(exp_chs, out_chs, kernel_size=1, **conv_kwargs)
+#         # transition convs
+#         self.conv_transition_b = ConvNormAct(prev_chs, exp_chs // 2, kernel_size=1, **conv_kwargs)
+#         self.conv_transition = ConvNormAct(exp_chs, out_chs, kernel_size=1, **conv_kwargs)
 
-    def forward(self, x):
-        x = self.conv_down(x)
-        x = self.conv_exp(x)
-        xs, xb = x.split(self.expand_chs // 2, dim=1)
-        xb = self.blocks(xb)
-        xb = self.conv_transition_b(xb).contiguous()
-        out = self.conv_transition(torch.cat([xs, xb], dim=1))
-        return out
+#     def forward(self, x):
+#         x = self.conv_down(x)
+#         x = self.conv_exp(x)
+#         xs, xb = x.split(self.expand_chs // 2, dim=1)
+#         xb = self.blocks(xb)
+#         xb = self.conv_transition_b(xb).contiguous()
+#         out = self.conv_transition(torch.cat([xs, xb], dim=1))
+#         return out
 
 
 class BasicCSPBlock(nn.Module):
     expansion = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, tracking=True):
-        super(BasicBlock, self).__init__()
+        super(BasicCSPBlock, self).__init__()
         self.tracking = tracking
-        self.conv1 = conv3x3x3(inplanes, planes, stride)
-        self.bn1 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+        in_dim = inplanes//2
+        out_dim = planes//2
+        self.conv1 = conv3x3x3(in_dim, out_dim, stride)
+        self.bn1 = nn.BatchNorm3d(out_dim, track_running_stats=self.tracking)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = conv3x3x3(planes, planes)
-        self.bn2 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+        self.conv2 = conv3x3x3(out_dim, out_dim)
+        self.bn2 = nn.BatchNorm3d(out_dim, track_running_stats=self.tracking)
         self.downsample = downsample
         self.stride = stride
 
         # transition layers
-        self.conv3 = conv3x3x3(inplanes//2, inplanes//2)
-        self.bn3 = nn.BatchNorm3d(planes//2, track_running_stats=self.tracking)
-        self.conv4 = conv3x3x3(planes, planes)
+        self.conv3 = conv3x3x3(out_dim, in_dim)
+        self.bn3 = nn.BatchNorm3d(in_dim, track_running_stats=self.tracking)
+        
+        self.conv4 = conv3x3x3(inplanes, planes)
         self.bn4 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
 
 
@@ -178,14 +185,21 @@ class BasicCSPBlock(nn.Module):
             residual = self.downsample(x1)
         out += residual
         out = self.relu(out)
+        # print("shape before transitional layer 1: ", out.shape)
 
         # Transitional layer 1
         out = self.conv3(out)
         out = self.bn3(out)
         out = self.relu(out)
 
+        # print("shape before transitional layer 2: ", out.shape)
+        # print("x2.shape: ", x2.shape)
+        # print("x1.shape: ", x1.shape)
+        
         # Concat 2 parts
-        out = torch.cat([x1, x2], dim=1)
+        x2 = downsample_basic_block(x2, planes=numb_of_channels * self.expansion,
+                    stride=self.stride, block_type='basiccsp')
+        out = torch.cat([out, x2], dim=1)
 
         # Transitional layer 2
         out = self.conv4(out)
@@ -243,7 +257,7 @@ class ResNet(nn.Module):
                  sample_duration,
                  output_dim,
                  shortcut_type='B',
-                 tracking=True, pre_train=False):
+                 tracking=True, pre_train=False, block_type="basic"):
         self.inplanes = 64
         super(ResNet, self).__init__()
         if pre_train:
@@ -262,6 +276,7 @@ class ResNet(nn.Module):
                 stride=(1, 2, 2),
                 padding=(3, 3, 3),
                 bias=False)
+        self.block_type = block_type
         self.tracking = tracking
         self.bn1 = nn.BatchNorm3d(64, track_running_stats=self.tracking)
         self.relu = nn.ReLU(inplace=True)
@@ -293,7 +308,7 @@ class ResNet(nn.Module):
                 downsample = partial(
                     downsample_basic_block,
                     planes=planes * block.expansion,
-                    stride=stride)
+                    stride=stride, block_type=self.block_type)
             else:
                 downsample = nn.Sequential(
                     nn.Conv3d(
@@ -318,10 +333,15 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
+        # print('input layer1...: ', x.shape)
         x = self.layer1(x)
+        # print('input layer2...: ', x.shape)
         x = self.layer2(x)
+        # print('input layer3...: ', x.shape)
         x = self.layer3(x)
+        # print('input layer4...: ', x.shape)
         x = self.layer4(x)
+        # print('input avgpool...: ', x.shape)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         normed_x = F.normalize(x, p=2,

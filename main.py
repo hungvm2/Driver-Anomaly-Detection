@@ -360,7 +360,7 @@ if __name__ == '__main__':
         validation_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=args.val_batch_size,
-            shuffle=False,
+            shuffle=False
             num_workers=args.n_threads,
             pin_memory=True,
         )

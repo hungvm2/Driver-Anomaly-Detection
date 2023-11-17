@@ -240,3 +240,69 @@ View: Fusion(IR)(post-processed):       Best Acc: 79.88 | Threshold: 0.85 | AUC:
 Mode: Fusion(DIR):      Best Acc: 88.19 | Threshold: 0.87 | AUC: 0.9388
 View: Fusion(DIR)(post-processed):       Best Acc: 88.32 | Threshold: 0.87 | AUC: 0.9407 
 
+# Experiment 24:
+SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone
+
+TRAIN_COMMAND = "python main.py \
+ --root_path /content/DAD/ \
+ --mode train \
+ --view %s \
+ --model_type resnet \
+ --model_depth 18 \
+ --shortcut_type A \
+ --pre_train_model False \
+ --n_train_batch_size 10 \
+ --a_train_batch_size 150 \
+ --val_batch_size 70 \
+ --learning_rate 0.01 \
+ --epochs 100 \
+ --norm_value 255 \
+ --cal_vec_batch_size 100 \
+ --tau 0.1 \
+ --manual_seed 26 \
+ --memory_bank_size 200 \
+ --resume_path '' \
+ --resume_head_path '' \
+ --val_step 1 \
+ --save_step 50 \
+ --train_crop 'random' \
+ --n_scales 5 \
+ --downsample 2 \
+ --log_resume False \
+ --width_mult 2.0 \
+ --n_split_ratio 1.0 \
+ --a_split_ratio 1.0 \
+ --n_threads 4 \
+ --block basiccsp \
+ --name %s"
+TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
+
+### Result:
+Mode: Top(D):      Best Acc: 86.36 | Threshold: 0.63 | AUC: 0.907
+View: Top(D)(post-processed):       Best Acc: 86.5 | Threshold: 0.64 | AUC: 0.9095 
+
+Mode: Top(IR):      Best Acc: 80.79 | Threshold: 0.98 | AUC: 0.8783
+View: Top(IR)(post-processed):       Best Acc: 80.99 | Threshold: 0.98 | AUC: 0.8811 
+
+Mode: Top(DIR):      Best Acc: 87.34 | Threshold: 0.81 | AUC: 0.9173
+View: Top(DIR)(post-processed):       Best Acc: 87.5 | Threshold: 0.81 | AUC: 0.9194 
+
+Mode: Front(D):      Best Acc: 69.78 | Threshold: 0.94 | AUC: 0.7415
+View: Front(D)(post-processed):       Best Acc: 69.86 | Threshold: 0.94 | AUC: 0.7437 
+
+Mode: Front(IR):      Best Acc: 70.13 | Threshold: 0.79 | AUC: 0.7373
+View: Front(IR)(post-processed):       Best Acc: 70.36 | Threshold: 0.81 | AUC: 0.7405 
+
+Mode: Front(DIR):      Best Acc: 71.44 | Threshold: 0.91 | AUC: 0.7733
+View: Front(DIR)(post-processed):       Best Acc: 71.58 | Threshold: 0.91 | AUC: 0.7756 
+
+Mode: Fusion(D):      Best Acc: 88.0 | Threshold: 0.81 | AUC: 0.9339
+View: Fusion(D)(post-processed):       Best Acc: 88.16 | Threshold: 0.81 | AUC: 0.9358 
+
+Mode: Fusion(IR):      Best Acc: 79.44 | Threshold: 0.93 | AUC: 0.8707
+View: Fusion(IR)(post-processed):       Best Acc: 79.6 | Threshold: 0.93 | AUC: 0.873 
+
+Mode: Fusion(DIR):      Best Acc: 87.02 | Threshold: 0.86 | AUC: 0.9337
+View: Fusion(DIR)(post-processed):       Best Acc: 87.21 | Threshold: 0.86 | AUC: 0.9361 
+
+Total testing time: 2109.534331560135

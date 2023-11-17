@@ -32,16 +32,15 @@ TRAIN_COMMAND = "python main.py \
  --n_split_ratio 1.0 \
  --a_split_ratio 1.0 \
  --n_threads 4 \
- --loss cence \
- --head two_heads_cence \
+ --block basiccsp \
  --name %s"
-TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
+TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4  --block basiccsp --name %s"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run')
     parser.add_argument('-n', required=True, type=str, help='Experiment name')
     parser.add_argument('-m', default="", type=str, help='Experiment name')
-    parser.add_argument('-s', default=600, type=int, help='Sleep time')
+    parser.add_argument('-s', default=10, type=int, help='Sleeping time')
     args = parser.parse_args()
 
     name = args.n
