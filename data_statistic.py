@@ -33,7 +33,4 @@ if __name__ == "__main__":
                 rec_path = os.path.join(val_path, rec_dir, "front_depth")
                 numb_of_imgs = os.listdir(rec_path) * 4
                 total_val_imgs += numb_of_imgs
-
-
-
-        
+    print("Images by states: ", states)

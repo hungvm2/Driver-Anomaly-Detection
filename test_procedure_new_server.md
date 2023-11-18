@@ -21,6 +21,9 @@ SGD optimizer, CENCE loss (beta0.5, eps 0.1), ce label smoothing, n/a batch 10/1
 # Experiment 24:
 SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone
 
+# Experiment 25:
+SGD optimizer, n/a batch 10/150, BasicCSP block in backbone, CENCE loss (beta0.5, eps 0.0), no ce label smoothing,
+
 # Experiment 20: (not yet)
 
 n_threads 4, Adam optimizer

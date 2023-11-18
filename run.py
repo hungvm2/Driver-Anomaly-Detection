@@ -33,6 +33,8 @@ TRAIN_COMMAND = "python main.py \
  --a_split_ratio 1.0 \
  --n_threads 4 \
  --block basiccsp \
+ --loss cence \
+ --head two_heads_cence \
  --name %s"
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4  --block basiccsp --name %s"
 

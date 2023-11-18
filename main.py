@@ -360,9 +360,9 @@ if __name__ == '__main__':
         validation_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=args.val_batch_size,
-            shuffle=False
+            shuffle=False,
             num_workers=args.n_threads,
-            pin_memory=True,
+            pin_memory=True
         )
 
         len_neg = training_anormal_data.__len__()
@@ -415,7 +415,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.5, eps=0.1)
+                criterion = CENCE(args, len_neg, len_pos, beta=0.5, eps=0.0)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")

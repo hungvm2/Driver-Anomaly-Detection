@@ -306,3 +306,35 @@ Mode: Fusion(DIR):      Best Acc: 87.02 | Threshold: 0.86 | AUC: 0.9337
 View: Fusion(DIR)(post-processed):       Best Acc: 87.21 | Threshold: 0.86 | AUC: 0.9361 
 
 Total testing time: 2109.534331560135
+
+# Experiment 25:
+SGD optimizer, n/a batch 10/150, BasicCSP block in backbone, CENCE loss (beta0.5, eps 0.0), no ce label smoothing,
+
+Mode: Top(D):      Best Acc: 86.8 | Threshold: 0.93 | AUC: 0.9155
+View: Top(D)(post-processed):       Best Acc: 87.02 | Threshold: 0.93 | AUC: 0.9184 
+
+Mode: Top(IR):      Best Acc: 80.43 | Threshold: 0.95 | AUC: 0.8775
+View: Top(IR)(post-processed):       Best Acc: 80.71 | Threshold: 0.95 | AUC: 0.881 
+
+Mode: Top(DIR):      Best Acc: 87.67 | Threshold: 0.93 | AUC: 0.9247
+View: Top(DIR)(post-processed):       Best Acc: 87.85 | Threshold: 0.93 | AUC: 0.927 
+
+Mode: Front(D):      Best Acc: 72.22 | Threshold: 0.98 | AUC: 0.7367
+View: Front(D)(post-processed):       Best Acc: 72.31 | Threshold: 0.98 | AUC: 0.7379 
+
+Mode: Front(IR):      Best Acc: 73.21 | Threshold: 0.79 | AUC: 0.7873
+View: Front(IR)(post-processed):       Best Acc: 73.41 | Threshold: 0.79 | AUC: 0.7898 
+
+Mode: Front(DIR):      Best Acc: 73.56 | Threshold: 0.88 | AUC: 0.7951
+View: Front(DIR)(post-processed):       Best Acc: 73.75 | Threshold: 0.89 | AUC: 0.7971 
+
+Mode: Fusion(D):      Best Acc: 89.06 | Threshold: 0.95 | AUC: 0.9396
+View: Fusion(D)(post-processed):       Best Acc: 89.23 | Threshold: 0.95 | AUC: 0.942 
+
+Mode: Fusion(IR):      Best Acc: 80.35 | Threshold: 0.88 | AUC: 0.8813
+View: Fusion(IR)(post-processed):       Best Acc: 80.52 | Threshold: 0.87 | AUC: 0.8839 
+
+Mode: Fusion(DIR):      Best Acc: 86.24 | Threshold: 0.87 | AUC: 0.9383
+View: Fusion(DIR)(post-processed):       Best Acc: 86.49 | Threshold: 0.87 | AUC: 0.9406 
+
+Total testing time: 2111.0074281692505
