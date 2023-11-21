@@ -25,7 +25,7 @@ class CommonLogger:
     def write(self, content):
         print(content)
         with open(self.path, "a", encoding="utf-8") as file:
-            file.write(f"{content}\n")
+            file.write(f"'{content}'-\n")
 
 
 class Logger(object):

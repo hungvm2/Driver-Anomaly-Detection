@@ -1,4 +1,5 @@
 import argparse
+import traceback
 import ast
 import numpy as np
 import os
@@ -268,303 +269,306 @@ if __name__ == '__main__':
     test_logger = CommonLogger(test_logger_file_path)
 
     if args.mode == 'train':
-        temporal_transform = TemporalSequentialCrop(
-            before_crop_duration, args.downsample)
+        try:
+            temporal_transform = TemporalSequentialCrop(
+                before_crop_duration, args.downsample)
 
-        if args.view == 'front_depth' or args.view == 'front_IR':
+            if args.view == 'front_depth' or args.view == 'front_IR':
 
-            spatial_transform = spatial_transforms.Compose([
-                crop_method,
+                spatial_transform = spatial_transforms.Compose([
+                    crop_method,
 
-                spatial_transforms.RandomRotate(),
-                spatial_transforms.SaltImage(),
-                spatial_transforms.Dropout(),
-                spatial_transforms.ToTensor(args.norm_value),
-                spatial_transforms.Normalize([0], [1])
-            ])
-        elif args.view == 'top_depth' or args.view == 'top_IR':
-            spatial_transform = spatial_transforms.Compose([
-                spatial_transforms.RandomHorizontalFlip(),
+                    spatial_transforms.RandomRotate(),
+                    spatial_transforms.SaltImage(),
+                    spatial_transforms.Dropout(),
+                    spatial_transforms.ToTensor(args.norm_value),
+                    spatial_transforms.Normalize([0], [1])
+                ])
+            elif args.view == 'top_depth' or args.view == 'top_IR':
+                spatial_transform = spatial_transforms.Compose([
+                    spatial_transforms.RandomHorizontalFlip(),
+                    spatial_transforms.Scale(args.sample_size),
+                    spatial_transforms.CenterCrop(args.sample_size),
+
+                    spatial_transforms.RandomRotate(),
+                    spatial_transforms.SaltImage(),
+                    spatial_transforms.Dropout(),
+                    spatial_transforms.ToTensor(args.norm_value),
+                    spatial_transforms.Normalize([0], [1])
+                ])
+
+            c_logger.write(
+                "=================================Loading Anormal-Driving Training Data!=================================")
+            training_anormal_data = DAD(root_path=args.root_path,
+                                        subset='train',
+                                        view=args.view,
+                                        sample_duration=before_crop_duration,
+                                        type='anormal',
+                                        spatial_transform=spatial_transform,
+                                        temporal_transform=temporal_transform
+                                        )
+
+            training_anormal_size = int(
+                len(training_anormal_data) * args.a_split_ratio)
+            training_anormal_data = torch.utils.data.Subset(training_anormal_data,
+                                                            np.arange(training_anormal_size))
+
+            train_anormal_loader = torch.utils.data.DataLoader(
+                training_anormal_data,
+                batch_size=args.a_train_batch_size,
+                shuffle=True,
+                num_workers=args.n_threads,
+                pin_memory=True,
+            )
+
+            c_logger.write(
+                "=================================Loading Normal-Driving Training Data!=================================")
+            training_normal_data = DAD(root_path=args.root_path,
+                                       subset='train',
+                                       view=args.view,
+                                       sample_duration=before_crop_duration,
+                                       type='normal',
+                                       spatial_transform=spatial_transform,
+                                       temporal_transform=temporal_transform
+                                       )
+
+            training_normal_size = int(
+                len(training_normal_data) * args.n_split_ratio)
+            training_normal_data = torch.utils.data.Subset(training_normal_data,
+                                                           np.arange(training_normal_size))
+
+            train_normal_loader = torch.utils.data.DataLoader(
+                training_normal_data,
+                batch_size=args.n_train_batch_size,
+                shuffle=True,
+                num_workers=args.n_threads,
+                pin_memory=True,
+            )
+
+            c_logger.write(
+                "========================================Loading Validation Data========================================")
+            val_spatial_transform = spatial_transforms.Compose([
                 spatial_transforms.Scale(args.sample_size),
                 spatial_transforms.CenterCrop(args.sample_size),
-
-                spatial_transforms.RandomRotate(),
-                spatial_transforms.SaltImage(),
-                spatial_transforms.Dropout(),
                 spatial_transforms.ToTensor(args.norm_value),
                 spatial_transforms.Normalize([0], [1])
             ])
+            validation_data = DAD(root_path=args.root_path,
+                                  subset='validation',
+                                  view=args.view,
+                                  sample_duration=args.sample_duration,
+                                  type=None,
+                                  spatial_transform=val_spatial_transform,
+                                  )
 
-        c_logger.write(
-            "=================================Loading Anormal-Driving Training Data!=================================")
-        training_anormal_data = DAD(root_path=args.root_path,
-                                    subset='train',
-                                    view=args.view,
-                                    sample_duration=before_crop_duration,
-                                    type='anormal',
-                                    spatial_transform=spatial_transform,
-                                    temporal_transform=temporal_transform
-                                    )
+            validation_loader = torch.utils.data.DataLoader(
+                validation_data,
+                batch_size=args.val_batch_size,
+                shuffle=False,
+                num_workers=args.n_threads,
+                pin_memory=True
+            )
 
-        training_anormal_size = int(
-            len(training_anormal_data) * args.a_split_ratio)
-        training_anormal_data = torch.utils.data.Subset(training_anormal_data,
-                                                        np.arange(training_anormal_size))
+            len_neg = training_anormal_data.__len__()
+            len_pos = training_normal_data.__len__()
+            num_val_data = validation_data.__len__()
+            c_logger.write(f"len_neg: {len_neg}")
+            c_logger.write(f"len_pos: {len_pos}")
+            c_logger.write(
+                "============================================Generating Model============================================")
 
-        train_anormal_loader = torch.utils.data.DataLoader(
-            training_anormal_data,
-            batch_size=args.a_train_batch_size,
-            shuffle=True,
-            num_workers=args.n_threads,
-            pin_memory=True,
-        )
-
-        c_logger.write(
-            "=================================Loading Normal-Driving Training Data!=================================")
-        training_normal_data = DAD(root_path=args.root_path,
-                                   subset='train',
-                                   view=args.view,
-                                   sample_duration=before_crop_duration,
-                                   type='normal',
-                                   spatial_transform=spatial_transform,
-                                   temporal_transform=temporal_transform
-                                   )
-
-        training_normal_size = int(
-            len(training_normal_data) * args.n_split_ratio)
-        training_normal_data = torch.utils.data.Subset(training_normal_data,
-                                                       np.arange(training_normal_size))
-
-        train_normal_loader = torch.utils.data.DataLoader(
-            training_normal_data,
-            batch_size=args.n_train_batch_size,
-            shuffle=True,
-            num_workers=args.n_threads,
-            pin_memory=True,
-        )
-
-        c_logger.write(
-            "========================================Loading Validation Data========================================")
-        val_spatial_transform = spatial_transforms.Compose([
-            spatial_transforms.Scale(args.sample_size),
-            spatial_transforms.CenterCrop(args.sample_size),
-            spatial_transforms.ToTensor(args.norm_value),
-            spatial_transforms.Normalize([0], [1])
-        ])
-        validation_data = DAD(root_path=args.root_path,
-                              subset='validation',
-                              view=args.view,
-                              sample_duration=args.sample_duration,
-                              type=None,
-                              spatial_transform=val_spatial_transform,
-                              )
-
-        validation_loader = torch.utils.data.DataLoader(
-            validation_data,
-            batch_size=args.val_batch_size,
-            shuffle=False,
-            num_workers=args.n_threads,
-            pin_memory=True
-        )
-
-        len_neg = training_anormal_data.__len__()
-        len_pos = training_normal_data.__len__()
-        num_val_data = validation_data.__len__()
-        c_logger.write(f"len_neg: {len_neg}")
-        c_logger.write(f"len_pos: {len_pos}")
-        c_logger.write(
-            "============================================Generating Model============================================")
-
-        if args.model_type == 'resnet':
-            if args.head == "two_heads_cence":
-                model_head = resnet.CENCEProjectionHead(
-                    args.feature_dim, args.model_depth)
-            else:
-                model_head = resnet.ProjectionHead(
-                    args.feature_dim, args.model_depth, args.loss)
-        elif args.model_type == 'shufflenet':
-            model_head = shufflenet.ProjectionHead(args.feature_dim)
-        elif args.model_type == 'shufflenetv2':
-            model_head = shufflenetv2.ProjectionHead(args.feature_dim)
-        elif args.model_type == 'mobilenet':
-            model_head = mobilenet.ProjectionHead(args.feature_dim)
-        elif args.model_type == 'mobilenetv2':
-            model_head = mobilenetv2.ProjectionHead(args.feature_dim)
-        if args.use_cuda:
-            model_head.cuda()
-
-        if args.resume_path == '':
-            # ===============generate new model or pre-trained model===============
-            model = generate_model(args)
-            if args.opt == "sgd":
-                c_logger.write(
-                    "========================================== Used SGD Optimizer ==========================================")
-                optimizer = torch.optim.SGD(
-                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
-                    momentum=args.momentum,
-                    dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
-            else:
-                c_logger.write(
-                    "========================================== Used Adam Optimizer ==========================================")
-                optimizer = torch.optim.Adam(
-                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
-                    weight_decay=args.weight_decay)
-            nce_average = None
-            if args.loss == "ce":
-                c_logger.write(
-                    "========================================== Used Cross Entropy Loss ==========================================")
-                criterion = CrossEntropy(eps=0.1)
-            elif args.loss == "cence":
-                c_logger.write(
-                    "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=args.beta, eps=0.0)
-            else:
-                c_logger.write(
-                    "========================================== Used NCE Loss ==========================================")
-                nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau,
-                                         args.Z_momentum)
-                criterion = NCECriterion(len_neg)
-            begin_epoch = 1
-            best_acc = 0
-            memory_bank = []
-
-        else:
-            # ===============load previously trained model ===============
-            args.pre_train_model = False
-            model = generate_model(args)
-            resume_path = os.path.join(
-                args.checkpoint_folder, args.resume_path)
-            resume_checkpoint = torch.load(resume_path)
-            model.load_state_dict(resume_checkpoint['state_dict'])
-            resume_head_checkpoint = torch.load(
-                os.path.join(args.checkpoint_folder, args.resume_head_path))
-            model_head.load_state_dict(resume_head_checkpoint['state_dict'])
+            if args.model_type == 'resnet':
+                if args.head == "two_heads_cence":
+                    model_head = resnet.CENCEProjectionHead(
+                        args.feature_dim, args.model_depth)
+                else:
+                    model_head = resnet.ProjectionHead(
+                        args.feature_dim, args.model_depth, args.loss)
+            elif args.model_type == 'shufflenet':
+                model_head = shufflenet.ProjectionHead(args.feature_dim)
+            elif args.model_type == 'shufflenetv2':
+                model_head = shufflenetv2.ProjectionHead(args.feature_dim)
+            elif args.model_type == 'mobilenet':
+                model_head = mobilenet.ProjectionHead(args.feature_dim)
+            elif args.model_type == 'mobilenetv2':
+                model_head = mobilenetv2.ProjectionHead(args.feature_dim)
             if args.use_cuda:
                 model_head.cuda()
-            if args.opt == "sgd":
-                c_logger.write(
-                    "========================================== Used SGD Optimizer ==========================================")
-                optimizer = torch.optim.SGD(
-                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
-                    momentum=args.momentum,
-                    dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
-            else:
-                c_logger.write(
-                    "========================================== Used Adam Optimizer ==========================================")
-                optimizer = torch.optim.Adam(
-                    list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
-                    weight_decay=args.weight_decay)
-            optimizer.load_state_dict(resume_checkpoint['optimizer'])
-            nce_average = resume_checkpoint['nce_average']
-            criterion = NCECriterion(len_neg)
-            begin_epoch = resume_checkpoint['epoch'] + 1
-            best_acc = resume_checkpoint['acc']
-            memory_bank = resume_checkpoint['memory_bank']
-            del resume_checkpoint
-            torch.cuda.empty_cache()
-            adjust_learning_rate(optimizer, args.learning_rate)
 
-        c_logger.write(
-            "==========================================!!!START TRAINING!!!==========================================")
-        start = time.time()
-        cudnn.benchmark = True
-        batch_logger = Logger(os.path.join(args.log_folder, f'batch_{args.name}_{args.view}.log'),
-                              ['epoch', 'batch', 'loss', 'probs', 'lr'],
-                              args.log_resume)
-        epoch_logger = Logger(os.path.join(args.log_folder, f'epoch_{args.name}_{args.view}.log'),
-                              ['epoch', 'loss', 'probs', 'lr'],
-                              args.log_resume)
-        val_logger = Logger(os.path.join(args.log_folder, f'val_{args.name}_{args.view}.log'),
-                            ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold',
-                             'acc_list',
-                             'normal_acc_list', 'anormal_acc_list'], args.log_resume)
-        for epoch in range(begin_epoch, begin_epoch + args.epochs):
-            memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head,
-                                      nce_average,
-                                      criterion, optimizer, epoch, args, batch_logger, epoch_logger, c_logger,
-                                      memory_bank)
-
-            if epoch % args.val_step == 0:
-            # if epoch in {150, 151} or epoch > args.epochs - 10:
-                start_val_step_time = time.time()
-                c_logger.write(
-                    "==========================================!!!Evaluating!!!==========================================")
-                normal_vec = torch.mean(
-                    torch.cat(memory_bank, dim=0), dim=0, keepdim=True)
-                normal_vec = l2_normalize(normal_vec)
-
-                model.eval()
-                accuracy, best_threshold, acc_n, acc_a, acc_list, acc_n_list, acc_a_list = split_acc_diff_threshold(
-                    model, normal_vec, validation_loader, args.use_cuda)
-                c_logger.write(
-                    f'Epoch: {epoch}/{args.epochs} | Accuracy: {accuracy} | Normal Acc: {acc_n} | Anormal Acc: {acc_a} | Threshold: {best_threshold}')
-                c_logger.write(
-                    "==========================================!!!Logging!!!==========================================")
-                val_logger.log({
-                    'epoch': epoch,
-                    'accuracy': accuracy * 100,
-                    'normal_acc': acc_n * 100,
-                    'anormal_acc': acc_a * 100,
-                    'threshold': best_threshold,
-                    'acc_list': acc_list,
-                    'normal_acc_list': acc_n_list,
-                    'anormal_acc_list': acc_a_list
-                })
-
-                if accuracy > best_acc:
-                    best_acc = accuracy
+            if args.resume_path == '':
+                # ===============generate new model or pre-trained model===============
+                model = generate_model(args)
+                if args.opt == "sgd":
                     c_logger.write(
-                        "==========================================!!!Saving!!!==========================================")
-                    c_logger.write(f"The Best result of {args.view} on val set is currently at epoch {epoch}...")
-                    checkpoint_path = os.path.join(args.checkpoint_folder,
-                                                   f'best_model_{args.model_type}_{args.view}_{args.name}.pth')
-                    states = {
+                        "========================================== Used SGD Optimizer ==========================================")
+                    optimizer = torch.optim.SGD(
+                        list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                        momentum=args.momentum,
+                        dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+                else:
+                    c_logger.write(
+                        "========================================== Used Adam Optimizer ==========================================")
+                    optimizer = torch.optim.Adam(
+                        list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                        weight_decay=args.weight_decay)
+                nce_average = None
+                if args.loss == "ce":
+                    c_logger.write(
+                        "========================================== Used Cross Entropy Loss ==========================================")
+                    criterion = CrossEntropy(eps=0.1)
+                elif args.loss == "cence":
+                    c_logger.write(
+                        "========================================== Used CENCE Loss ==========================================")
+                    criterion = CENCE(args, len_neg, len_pos, beta=args.beta, eps=0.0)
+                else:
+                    c_logger.write(
+                        "========================================== Used NCE Loss ==========================================")
+                    nce_average = NCEAverage(args.feature_dim, len_neg, len_pos, args.tau,
+                                             args.Z_momentum)
+                    criterion = NCECriterion(len_neg)
+                begin_epoch = 1
+                best_acc = 0
+                memory_bank = []
+
+            else:
+                # ===============load previously trained model ===============
+                args.pre_train_model = False
+                model = generate_model(args)
+                resume_path = os.path.join(
+                    args.checkpoint_folder, args.resume_path)
+                resume_checkpoint = torch.load(resume_path)
+                model.load_state_dict(resume_checkpoint['state_dict'])
+                resume_head_checkpoint = torch.load(
+                    os.path.join(args.checkpoint_folder, args.resume_head_path))
+                model_head.load_state_dict(resume_head_checkpoint['state_dict'])
+                if args.use_cuda:
+                    model_head.cuda()
+                if args.opt == "sgd":
+                    c_logger.write(
+                        "========================================== Used SGD Optimizer ==========================================")
+                    optimizer = torch.optim.SGD(
+                        list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                        momentum=args.momentum,
+                        dampening=dampening, weight_decay=args.weight_decay, nesterov=args.nesterov)
+                else:
+                    c_logger.write(
+                        "========================================== Used Adam Optimizer ==========================================")
+                    optimizer = torch.optim.Adam(
+                        list(model.parameters()) + list(model_head.parameters()), lr=args.learning_rate,
+                        weight_decay=args.weight_decay)
+                optimizer.load_state_dict(resume_checkpoint['optimizer'])
+                nce_average = resume_checkpoint['nce_average']
+                criterion = NCECriterion(len_neg)
+                begin_epoch = resume_checkpoint['epoch'] + 1
+                best_acc = resume_checkpoint['acc']
+                memory_bank = resume_checkpoint['memory_bank']
+                del resume_checkpoint
+                torch.cuda.empty_cache()
+                adjust_learning_rate(optimizer, args.learning_rate)
+
+            c_logger.write(
+                "==========================================!!!START TRAINING!!!==========================================")
+            start = time.time()
+            cudnn.benchmark = True
+            batch_logger = Logger(os.path.join(args.log_folder, f'batch_{args.name}_{args.view}.log'),
+                                  ['epoch', 'batch', 'loss', 'probs', 'lr'],
+                                  args.log_resume)
+            epoch_logger = Logger(os.path.join(args.log_folder, f'epoch_{args.name}_{args.view}.log'),
+                                  ['epoch', 'loss', 'probs', 'lr'],
+                                  args.log_resume)
+            val_logger = Logger(os.path.join(args.log_folder, f'val_{args.name}_{args.view}.log'),
+                                ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold',
+                                 'acc_list',
+                                 'normal_acc_list', 'anormal_acc_list'], args.log_resume)
+            for epoch in range(begin_epoch, begin_epoch + args.epochs):
+                memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head,
+                                          nce_average,
+                                          criterion, optimizer, epoch, args, batch_logger, epoch_logger, c_logger,
+                                          memory_bank)
+
+                if epoch % args.val_step == 0:
+                # if epoch in {150, 151} or epoch > args.epochs - 10:
+                    start_val_step_time = time.time()
+                    c_logger.write(
+                        "==========================================!!!Evaluating!!!==========================================")
+                    normal_vec = torch.mean(
+                        torch.cat(memory_bank, dim=0), dim=0, keepdim=True)
+                    normal_vec = l2_normalize(normal_vec)
+
+                    model.eval()
+                    accuracy, best_threshold, acc_n, acc_a, acc_list, acc_n_list, acc_a_list = split_acc_diff_threshold(
+                        model, normal_vec, validation_loader, args.use_cuda)
+                    c_logger.write(
+                        f'Epoch: {epoch}/{args.epochs} | Accuracy: {accuracy} | Normal Acc: {acc_n} | Anormal Acc: {acc_a} | Threshold: {best_threshold}')
+                    c_logger.write(
+                        "==========================================!!!Logging!!!==========================================")
+                    val_logger.log({
                         'epoch': epoch,
-                        'state_dict': model.state_dict(),
-                        'optimizer': optimizer.state_dict(),
-                        'acc': accuracy,
+                        'accuracy': accuracy * 100,
+                        'normal_acc': acc_n * 100,
+                        'anormal_acc': acc_a * 100,
                         'threshold': best_threshold,
-                        'nce_average': nce_average,
-                        'memory_bank': memory_bank
-                    }
-                    torch.save(states, checkpoint_path)
+                        'acc_list': acc_list,
+                        'normal_acc_list': acc_n_list,
+                        'anormal_acc_list': acc_a_list
+                    })
 
-                    head_checkpoint_path = os.path.join(args.checkpoint_folder,
-                                                        f'best_model_{args.model_type}_{args.view}_head_{args.name}.pth')
-                    states_head = {
-                        'state_dict': model_head.state_dict()
-                    }
-                    torch.save(states_head, head_checkpoint_path)
-                c_logger.write(f"---- Eval time: {time.time() - start_val_step_time}")
+                    if accuracy > best_acc:
+                        best_acc = accuracy
+                        c_logger.write(
+                            "==========================================!!!Saving!!!==========================================")
+                        c_logger.write(f"The Best result of {args.view} on val set is currently at epoch {epoch}...")
+                        checkpoint_path = os.path.join(args.checkpoint_folder,
+                                                       f'best_model_{args.model_type}_{args.view}_{args.name}.pth')
+                        states = {
+                            'epoch': epoch,
+                            'state_dict': model.state_dict(),
+                            'optimizer': optimizer.state_dict(),
+                            'acc': accuracy,
+                            'threshold': best_threshold,
+                            'nce_average': nce_average,
+                            'memory_bank': memory_bank
+                        }
+                        torch.save(states, checkpoint_path)
 
-            # if epoch % args.save_step == 0:
-            # if epoch == args.epochs or epoch in {150, 151}:
-            #     c_logger.write(
-            #         "==========================================!!!Saving!!!==========================================")
-            #     checkpoint_path = os.path.join(args.checkpoint_folder,
-            #                                    f'{args.model_type}_{args.view}_{epoch}.pth')
-            #     states = {
-            #         'epoch': epoch,
-            #         'state_dict': model.state_dict(),
-            #         'optimizer': optimizer.state_dict(),
-            #         'acc': accuracy,
-            #         'nce_average': nce_average,
-            #         'memory_bank': memory_bank
-            #     }
-            #     torch.save(states, checkpoint_path)
-            #
-            #     head_checkpoint_path = os.path.join(args.checkpoint_folder,
-            #                                         f'{args.model_type}_{args.view}_{epoch}_head.pth')
-            #     states_head = {
-            #         'state_dict': model_head.state_dict()
-            #     }
-            #     torch.save(states_head, head_checkpoint_path)
+                        head_checkpoint_path = os.path.join(args.checkpoint_folder,
+                                                            f'best_model_{args.model_type}_{args.view}_head_{args.name}.pth')
+                        states_head = {
+                            'state_dict': model_head.state_dict()
+                        }
+                        torch.save(states_head, head_checkpoint_path)
+                    c_logger.write(f"---- Eval time: {time.time() - start_val_step_time}")
 
-            if epoch % args.lr_decay == 0:
-                lr = args.learning_rate * (0.1 ** (epoch // args.lr_decay))
-                adjust_learning_rate(optimizer, lr)
-                print(f'New learning rate: {lr}')
-        c_logger.write(f"Total training time: {time.time() - start}")
+                # if epoch % args.save_step == 0:
+                # if epoch == args.epochs or epoch in {150, 151}:
+                #     c_logger.write(
+                #         "==========================================!!!Saving!!!==========================================")
+                #     checkpoint_path = os.path.join(args.checkpoint_folder,
+                #                                    f'{args.model_type}_{args.view}_{epoch}.pth')
+                #     states = {
+                #         'epoch': epoch,
+                #         'state_dict': model.state_dict(),
+                #         'optimizer': optimizer.state_dict(),
+                #         'acc': accuracy,
+                #         'nce_average': nce_average,
+                #         'memory_bank': memory_bank
+                #     }
+                #     torch.save(states, checkpoint_path)
+                #
+                #     head_checkpoint_path = os.path.join(args.checkpoint_folder,
+                #                                         f'{args.model_type}_{args.view}_{epoch}_head.pth')
+                #     states_head = {
+                #         'state_dict': model_head.state_dict()
+                #     }
+                #     torch.save(states_head, head_checkpoint_path)
+
+                if epoch % args.lr_decay == 0:
+                    lr = args.learning_rate * (0.1 ** (epoch // args.lr_decay))
+                    adjust_learning_rate(optimizer, lr)
+                    print(f'New learning rate: {lr}')
+            c_logger.write(f"Total training time: {time.time() - start}")
+        except Exception as e:
+            c_logger.write(traceback.print_exc())
     elif args.mode == 'test':
         if not os.path.exists(args.normvec_folder):
             os.makedirs(args.normvec_folder)

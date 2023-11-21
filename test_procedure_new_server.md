@@ -20,6 +20,11 @@ Best Acc: 88.34 | Threshold: 0.9 | AUC: 0.9407
 SGD optimizer, CENCE loss (beta0.4, eps 0.0), no ce label smoothing, n/a batch 10/150
 Best Acc: 85.6 | Threshold: 0.82 | AUC: 0.922
 
+# Experiment 27:
+
+SGD optimizer, CENCE loss (beta0.6, eps 0.0), no ce label smoothing, n/a batch 10/150
+Best Acc: 85.75 | Threshold: 0.84 | AUC: 0.9282
+
 # Experiment 23:
 
 SGD optimizer, CENCE loss (beta0.5, eps 0.1), ce label smoothing, n/a batch 10/150
