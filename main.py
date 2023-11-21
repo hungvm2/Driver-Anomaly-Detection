@@ -134,6 +134,8 @@ def parse_args():
                         help='Select head.')
     parser.add_argument('--block', default="basic", type=str,
                         help='Select backbone block.')
+    parser.add_argument('--beta', default=0.5, type=float,
+                        help='CENCE beta number.')
     args = parser.parse_args()
     return args
 
@@ -415,7 +417,7 @@ if __name__ == '__main__':
             elif args.loss == "cence":
                 c_logger.write(
                     "========================================== Used CENCE Loss ==========================================")
-                criterion = CENCE(args, len_neg, len_pos, beta=0.5, eps=0.0)
+                criterion = CENCE(args, len_neg, len_pos, beta=args.beta, eps=0.0)
             else:
                 c_logger.write(
                     "========================================== Used NCE Loss ==========================================")
