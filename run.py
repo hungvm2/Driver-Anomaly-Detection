@@ -34,7 +34,6 @@ TRAIN_COMMAND = "python main.py \
  --n_threads 4 \
  --loss cence \
  --head two_heads_cence \
- --beta 0.6 \
  --name %s"
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
 
@@ -49,6 +48,7 @@ if __name__ == "__main__":
     sleep_time = int(args.s)
     print("Sleeping time: ", sleep_time)
     datasets = [ "front_IR", "front_depth", "top_depth", "top_IR" ]
+    # datasets = [ "front_depth" ]
     if not args.m:
         for dataset in datasets:
             print(f"==== START DATASET: {dataset} - NAME: {name} ====")

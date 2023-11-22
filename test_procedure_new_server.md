@@ -30,6 +30,11 @@ Best Acc: 85.75 | Threshold: 0.84 | AUC: 0.9282
 SGD optimizer, CENCE loss (beta0.5, eps 0.1), ce label smoothing, n/a batch 10/150
 Best Acc: 88.19 | Threshold: 0.87 | AUC: 0.9388
 
+# Experiment 28:
+
+SGD optimizer, CENCE loss (beta0.5, eps 0.2), ce label smoothing, n/a batch 10/150
+Best Acc: 84.71 | Threshold: 0.8 | AUC: 0.9137
+
 # Experiment 24:
 
 SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone
