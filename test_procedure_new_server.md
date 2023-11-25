@@ -47,8 +47,16 @@ Best Acc: 84.52 | Threshold: 0.84 | AUC: 0.9002
 
 # Experiment 24:
 
-SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone
+SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone (b type: 2 transition blocks)
 Best Acc: 87.02 | Threshold: 0.86 | AUC: 0.9337
+
+# Experiment 31:
+
+SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone (c type: transition first)
+
+# Experiment 32:
+
+SGD optimizer, NCE loss, n/a batch 10/150, BasicCSP block in backbone (d type: transition last)
 
 # Experiment 25:
 

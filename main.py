@@ -135,6 +135,8 @@ def parse_args():
                         help='Select head.')
     parser.add_argument('--block', default="basic", type=str,
                         help='Select backbone block.')
+    parser.add_argument('--t_type', default="b", type=str,
+                        help='Transition type in the CSP block.')
     parser.add_argument('--beta', default=0.5, type=float,
                         help='CENCE beta number.')
     args = parser.parse_args()

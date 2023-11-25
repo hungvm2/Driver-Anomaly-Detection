@@ -149,7 +149,7 @@ class BasicBlock(nn.Module):
 class BasicCSPBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, tracking=True):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, tracking=True, t_type="b"):
         super(BasicCSPBlock, self).__init__()
         self.tracking = tracking
         in_dim = inplanes//2
@@ -161,13 +161,25 @@ class BasicCSPBlock(nn.Module):
         self.bn2 = nn.BatchNorm3d(out_dim, track_running_stats=self.tracking)
         self.downsample = downsample
         self.stride = stride
+        self.transition_type = t_type
 
         # transition layers
-        self.conv3 = conv3x3x3(out_dim, in_dim)
-        self.bn3 = nn.BatchNorm3d(in_dim, track_running_stats=self.tracking)
-        
-        self.conv4 = conv3x3x3(inplanes, planes)
-        self.bn4 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+        if t_type == "b":
+            self.conv3 = conv3x3x3(out_dim, in_dim)
+            self.bn3 = nn.BatchNorm3d(in_dim, track_running_stats=self.tracking)
+            
+            self.conv4 = conv3x3x3(inplanes, planes)
+            self.bn4 = nn.BatchNorm3d(planes, track_running_stats=self.tracking)
+        elif t_type == "c":
+            # transition first
+            self.conv3 = conv3x3x3(out_dim, in_dim)
+            self.bn3 = nn.BatchNorm3d(in_dim, track_running_stats=self.tracking)
+        elif t_type == "d":
+            # transition last
+            self.conv3 = conv3x3x3(inplanes, planes)
+            self.bn3 = nn.BatchNorm3d(inplanes, track_running_stats=self.tracking)
+
+
 
 
     def forward(self, x):
@@ -187,24 +199,37 @@ class BasicCSPBlock(nn.Module):
         out = self.relu(out)
         # print("shape before transitional layer 1: ", out.shape)
 
-        # Transitional layer 1
-        out = self.conv3(out)
-        out = self.bn3(out)
-        out = self.relu(out)
+        if self.transition_type == "b":
+            # Transitional layer 1
+            out = self.conv3(out)
+            out = self.bn3(out)
+            out = self.relu(out)
+            # Concat 2 parts
+            x2 = downsample_basic_block(x2, planes=numb_of_channels * self.expansion,
+                        stride=self.stride, block_type='basiccsp')
+            out = torch.cat([out, x2], dim=1)
 
-        # print("shape before transitional layer 2: ", out.shape)
-        # print("x2.shape: ", x2.shape)
-        # print("x1.shape: ", x1.shape)
-        
-        # Concat 2 parts
-        x2 = downsample_basic_block(x2, planes=numb_of_channels * self.expansion,
-                    stride=self.stride, block_type='basiccsp')
-        out = torch.cat([out, x2], dim=1)
-
-        # Transitional layer 2
-        out = self.conv4(out)
-        out = self.bn4(out)
-        out = self.relu(out)
+            # Transitional layer 2
+            out = self.conv4(out)
+            out = self.bn4(out)
+            out = self.relu(out)
+        elif self.transition_type == "c":
+            # fusion first
+            out = self.conv3(out)
+            out = self.bn3(out)
+            out = self.relu(out)
+            # Concat 2 parts
+            x2 = downsample_basic_block(x2, planes=numb_of_channels * self.expansion,
+                        stride=self.stride, block_type='basiccsp')
+            out = torch.cat([out, x2], dim=1)
+        else:
+            # fusion last
+            x2 = downsample_basic_block(x2, planes=numb_of_channels * self.expansion,
+                        stride=self.stride, block_type='basiccsp')
+            out = torch.cat([out, x2], dim=1)
+            out = self.conv3(out)
+            out = self.bn3(out)
+            out = self.relu(out)
         return out
 
 
@@ -257,7 +282,7 @@ class ResNet(nn.Module):
                  sample_duration,
                  output_dim,
                  shortcut_type='B',
-                 tracking=True, pre_train=False, block_type="basic"):
+                 tracking=True, pre_train=False, block_type="basic", t_type="b"):
         self.inplanes = 64
         super(ResNet, self).__init__()
         if pre_train:

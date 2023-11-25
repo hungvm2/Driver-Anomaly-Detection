@@ -20,7 +20,8 @@ def generate_model(args):
                     shortcut_type=args.shortcut_type,
                     tracking=args.tracking,
                     pre_train=args.pre_train_model,
-                    block_type=args.block
+                    block_type=args.block,
+                    t_type=args.t_type
                 )
 
             elif args.model_depth == 50:
