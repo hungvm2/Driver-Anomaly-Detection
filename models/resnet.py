@@ -214,7 +214,7 @@ class BasicCSPBlock(nn.Module):
             out = self.bn4(out)
             out = self.relu(out)
         elif self.transition_type == "c":
-            # fusion first
+            # fusion last
             out = self.conv3(out)
             out = self.bn3(out)
             out = self.relu(out)
@@ -223,7 +223,7 @@ class BasicCSPBlock(nn.Module):
                         stride=self.stride, block_type='basiccsp')
             out = torch.cat([out, x2], dim=1)
         else:
-            # fusion last
+            # fusion first
             x2 = downsample_basic_block(x2, planes=numb_of_channels * self.expansion,
                         stride=self.stride, block_type='basiccsp')
             out = torch.cat([out, x2], dim=1)
