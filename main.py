@@ -139,6 +139,8 @@ def parse_args():
                         help='Transition type in the CSP block.')
     parser.add_argument('--beta', default=0.5, type=float,
                         help='CENCE beta number.')
+    parser.add_argument('--normal_downsample', default=2, type=int,
+                        help='Downsampling of normal data. Select 1 frame out of N')
     args = parser.parse_args()
     return args
 
@@ -262,7 +264,10 @@ if __name__ == '__main__':
     elif args.train_crop == 'center':
         crop_method = spatial_transforms.MultiScaleCornerCrop(args.scales, args.sample_size,
                                                               crop_positions=['c'])
+
     before_crop_duration = int(args.sample_duration * args.downsample)
+    normal_before_crop_duration = int(args.sample_duration * args.normal_downsample)
+
     common_logger_file_path = os.path.join(
         args.log_folder, f'common_{args.name}_{args.view}.log')
     c_logger = CommonLogger(common_logger_file_path)
@@ -274,7 +279,8 @@ if __name__ == '__main__':
         try:
             temporal_transform = TemporalSequentialCrop(
                 before_crop_duration, args.downsample)
-
+            normal_temporal_transform = TemporalSequentialCrop(
+                normal_before_crop_duration, args.normal_downsample)
             if args.view == 'front_depth' or args.view == 'front_IR':
 
                 spatial_transform = spatial_transforms.Compose([
@@ -328,10 +334,10 @@ if __name__ == '__main__':
             training_normal_data = DAD(root_path=args.root_path,
                                        subset='train',
                                        view=args.view,
-                                       sample_duration=before_crop_duration,
+                                       sample_duration=normal_before_crop_duration,
                                        type='normal',
                                        spatial_transform=spatial_transform,
-                                       temporal_transform=temporal_transform
+                                       temporal_transform=normal_temporal_transform
                                        )
 
             training_normal_size = int(

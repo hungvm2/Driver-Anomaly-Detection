@@ -68,3 +68,10 @@ Total testing time: 2147.911495447159
 
 SGD optimizer, n/a batch 10/150, BasicCSP block in backbone (b type: 2 transition blocks), CENCE loss (beta0.5, eps 0.0), no ce label smoothing,
 Best Acc: 86.24 | Threshold: 0.87 | AUC: 0.9383
+Total testing time: 2111.0074281692505
+
+# Experiment 33:
+
+SGD optimizer, NCE loss, n/a batch 10/150, lr 0.01, normal_downsample=3, downsample=2
+Epoches 100
+
