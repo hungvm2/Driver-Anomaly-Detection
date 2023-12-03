@@ -26,12 +26,12 @@ TRAIN_COMMAND = "python main.py \
  --save_step 50 \
  --train_crop 'random' \
  --n_scales 5 \
- --downsample 2 \
  --log_resume False \
  --width_mult 2.0 \
  --n_split_ratio 1.0 \
  --a_split_ratio 1.0 \
  --n_threads 4 \
+ --downsample 1 \
  --normal_downsample 3 \
  --name %s"
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"

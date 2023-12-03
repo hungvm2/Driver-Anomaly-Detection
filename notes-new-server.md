@@ -733,35 +733,35 @@ TRAIN_COMMAND = "python main.py \
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --block basiccsp --t_type c --name %s"
 
 ### results:
-Mode: Top(D):      Best Acc: 86.49 | Threshold: 0.97 | AUC: 0.9179
-View: Top(D)(post-processed):       Best Acc: 86.8 | Threshold: 0.97 | AUC: 0.9214 
 
-Mode: Top(IR):      Best Acc: 78.14 | Threshold: 0.98 | AUC: 0.8447
-View: Top(IR)(post-processed):       Best Acc: 78.31 | Threshold: 0.98 | AUC: 0.849 
+Mode: Top(D): Best Acc: 86.49 | Threshold: 0.97 | AUC: 0.9179
+View: Top(D)(post-processed): Best Acc: 86.8 | Threshold: 0.97 | AUC: 0.9214
 
-Mode: Top(DIR):      Best Acc: 84.28 | Threshold: 0.97 | AUC: 0.9188
-View: Top(DIR)(post-processed):       Best Acc: 84.41 | Threshold: 0.97 | AUC: 0.9215 
+Mode: Top(IR): Best Acc: 78.14 | Threshold: 0.98 | AUC: 0.8447
+View: Top(IR)(post-processed): Best Acc: 78.31 | Threshold: 0.98 | AUC: 0.849
 
-Mode: Front(D):      Best Acc: 72.34 | Threshold: 0.93 | AUC: 0.7038
-View: Front(D)(post-processed):       Best Acc: 72.47 | Threshold: 0.93 | AUC: 0.7056 
+Mode: Top(DIR): Best Acc: 84.28 | Threshold: 0.97 | AUC: 0.9188
+View: Top(DIR)(post-processed): Best Acc: 84.41 | Threshold: 0.97 | AUC: 0.9215
 
-Mode: Front(IR):      Best Acc: 70.73 | Threshold: 0.3 | AUC: 0.7589
-View: Front(IR)(post-processed):       Best Acc: 70.85 | Threshold: 0.3 | AUC: 0.7625 
+Mode: Front(D): Best Acc: 72.34 | Threshold: 0.93 | AUC: 0.7038
+View: Front(D)(post-processed): Best Acc: 72.47 | Threshold: 0.93 | AUC: 0.7056
 
-Mode: Front(DIR):      Best Acc: 72.11 | Threshold: 0.63 | AUC: 0.7759
-View: Front(DIR)(post-processed):       Best Acc: 72.26 | Threshold: 0.63 | AUC: 0.7794 
+Mode: Front(IR): Best Acc: 70.73 | Threshold: 0.3 | AUC: 0.7589
+View: Front(IR)(post-processed): Best Acc: 70.85 | Threshold: 0.3 | AUC: 0.7625
 
-Mode: Fusion(D):      Best Acc: 87.13 | Threshold: 0.95 | AUC: 0.9052
-View: Fusion(D)(post-processed):       Best Acc: 87.33 | Threshold: 0.95 | AUC: 0.9086 
+Mode: Front(DIR): Best Acc: 72.11 | Threshold: 0.63 | AUC: 0.7759
+View: Front(DIR)(post-processed): Best Acc: 72.26 | Threshold: 0.63 | AUC: 0.7794
 
-Mode: Fusion(IR):      Best Acc: 77.38 | Threshold: 0.61 | AUC: 0.8373
-View: Fusion(IR)(post-processed):       Best Acc: 77.53 | Threshold: 0.61 | AUC: 0.841 
+Mode: Fusion(D): Best Acc: 87.13 | Threshold: 0.95 | AUC: 0.9052
+View: Fusion(D)(post-processed): Best Acc: 87.33 | Threshold: 0.95 | AUC: 0.9086
 
-Mode: Fusion(DIR):      Best Acc: 85.82 | Threshold: 0.78 | AUC: 0.9091
-View: Fusion(DIR)(post-processed):       Best Acc: 86.0 | Threshold: 0.79 | AUC: 0.9125 
+Mode: Fusion(IR): Best Acc: 77.38 | Threshold: 0.61 | AUC: 0.8373
+View: Fusion(IR)(post-processed): Best Acc: 77.53 | Threshold: 0.61 | AUC: 0.841
+
+Mode: Fusion(DIR): Best Acc: 85.82 | Threshold: 0.78 | AUC: 0.9091
+View: Fusion(DIR)(post-processed): Best Acc: 86.0 | Threshold: 0.79 | AUC: 0.9125
 
 Total testing time: 2044.8548233509064
-
 
 # Experiment 32:
 
@@ -803,37 +803,38 @@ TRAIN_COMMAND = "python main.py \
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --block basiccsp --t_type d --name %s"
 
 ## Result:
-Mode: Top(D):      Best Acc: 85.96 | Threshold: 0.96 | AUC: 0.9077
-View: Top(D)(post-processed):       Best Acc: 86.22 | Threshold: 0.96 | AUC: 0.9115 
 
-Mode: Top(IR):      Best Acc: 81.35 | Threshold: 0.96 | AUC: 0.8657
-View: Top(IR)(post-processed):       Best Acc: 81.57 | Threshold: 0.96 | AUC: 0.8698 
+Mode: Top(D): Best Acc: 85.96 | Threshold: 0.96 | AUC: 0.9077
+View: Top(D)(post-processed): Best Acc: 86.22 | Threshold: 0.96 | AUC: 0.9115
 
-Mode: Top(DIR):      Best Acc: 85.52 | Threshold: 0.95 | AUC: 0.9201
-View: Top(DIR)(post-processed):       Best Acc: 85.68 | Threshold: 0.95 | AUC: 0.9231 
+Mode: Top(IR): Best Acc: 81.35 | Threshold: 0.96 | AUC: 0.8657
+View: Top(IR)(post-processed): Best Acc: 81.57 | Threshold: 0.96 | AUC: 0.8698
 
-Mode: Front(D):      Best Acc: 75.36 | Threshold: 0.24 | AUC: 0.7656
-View: Front(D)(post-processed):       Best Acc: 75.36 | Threshold: 0.24 | AUC: 0.7658 
+Mode: Top(DIR): Best Acc: 85.52 | Threshold: 0.95 | AUC: 0.9201
+View: Top(DIR)(post-processed): Best Acc: 85.68 | Threshold: 0.95 | AUC: 0.9231
 
-Mode: Front(IR):      Best Acc: 71.93 | Threshold: 0.64 | AUC: 0.7538
-View: Front(IR)(post-processed):       Best Acc: 72.04 | Threshold: 0.64 | AUC: 0.7583 
+Mode: Front(D): Best Acc: 75.36 | Threshold: 0.24 | AUC: 0.7656
+View: Front(D)(post-processed): Best Acc: 75.36 | Threshold: 0.24 | AUC: 0.7658
 
-Mode: Front(DIR):      Best Acc: 72.63 | Threshold: 0.48 | AUC: 0.7787
-View: Front(DIR)(post-processed):       Best Acc: 72.81 | Threshold: 0.48 | AUC: 0.781 
+Mode: Front(IR): Best Acc: 71.93 | Threshold: 0.64 | AUC: 0.7538
+View: Front(IR)(post-processed): Best Acc: 72.04 | Threshold: 0.64 | AUC: 0.7583
 
-Mode: Fusion(D):      Best Acc: 85.64 | Threshold: 0.58 | AUC: 0.8729
-View: Fusion(D)(post-processed):       Best Acc: 85.71 | Threshold: 0.58 | AUC: 0.8737 
+Mode: Front(DIR): Best Acc: 72.63 | Threshold: 0.48 | AUC: 0.7787
+View: Front(DIR)(post-processed): Best Acc: 72.81 | Threshold: 0.48 | AUC: 0.781
 
-Mode: Fusion(IR):      Best Acc: 78.81 | Threshold: 0.75 | AUC: 0.8365
-View: Fusion(IR)(post-processed):       Best Acc: 79.01 | Threshold: 0.76 | AUC: 0.8402 
+Mode: Fusion(D): Best Acc: 85.64 | Threshold: 0.58 | AUC: 0.8729
+View: Fusion(D)(post-processed): Best Acc: 85.71 | Threshold: 0.58 | AUC: 0.8737
 
-Mode: Fusion(DIR):      Best Acc: 83.26 | Threshold: 0.67 | AUC: 0.8873
-View: Fusion(DIR)(post-processed):       Best Acc: 83.43 | Threshold: 0.69 | AUC: 0.8894 
+Mode: Fusion(IR): Best Acc: 78.81 | Threshold: 0.75 | AUC: 0.8365
+View: Fusion(IR)(post-processed): Best Acc: 79.01 | Threshold: 0.76 | AUC: 0.8402
+
+Mode: Fusion(DIR): Best Acc: 83.26 | Threshold: 0.67 | AUC: 0.8873
+View: Fusion(DIR)(post-processed): Best Acc: 83.43 | Threshold: 0.69 | AUC: 0.8894
 
 Total testing time: 2147.911495447159
 
-
 # Experiment 33:
+
 SGD optimizer, NCE loss, n/a batch 10/150, lr 0.01, normal_downsample=3, anormal_downsample=2
 Epoches 100
 
@@ -872,31 +873,101 @@ TRAIN_COMMAND = "python main.py \
 TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
 
 ### Results:
-Mode: Top(D):      Best Acc: 84.69 | Threshold: 0.96 | AUC: 0.8895
-View: Top(D)(post-processed):       Best Acc: 84.87 | Threshold: 0.96 | AUC: 0.8916 
 
-Mode: Top(IR):      Best Acc: 79.0 | Threshold: 0.82 | AUC: 0.8549
-View: Top(IR)(post-processed):       Best Acc: 79.15 | Threshold: 0.82 | AUC: 0.8575 
+Mode: Top(D): Best Acc: 84.69 | Threshold: 0.96 | AUC: 0.8895
+View: Top(D)(post-processed): Best Acc: 84.87 | Threshold: 0.96 | AUC: 0.8916
 
-Mode: Top(DIR):      Best Acc: 83.42 | Threshold: 0.87 | AUC: 0.8979
-View: Top(DIR)(post-processed):       Best Acc: 83.6 | Threshold: 0.87 | AUC: 0.8998 
+Mode: Top(IR): Best Acc: 79.0 | Threshold: 0.82 | AUC: 0.8549
+View: Top(IR)(post-processed): Best Acc: 79.15 | Threshold: 0.82 | AUC: 0.8575
 
-Mode: Front(D):      Best Acc: 72.93 | Threshold: 0.9 | AUC: 0.7424
-View: Front(D)(post-processed):       Best Acc: 72.99 | Threshold: 0.9 | AUC: 0.7436 
+Mode: Top(DIR): Best Acc: 83.42 | Threshold: 0.87 | AUC: 0.8979
+View: Top(DIR)(post-processed): Best Acc: 83.6 | Threshold: 0.87 | AUC: 0.8998
 
-Mode: Front(IR):      Best Acc: 76.61 | Threshold: 0.89 | AUC: 0.8278
-View: Front(IR)(post-processed):       Best Acc: 76.91 | Threshold: 0.89 | AUC: 0.8311 
+Mode: Front(D): Best Acc: 72.93 | Threshold: 0.9 | AUC: 0.7424
+View: Front(D)(post-processed): Best Acc: 72.99 | Threshold: 0.9 | AUC: 0.7436
 
-Mode: Front(DIR):      Best Acc: 78.33 | Threshold: 0.88 | AUC: 0.8338
-View: Front(DIR)(post-processed):       Best Acc: 78.54 | Threshold: 0.88 | AUC: 0.8362 
+Mode: Front(IR): Best Acc: 76.61 | Threshold: 0.89 | AUC: 0.8278
+View: Front(IR)(post-processed): Best Acc: 76.91 | Threshold: 0.89 | AUC: 0.8311
 
-Mode: Fusion(D):      Best Acc: 85.82 | Threshold: 0.93 | AUC: 0.8974
-View: Fusion(D)(post-processed):       Best Acc: 85.96 | Threshold: 0.93 | AUC: 0.8992 
+Mode: Front(DIR): Best Acc: 78.33 | Threshold: 0.88 | AUC: 0.8338
+View: Front(DIR)(post-processed): Best Acc: 78.54 | Threshold: 0.88 | AUC: 0.8362
 
-Mode: Fusion(IR):      Best Acc: 83.89 | Threshold: 0.83 | AUC: 0.8977
-View: Fusion(IR)(post-processed):       Best Acc: 84.11 | Threshold: 0.85 | AUC: 0.9001 
+Mode: Fusion(D): Best Acc: 85.82 | Threshold: 0.93 | AUC: 0.8974
+View: Fusion(D)(post-processed): Best Acc: 85.96 | Threshold: 0.93 | AUC: 0.8992
 
-Mode: Fusion(DIR):      Best Acc: 87.36 | Threshold: 0.88 | AUC: 0.9241
-View: Fusion(DIR)(post-processed):       Best Acc: 87.53 | Threshold: 0.88 | AUC: 0.926 
+Mode: Fusion(IR): Best Acc: 83.89 | Threshold: 0.83 | AUC: 0.8977
+View: Fusion(IR)(post-processed): Best Acc: 84.11 | Threshold: 0.85 | AUC: 0.9001
+
+Mode: Fusion(DIR): Best Acc: 87.36 | Threshold: 0.88 | AUC: 0.9241
+View: Fusion(DIR)(post-processed): Best Acc: 87.53 | Threshold: 0.88 | AUC: 0.926
 
 Total testing time: 1999.1075730323792
+
+# Experiment 34:
+
+SGD optimizer, NCE loss, n/a batch 10/150, lr 0.01, normal_downsample=3, anormal_downsample=1
+Epoches 100
+
+TRAIN_COMMAND = "python main.py \
+ --root_path /content/DAD/ \
+ --mode train \
+ --view %s \
+ --model_type resnet \
+ --model_depth 18 \
+ --shortcut_type A \
+ --pre_train_model False \
+ --n_train_batch_size 10 \
+ --a_train_batch_size 150 \
+ --val_batch_size 70 \
+ --learning_rate 0.01 \
+ --epochs 100 \
+ --norm_value 255 \
+ --cal_vec_batch_size 100 \
+ --tau 0.1 \
+ --manual_seed 26 \
+ --memory_bank_size 200 \
+ --resume_path '' \
+ --resume_head_path '' \
+ --val_step 1 \
+ --save_step 50 \
+ --train_crop 'random' \
+ --n_scales 5 \
+ --log_resume False \
+ --width_mult 2.0 \
+ --n_split_ratio 1.0 \
+ --a_split_ratio 1.0 \
+ --n_threads 4 \
+ --downsample 1 \
+ --normal_downsample 3 \
+ --name %s"
+TEST_COMMAND = "python main.py --root_path /content/DAD/ --mode test --model_type resnet --model_depth 18 --shortcut_type A --val_batch_size 70 --cal_vec_batch_size 100 --n_threads 4 --name %s"
+
+## Results:
+Mode: Top(D):      Best Acc: 85.18 | Threshold: 0.96 | AUC: 0.9102
+View: Top(D)(post-processed):       Best Acc: 85.33 | Threshold: 0.96 | AUC: 0.9125 
+
+Mode: Top(IR):      Best Acc: 77.63 | Threshold: 0.94 | AUC: 0.8449
+View: Top(IR)(post-processed):       Best Acc: 77.78 | Threshold: 0.94 | AUC: 0.8479 
+
+Mode: Top(DIR):      Best Acc: 83.16 | Threshold: 0.94 | AUC: 0.9032
+View: Top(DIR)(post-processed):       Best Acc: 83.36 | Threshold: 0.94 | AUC: 0.9056 
+
+Mode: Front(D):      Best Acc: 66.42 | Threshold: 0.98 | AUC: 0.6684
+View: Front(D)(post-processed):       Best Acc: 66.48 | Threshold: 0.98 | AUC: 0.6701 
+
+Mode: Front(IR):      Best Acc: 69.99 | Threshold: 0.67 | AUC: 0.7464
+View: Front(IR)(post-processed):       Best Acc: 70.23 | Threshold: 0.66 | AUC: 0.7493 
+
+Mode: Front(DIR):      Best Acc: 70.67 | Threshold: 0.82 | AUC: 0.7561
+View: Front(DIR)(post-processed):       Best Acc: 70.93 | Threshold: 0.81 | AUC: 0.7588 
+
+Mode: Fusion(D):      Best Acc: 86.71 | Threshold: 0.97 | AUC: 0.9286
+View: Fusion(D)(post-processed):       Best Acc: 86.82 | Threshold: 0.97 | AUC: 0.9306 
+
+Mode: Fusion(IR):      Best Acc: 77.46 | Threshold: 0.8 | AUC: 0.8475
+View: Fusion(IR)(post-processed):       Best Acc: 77.71 | Threshold: 0.8 | AUC: 0.851 
+
+Mode: Fusion(DIR):      Best Acc: 83.31 | Threshold: 0.87 | AUC: 0.9026
+View: Fusion(DIR)(post-processed):       Best Acc: 83.49 | Threshold: 0.87 | AUC: 0.9056 
+
+Total testing time: 1988.1956717967987
